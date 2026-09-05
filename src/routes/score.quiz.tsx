@@ -37,12 +37,36 @@ export const Route = createFileRoute("/score/quiz")({
   component: QuizPage,
 });
 
+type HandleKey =
+  | "instagram"
+  | "facebook"
+  | "tiktok"
+  | "youtube"
+  | "linkedin"
+  | "pinterest"
+  | "other";
+
+const HANDLE_FIELDS: { key: HandleKey; label: string; placeholder: string }[] = [
+  { key: "instagram", label: "Instagram", placeholder: "@yourbusiness" },
+  { key: "facebook", label: "Facebook", placeholder: "facebook.com/yourbusiness" },
+  { key: "tiktok", label: "TikTok", placeholder: "@yourbusiness" },
+  { key: "youtube", label: "YouTube", placeholder: "@yourchannel" },
+  { key: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/in/yourname" },
+  { key: "pinterest", label: "Pinterest", placeholder: "@yourbusiness" },
+  { key: "other", label: "Anywhere else", placeholder: "Etsy, WhatsApp, Yelp, a directory" },
+];
+
 type Details = {
   fullName: string;
   email: string;
   businessName: string;
   website: string;
   phone: string;
+  handles: Record<HandleKey, string>;
+  consentTerms: boolean;
+  consentEmail: boolean;
+  consentSms: boolean;
+  consentCommunity: boolean;
 };
 
 const emptyDetails: Details = {
@@ -51,6 +75,19 @@ const emptyDetails: Details = {
   businessName: "",
   website: "",
   phone: "",
+  handles: {
+    instagram: "",
+    facebook: "",
+    tiktok: "",
+    youtube: "",
+    linkedin: "",
+    pinterest: "",
+    other: "",
+  },
+  consentTerms: false,
+  consentEmail: true,
+  consentSms: false,
+  consentCommunity: true,
 };
 
 function QuizPage() {
