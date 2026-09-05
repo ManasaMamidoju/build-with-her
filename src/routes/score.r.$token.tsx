@@ -160,6 +160,16 @@ function ResultPage() {
         <p className="mt-4 text-sm text-muted-foreground">
           Booking opens shortly. Save your link below and we will come to you with times.
         </p>
+        <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
+          <Link to="/services/$slug" params={{ slug: "clarity-call" }}>
+            See what the call covers
+          </Link>
+        </Button>
+        <p className="mt-4 text-sm text-muted-foreground">
+          <Link to="/services" className="hover:text-primary">
+            Or look at every way to work with us
+          </Link>
+        </p>
       </section>
 
       <section className="mt-10 rounded-2xl border border-border p-6">
