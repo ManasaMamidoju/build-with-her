@@ -51,6 +51,7 @@ function ResultPage() {
   }
 
   const firstName = result.fullName.split(" ")[0] ?? result.fullName;
+  const matchedOffers = offersFor(result.total, result.areaScores, 5);
 
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
