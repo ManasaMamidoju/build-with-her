@@ -41,8 +41,6 @@ const WAYS = [
   },
 ];
 
-export default function noop() {}
-
 function Community() {
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
