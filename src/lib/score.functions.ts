@@ -9,6 +9,8 @@ import {
   type AreaKey,
 } from "@/lib/score-rubric";
 
+const handle = z.string().trim().max(160).optional().or(z.literal(""));
+
 const detailsSchema = z.object({
   fullName: z.string().trim().min(1, "Tell us your name").max(120),
   email: z.string().trim().email("That email does not look right").max(255),
@@ -16,6 +18,21 @@ const detailsSchema = z.object({
   website: z.string().trim().max(255).optional().or(z.literal("")),
   phone: z.string().trim().max(40).optional().or(z.literal("")),
   source: z.string().trim().max(80).optional().or(z.literal("")),
+  handles: z
+    .object({
+      instagram: handle,
+      facebook: handle,
+      tiktok: handle,
+      youtube: handle,
+      linkedin: handle,
+      pinterest: handle,
+      other: handle,
+    })
+    .optional(),
+  consentTerms: z.literal(true, { message: "Please accept the terms to see your score" }),
+  consentEmail: z.boolean().optional(),
+  consentSms: z.boolean().optional(),
+  consentCommunity: z.boolean().optional(),
 });
 
 const submitSchema = z.object({
