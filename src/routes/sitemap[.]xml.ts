@@ -1,8 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { canonical } from "@/lib/site";
+import { SERVICES } from "@/lib/services";
 
-const paths = ["/", "/terms", "/privacy"];
+const paths = [
+  "/",
+  "/services",
+  ...SERVICES.map((service) => `/services/${service.slug}`),
+  "/terms",
+  "/privacy",
+];
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {

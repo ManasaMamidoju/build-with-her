@@ -13,6 +13,7 @@ import { RoseMark } from "@/components/brand/RoseMark";
 import { AREA_ORDER, AREAS, QUESTIONS, type AreaKey } from "@/lib/score-rubric";
 import { submitScore } from "@/lib/score.functions";
 import { getCapturedSource } from "@/lib/source-capture";
+import { rememberScoreToken } from "@/lib/score-memory";
 import { canonical } from "@/lib/site";
 
 const STORAGE_KEY = "bwhm.score.answers";
@@ -139,6 +140,7 @@ function QuizPage() {
         data: { answers, details: { ...details, source: captured?.src ?? "direct" } },
       });
       window.sessionStorage.removeItem(STORAGE_KEY);
+      rememberScoreToken(token);
       navigate({ to: "/score/r/$token", params: { token } });
     } catch (error) {
       console.error(error);
