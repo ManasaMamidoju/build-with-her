@@ -77,7 +77,7 @@ function Events() {
                 </Link>
               </Button>
               <Script
-                json={{
+                data={{
                   "@context": "https://schema.org",
                   "@type": "Event",
                   name: event.title,

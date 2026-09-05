@@ -1,6 +1,6 @@
 import { SITE } from "@/lib/site";
 
-function Script({ data }: { data: Record<string, unknown> }) {
+export function Script({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
