@@ -15,6 +15,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
+import { Route as ScoreRTokenRouteImport } from './routes/score.r.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const ScoreQuizRoute = ScoreQuizRouteImport.update({
   path: '/score/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScoreRTokenRoute = ScoreRTokenRouteImport.update({
+  id: '/score/r/$token',
+  path: '/score/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/score/quiz': typeof ScoreQuizRoute
+  '/score/r/$token': typeof ScoreRTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/score/quiz': typeof ScoreQuizRoute
+  '/score/r/$token': typeof ScoreRTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +79,27 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/score/quiz': typeof ScoreQuizRoute
+  '/score/r/$token': typeof ScoreRTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/login' | '/privacy' | '/sitemap.xml' | '/terms' | '/score/quiz'
+    | '/'
+    | '/login'
+    | '/privacy'
+    | '/sitemap.xml'
+    | '/terms'
+    | '/score/quiz'
+    | '/score/r/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/privacy' | '/sitemap.xml' | '/terms' | '/score/quiz'
+  to:
+    | '/'
+    | '/login'
+    | '/privacy'
+    | '/sitemap.xml'
+    | '/terms'
+    | '/score/quiz'
+    | '/score/r/$token'
   id:
     | '__root__'
     | '/'
@@ -86,6 +108,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/score/quiz'
+    | '/score/r/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,6 +118,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ScoreQuizRoute: typeof ScoreQuizRoute
+  ScoreRTokenRoute: typeof ScoreRTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScoreQuizRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/score/r/$token': {
+      id: '/score/r/$token'
+      path: '/score/r/$token'
+      fullPath: '/score/r/$token'
+      preLoaderRoute: typeof ScoreRTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -151,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ScoreQuizRoute: ScoreQuizRoute,
+  ScoreRTokenRoute: ScoreRTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
