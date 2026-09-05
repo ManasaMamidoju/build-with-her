@@ -42,7 +42,7 @@ export function BandFirstStep() {
     );
   }
 
-  const match = BAND_FIRST_STEP[data.band] ?? BAND_FIRST_STEP["Undiscoverable"];
+  const match = BAND_FIRST_STEP[data.band] ?? BAND_FIRST_STEP["Undiscoverable"]!;
   const primary = serviceBySlug(match.primary);
   const secondary = serviceBySlug(match.secondary);
 
