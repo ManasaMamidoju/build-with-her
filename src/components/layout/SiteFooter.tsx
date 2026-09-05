@@ -35,6 +35,7 @@ export function SiteFooter() {
                 Sign in
               </Link>
             </li>
+          </ul>
         </div>
 
         <div>
