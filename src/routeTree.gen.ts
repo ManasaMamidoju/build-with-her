@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MissionRouteImport } from './routes/mission'
 import { Route as PodcastRouteImport } from './routes/podcast'
@@ -55,6 +56,11 @@ const CommunityRoute = CommunityRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
   '/podcast': typeof PodcastRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
   '/podcast': typeof PodcastRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
   '/podcast': typeof PodcastRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/community'
     | '/contact'
+    | '/events'
     | '/login'
     | '/mission'
     | '/podcast'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/community'
     | '/contact'
+    | '/events'
     | '/login'
     | '/mission'
     | '/podcast'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/community'
     | '/contact'
+    | '/events'
     | '/login'
     | '/mission'
     | '/podcast'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CommunityRoute: typeof CommunityRoute
   ContactRoute: typeof ContactRoute
+  EventsRoute: typeof EventsRoute
   LoginRoute: typeof LoginRoute
   MissionRoute: typeof MissionRoute
   PodcastRoute: typeof PodcastRoute
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -514,6 +534,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CommunityRoute: CommunityRoute,
   ContactRoute: ContactRoute,
+  EventsRoute: EventsRoute,
   LoginRoute: LoginRoute,
   MissionRoute: MissionRoute,
   PodcastRoute: PodcastRoute,
