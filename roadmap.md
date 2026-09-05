@@ -1,12 +1,20 @@
 # Roadmap
 
-Approved plan: `.lovable/plan/build-the-rest-of-the-platform-2026-09-05.md`
+## Done
+- Foundation, theme, sign-in, legal pages, SEO scaffolding
+- Findability Score quiz, private result page, source capture, touchpoints
+- Member area: dashboard, score, settings, billing empty state, booking flow
+- Public pages: about, mission, podcast, learn index + 5 explainers, community, contact, events, event sign-in
+- Studio area: today view, people list, person 360 with notes and stage
+- sitemap.xml route and robots rules
 
-- [ ] Batch A — waitlist form, band-aware CTA, service FAQ schema
-- [ ] Batch B — member area: /app, /app/score, /app/settings, /app/billing
-- [ ] Batch C — booking flow with availability rules (placeholder confirmations)
-- [ ] Batch D — admin area: today, people, person 360, pipeline, settings
-- [ ] Batch E — events + QR sign-in + /e/$slug + /events
-- [ ] Batch F — public pages: about, contact, community, mission, podcast, learn
-- [ ] Batch G — people import from spreadsheet export (dry run first)
-- [ ] Batch H — launch checklist: sitemap, spam protection, SEO pass
+## Next
+- Bootcamp waitlist form and band-aware first step on the services pages
+- People import from a spreadsheet export
+- Studio pipeline board and studio settings (availability, templates)
+- Email sending with Resend (confirmations, reminders, score result)
+- Payments with Stripe
+- Full site audit: spam protection on public forms, link check, SEO pass
+
+## Answered
+- Backend is already enabled on this project (Lovable Cloud); nothing to switch on.
