@@ -21,7 +21,10 @@ import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppScoreRouteImport } from './routes/_authenticated/app.score'
+import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as ScoreRTokenRouteImport } from './routes/score.r.$token'
+import { Route as AuthenticatedAppBookIndexRouteImport } from './routes/_authenticated/app.book.index'
+import { Route as AuthenticatedAppBookSlugRouteImport } from './routes/_authenticated/app.book.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,11 +85,29 @@ const AuthenticatedAppScoreRoute = AuthenticatedAppScoreRouteImport.update({
   path: '/app/score',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSettingsRoute =
+  AuthenticatedAppSettingsRouteImport.update({
+    id: '/app/settings',
+    path: '/app/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ScoreRTokenRoute = ScoreRTokenRouteImport.update({
   id: '/score/r/$token',
   path: '/score/r/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppBookIndexRoute =
+  AuthenticatedAppBookIndexRouteImport.update({
+    id: '/app/book/',
+    path: '/app/book/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppBookSlugRoute =
+  AuthenticatedAppBookSlugRouteImport.update({
+    id: '/app/book/$slug',
+    path: '/app/book/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -99,8 +120,11 @@ export interface FileRoutesByFullPath {
   '/services/': typeof ServicesIndexRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
+  '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/app/book/': typeof AuthenticatedAppBookIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -113,8 +137,11 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesIndexRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
+  '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/app/book': typeof AuthenticatedAppBookIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -129,8 +156,11 @@ export interface FileRoutesById {
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
+  '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/_authenticated/app/book/': typeof AuthenticatedAppBookIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,8 +175,11 @@ export interface FileRouteTypes {
     | '/services/'
     | '/app/billing'
     | '/app/score'
+    | '/app/settings'
     | '/score/r/$token'
     | '/app/'
+    | '/app/book/$slug'
+    | '/app/book/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -159,8 +192,11 @@ export interface FileRouteTypes {
     | '/services'
     | '/app/billing'
     | '/app/score'
+    | '/app/settings'
     | '/score/r/$token'
     | '/app'
+    | '/app/book/$slug'
+    | '/app/book'
   id:
     | '__root__'
     | '/'
@@ -174,8 +210,11 @@ export interface FileRouteTypes {
     | '/services/'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
+    | '/_authenticated/app/settings'
     | '/score/r/$token'
     | '/_authenticated/app/'
+    | '/_authenticated/app/book/$slug'
+    | '/_authenticated/app/book/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -277,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppScoreRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/settings': {
+      id: '/_authenticated/app/settings'
+      path: '/app/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/score/r/$token': {
       id: '/score/r/$token'
       path: '/score/r/$token'
@@ -284,19 +330,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScoreRTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app/book/': {
+      id: '/_authenticated/app/book/'
+      path: '/app/book'
+      fullPath: '/app/book/'
+      preLoaderRoute: typeof AuthenticatedAppBookIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/book/$slug': {
+      id: '/_authenticated/app/book/$slug'
+      path: '/app/book/$slug'
+      fullPath: '/app/book/$slug'
+      preLoaderRoute: typeof AuthenticatedAppBookSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppScoreRoute: typeof AuthenticatedAppScoreRoute
+  AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppBookSlugRoute: typeof AuthenticatedAppBookSlugRoute
+  AuthenticatedAppBookIndexRoute: typeof AuthenticatedAppBookIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppScoreRoute: AuthenticatedAppScoreRoute,
+  AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppBookSlugRoute: AuthenticatedAppBookSlugRoute,
+  AuthenticatedAppBookIndexRoute: AuthenticatedAppBookIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
