@@ -89,9 +89,14 @@ export type Database = {
           band: string
           business_name: string | null
           claimed_by: string | null
+          consent_community: boolean
+          consent_email: boolean
+          consent_sms: boolean
+          consent_terms_at: string | null
           created_at: string
           email: string
           full_name: string
+          handles: Json
           id: string
           phone: string | null
           primary_source: string | null
@@ -107,9 +112,14 @@ export type Database = {
           band: string
           business_name?: string | null
           claimed_by?: string | null
+          consent_community?: boolean
+          consent_email?: boolean
+          consent_sms?: boolean
+          consent_terms_at?: string | null
           created_at?: string
           email: string
           full_name: string
+          handles?: Json
           id?: string
           phone?: string | null
           primary_source?: string | null
@@ -125,9 +135,14 @@ export type Database = {
           band?: string
           business_name?: string | null
           claimed_by?: string | null
+          consent_community?: boolean
+          consent_email?: boolean
+          consent_sms?: boolean
+          consent_terms_at?: string | null
           created_at?: string
           email?: string
           full_name?: string
+          handles?: Json
           id?: string
           phone?: string | null
           primary_source?: string | null
