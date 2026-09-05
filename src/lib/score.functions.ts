@@ -107,6 +107,13 @@ export const submitScore = createServerFn({ method: "POST" })
       website: data.details.website || null,
       phone: data.details.phone || null,
       primary_source: data.details.source || null,
+      handles: Object.fromEntries(
+        Object.entries(data.details.handles ?? {}).filter(([, value]) => Boolean(value)),
+      ),
+      consent_email: data.details.consentEmail ?? false,
+      consent_sms: data.details.consentSms ?? false,
+      consent_community: data.details.consentCommunity ?? false,
+      consent_terms_at: new Date().toISOString(),
       answers: data.answers,
       area_scores: result.areaScores,
       total_score: result.total,
