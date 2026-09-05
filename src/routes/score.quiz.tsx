@@ -322,7 +322,12 @@ function QuizPage() {
           </fieldset>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Button type="submit" size="lg" className="h-12 px-7 text-base" disabled={saving}>
+            <Button
+              type="submit"
+              size="lg"
+              className="h-12 px-7 text-base"
+              disabled={saving || !details.consentTerms}
+            >
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Working out your score
