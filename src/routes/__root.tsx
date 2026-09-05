@@ -13,9 +13,10 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { MobileCtaBar } from "@/components/layout/MobileCtaBar";
+
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { captureSourceFromLocation } from "@/lib/source-capture";
 
 function NotFoundComponent() {
   return (
@@ -128,6 +129,10 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    captureSourceFromLocation();
+  }, []);
+
+  useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
@@ -139,13 +144,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <div className="flex min-h-screen flex-col pb-20 md:pb-0">
+      <div className="flex min-h-screen flex-col">
         <SiteHeader />
         <div className="flex-1">
           <Outlet />
         </div>
         <SiteFooter />
-        <MobileCtaBar />
       </div>
       <Toaster />
     </QueryClientProvider>
