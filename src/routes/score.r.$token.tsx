@@ -120,16 +120,42 @@ function ResultPage() {
         </ol>
       </section>
 
+      <section className="mt-12">
+        <h2 className="text-2xl">What could work for you next</h2>
+        <p className="mt-3 text-base text-muted-foreground">
+          Picked for your score and your weakest areas. Some you can do yourself for free, some we
+          build with you.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {matchedOffers.map((offer) => (
+            <div
+              key={offer.id}
+              className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card"
+            >
+              <p className="eyebrow text-primary">{OFFER_KINDS[offer.kind].label}</p>
+              <h3 className="mt-2 text-xl">{offer.title}</h3>
+              <p className="mt-2 flex-1 text-base text-muted-foreground">{offer.blurb}</p>
+              {offer.href ? (
+                <Button asChild variant="outline" className="mt-5 self-start">
+                  <a href={offer.href}>{offer.ctaLabel}</a>
+                </Button>
+              ) : (
+                <p className="mt-5 text-sm text-muted-foreground">
+                  {offer.note ?? "We go through this on your clarity call."}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-12 rounded-2xl bg-secondary p-8">
         <h2 className="text-2xl">Your next step</h2>
         <p className="mt-3 text-base text-muted-foreground">
           Bring this score to a free clarity call. Twenty minutes, no pitch deck, and you leave
           knowing which of these three to do this month and which to have built for you.
         </p>
-        <Button asChild size="lg" className="mt-6 h-12 px-7 text-base">
-          <Link to="/score/quiz">Book your free clarity call</Link>
-        </Button>
-        <p className="mt-3 text-sm text-muted-foreground">
+        <p className="mt-4 text-sm text-muted-foreground">
           Booking opens shortly. Save your link below and we will come to you with times.
         </p>
       </section>
