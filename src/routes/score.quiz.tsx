@@ -84,7 +84,7 @@ function QuizPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
 
-  const areaKey = AREA_ORDER[Math.min(step, AREA_ORDER.length - 1)];
+  const areaKey = AREA_ORDER[Math.min(step, AREA_ORDER.length - 1)] as AreaKey;
   const area = AREAS[areaKey];
   const areaQuestions = QUESTIONS.filter((q) => q.area === areaKey);
   const answeredInArea = areaQuestions.filter((q) => answers[q.id]).length;
