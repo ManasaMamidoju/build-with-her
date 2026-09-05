@@ -21,6 +21,7 @@ import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
@@ -91,6 +92,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ESlugRoute = ESlugRouteImport.update({
+  id: '/e/$slug',
+  path: '/e/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LearnIndexRoute = LearnIndexRouteImport.update({
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/e/$slug'
     | '/learn/$slug'
     | '/score/quiz'
     | '/services/$slug'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/e/$slug'
     | '/learn/$slug'
     | '/score/quiz'
     | '/services/$slug'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/e/$slug'
     | '/learn/$slug'
     | '/score/quiz'
     | '/services/$slug'
@@ -326,6 +338,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ESlugRoute: typeof ESlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
   ScoreQuizRoute: typeof ScoreQuizRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
@@ -418,6 +431,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e/$slug': {
+      id: '/e/$slug'
+      path: '/e/$slug'
+      fullPath: '/e/$slug'
+      preLoaderRoute: typeof ESlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learn/': {
@@ -541,6 +561,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ESlugRoute: ESlugRoute,
   LearnSlugRoute: LearnSlugRoute,
   ScoreQuizRoute: ScoreQuizRoute,
   ServicesSlugRoute: ServicesSlugRoute,
