@@ -21,17 +21,21 @@ import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin.route'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppScoreRouteImport } from './routes/_authenticated/app.score'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as ScoreRTokenRouteImport } from './routes/score.r.$token'
+import { Route as AuthenticatedAdminPeopleIndexRouteImport } from './routes/_authenticated/admin.people.index'
+import { Route as AuthenticatedAdminPeopleIdRouteImport } from './routes/_authenticated/admin.people.$id'
 import { Route as AuthenticatedAppBookIndexRouteImport } from './routes/_authenticated/app.book.index'
 import { Route as AuthenticatedAppBookSlugRouteImport } from './routes/_authenticated/app.book.$slug'
 
@@ -94,6 +98,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
   path: '/e/$slug',
@@ -124,6 +133,11 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/app/',
   path: '/app/',
@@ -150,6 +164,18 @@ const ScoreRTokenRoute = ScoreRTokenRouteImport.update({
   path: '/score/r/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminPeopleIndexRoute =
+  AuthenticatedAdminPeopleIndexRouteImport.update({
+    id: '/people/',
+    path: '/people/',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPeopleIdRoute =
+  AuthenticatedAdminPeopleIdRouteImport.update({
+    id: '/people/$id',
+    path: '/people/$id',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAppBookIndexRoute =
   AuthenticatedAppBookIndexRouteImport.update({
     id: '/app/book/',
@@ -175,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/score/quiz': typeof ScoreQuizRoute
@@ -185,8 +212,11 @@ export interface FileRoutesByFullPath {
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/score/r/$token': typeof ScoreRTokenRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
   '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
   '/app/book/': typeof AuthenticatedAppBookIndexRoute
 }
 export interface FileRoutesByTo {
@@ -211,8 +241,11 @@ export interface FileRoutesByTo {
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/score/r/$token': typeof ScoreRTokenRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
   '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/admin/people': typeof AuthenticatedAdminPeopleIndexRoute
   '/app/book': typeof AuthenticatedAppBookIndexRoute
 }
 export interface FileRoutesById {
@@ -229,6 +262,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/score/quiz': typeof ScoreQuizRoute
@@ -239,8 +273,11 @@ export interface FileRoutesById {
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/score/r/$token': typeof ScoreRTokenRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
   '/_authenticated/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/_authenticated/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
   '/_authenticated/app/book/': typeof AuthenticatedAppBookIndexRoute
 }
 export interface FileRouteTypes {
@@ -257,6 +294,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/admin'
     | '/e/$slug'
     | '/learn/$slug'
     | '/score/quiz'
@@ -267,8 +305,11 @@ export interface FileRouteTypes {
     | '/app/score'
     | '/app/settings'
     | '/score/r/$token'
+    | '/admin/'
     | '/app/'
+    | '/admin/people/$id'
     | '/app/book/$slug'
+    | '/admin/people/'
     | '/app/book/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -293,8 +334,11 @@ export interface FileRouteTypes {
     | '/app/score'
     | '/app/settings'
     | '/score/r/$token'
+    | '/admin'
     | '/app'
+    | '/admin/people/$id'
     | '/app/book/$slug'
+    | '/admin/people'
     | '/app/book'
   id:
     | '__root__'
@@ -310,6 +354,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/_authenticated/admin'
     | '/e/$slug'
     | '/learn/$slug'
     | '/score/quiz'
@@ -320,8 +365,11 @@ export interface FileRouteTypes {
     | '/_authenticated/app/score'
     | '/_authenticated/app/settings'
     | '/score/r/$token'
+    | '/_authenticated/admin/'
     | '/_authenticated/app/'
+    | '/_authenticated/admin/people/$id'
     | '/_authenticated/app/book/$slug'
+    | '/_authenticated/admin/people/'
     | '/_authenticated/app/book/'
   fileRoutesById: FileRoutesById
 }
@@ -433,6 +481,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/e/$slug': {
       id: '/e/$slug'
       path: '/e/$slug'
@@ -475,6 +530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
       path: '/app'
@@ -510,6 +572,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScoreRTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/people/': {
+      id: '/_authenticated/admin/people/'
+      path: '/people'
+      fullPath: '/admin/people/'
+      preLoaderRoute: typeof AuthenticatedAdminPeopleIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/people/$id': {
+      id: '/_authenticated/admin/people/$id'
+      path: '/people/$id'
+      fullPath: '/admin/people/$id'
+      preLoaderRoute: typeof AuthenticatedAdminPeopleIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/app/book/': {
       id: '/_authenticated/app/book/'
       path: '/app/book'
@@ -527,7 +603,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminPeopleIdRoute: typeof AuthenticatedAdminPeopleIdRoute
+  AuthenticatedAdminPeopleIndexRoute: typeof AuthenticatedAdminPeopleIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+    AuthenticatedAdminPeopleIdRoute: AuthenticatedAdminPeopleIdRoute,
+    AuthenticatedAdminPeopleIndexRoute: AuthenticatedAdminPeopleIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppScoreRoute: typeof AuthenticatedAppScoreRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
@@ -537,6 +632,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppScoreRoute: AuthenticatedAppScoreRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
