@@ -1,0 +1,14 @@
+# Build With Her Media
+
+> Media, systems and AI for women who own businesses. Every visitor gets a Findability Score out of 100, then one clear next step: a free clarity call, a paid strategy consult, an automation build, or a podcast recording.
+
+Operated by BUILD WITH HER MEDIA LLC. Contact: hello@buildwithhermedia.com
+
+## What the Findability Score measures
+The SCALE rubric, five areas out of 100 points: Source (25), Clarity (20), Attract (25), Land (15), Elevate (15). Score bands: under 40 Undiscoverable, 40 to 54 Invisible with a pulse, 55 to 69 Leaky, 70 to 84 Solid, 85 to 100 Compounding.
+
+## Pages
+- /: home, what the score is and the three ways in
+- /login: sign in with Google
+- /terms: terms of service
+- /privacy: privacy notice
