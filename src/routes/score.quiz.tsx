@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { AREA_ORDER, AREAS, QUESTIONS, type AreaKey } from "@/lib/score-rubric";
 import { submitScore } from "@/lib/score.functions";
+import { getCapturedSource } from "@/lib/source-capture";
 import { canonical } from "@/lib/site";
 
 const STORAGE_KEY = "bwhm.score.answers";
