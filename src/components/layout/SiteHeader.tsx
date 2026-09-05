@@ -56,9 +56,6 @@ export function SiteHeader() {
           <Button asChild size="sm" variant={signedIn ? "outline" : "default"}>
             <Link to="/login">{signedIn ? "My account" : "Sign in"}</Link>
           </Button>
-          <Button asChild size="sm">
-            <Link to="/score/quiz">Get your score</Link>
-          </Button>
         </nav>
 
         <button
