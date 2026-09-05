@@ -105,26 +105,6 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div>
-          <p className="eyebrow text-muted-foreground">The details</p>
-          <ul className="mt-4 space-y-3 text-base">
-            <li>
-              <Link to="/terms" className="text-foreground hover:text-primary">
-                Terms of Service
-              </Link>
-            </li>
-            <li>
-              <Link to="/privacy" className="text-foreground hover:text-primary">
-                Privacy Notice
-              </Link>
-            </li>
-            <li>
-              <a href={`mailto:${SITE.email}`} className="text-foreground hover:text-primary">
-                {SITE.email}
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
 
       <div className="border-t border-border">
