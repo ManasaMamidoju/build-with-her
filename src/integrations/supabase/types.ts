@@ -47,6 +47,63 @@ export type Database = {
         }
         Relationships: []
       }
+      score_submissions: {
+        Row: {
+          answers: Json
+          area_scores: Json
+          band: string
+          business_name: string | null
+          claimed_by: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          primary_source: string | null
+          token: string
+          top_fixes: Json
+          total_score: number
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          answers?: Json
+          area_scores?: Json
+          band: string
+          business_name?: string | null
+          claimed_by?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          primary_source?: string | null
+          token: string
+          top_fixes?: Json
+          total_score: number
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          answers?: Json
+          area_scores?: Json
+          band?: string
+          business_name?: string | null
+          claimed_by?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          primary_source?: string | null
+          token?: string
+          top_fixes?: Json
+          total_score?: number
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

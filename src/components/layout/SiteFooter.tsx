@@ -26,6 +26,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link to="/score/quiz" className="text-foreground hover:text-primary">
+                Take the quiz
+              </Link>
+            </li>
+            <li>
               <Link to="/login" className="text-foreground hover:text-primary">
                 Sign in
               </Link>

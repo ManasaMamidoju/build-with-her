@@ -25,6 +25,8 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
 Disallow: /app/
 Disallow: /admin/
 

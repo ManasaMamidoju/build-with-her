@@ -8,8 +8,7 @@ import { RoseMark } from "@/components/brand/RoseMark";
 
 const links = [
   { to: "/", label: "Home" },
-  { to: "/terms", label: "Terms" },
-  { to: "/privacy", label: "Privacy" },
+  { to: "/score/quiz", label: "Take the quiz" },
 ] as const;
 
 export function SiteHeader() {
@@ -54,10 +53,11 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          <Button asChild size="sm" variant={signedIn ? "outline" : "default"}>
+            <Link to="/login">{signedIn ? "My account" : "Sign in"}</Link>
+          </Button>
           <Button asChild size="sm">
-            <Link to={signedIn ? "/" : "/login"}>
-              {signedIn ? "Get your Findability Score" : "Sign in"}
-            </Link>
+            <Link to="/score/quiz">Get your score</Link>
           </Button>
         </nav>
 
@@ -86,7 +86,7 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link to="/login" onClick={() => setOpen(false)} className="py-3 text-base text-primary">
-              Sign in
+              {signedIn ? "My account" : "Sign in"}
             </Link>
           </div>
         </nav>
