@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { AREAS, type AreaKey } from "@/lib/score-rubric";
+import { OFFER_KINDS, offersFor } from "@/lib/offers";
 import { getScoreByToken } from "@/lib/score.functions";
 
 export const Route = createFileRoute("/score/r/$token")({
