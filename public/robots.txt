@@ -10,5 +10,22 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
 User-agent: *
 Allow: /
+Disallow: /login
+Disallow: /app/
+Disallow: /admin/
+
+Sitemap: https://buildwithhermedia.com/sitemap.xml
