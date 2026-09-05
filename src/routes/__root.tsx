@@ -16,6 +16,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { captureSourceFromLocation } from "@/lib/source-capture";
 
 function NotFoundComponent() {
   return (
