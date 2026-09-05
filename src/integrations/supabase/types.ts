@@ -213,6 +213,45 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlists: {
+        Row: {
+          business_name: string | null
+          consent_email: boolean
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          note: string | null
+          phone: string | null
+          service_slug: string
+          source: string | null
+        }
+        Insert: {
+          business_name?: string | null
+          consent_email?: boolean
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          note?: string | null
+          phone?: string | null
+          service_slug: string
+          source?: string | null
+        }
+        Update: {
+          business_name?: string | null
+          consent_email?: boolean
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          note?: string | null
+          phone?: string | null
+          service_slug?: string
+          source?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

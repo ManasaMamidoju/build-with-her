@@ -26,6 +26,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link to="/services" className="text-foreground hover:text-primary">
+                Ways to work with us
+              </Link>
+            </li>
+            <li>
               <Link to="/score/quiz" className="text-foreground hover:text-primary">
                 Take the quiz
               </Link>
