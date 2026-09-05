@@ -86,7 +86,7 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link to="/login" onClick={() => setOpen(false)} className="py-3 text-base text-primary">
-              Sign in
+              {signedIn ? "My account" : "Sign in"}
             </Link>
           </div>
         </nav>
