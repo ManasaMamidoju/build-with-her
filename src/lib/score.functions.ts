@@ -102,6 +102,16 @@ export const submitScore = createServerFn({ method: "POST" })
       throw new Error("We could not save your score. Please try again.");
     }
 
+    const { error: touchError } = await supabaseAdmin.from("touchpoints").insert({
+      email: data.details.email.toLowerCase(),
+      kind: "score_submit",
+      source: data.details.source || null,
+      detail: { token, total: result.total, band: result.band.name },
+    });
+    if (touchError) {
+      console.error("touchpoint write failed", touchError.message);
+    }
+
     return { token };
   });
 

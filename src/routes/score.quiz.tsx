@@ -95,7 +95,10 @@ function QuizPage() {
     if (saving) return;
     setSaving(true);
     try {
-      const { token } = await submit({ data: { answers, details: { ...details, source: "site" } } });
+      const captured = getCapturedSource();
+      const { token } = await submit({
+        data: { answers, details: { ...details, source: captured?.src ?? "direct" } },
+      });
       window.sessionStorage.removeItem(STORAGE_KEY);
       navigate({ to: "/score/r/$token", params: { token } });
     } catch (error) {
