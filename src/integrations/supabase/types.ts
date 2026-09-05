@@ -14,6 +14,216 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability_rules: {
+        Row: {
+          active: boolean
+          buffer_minutes: number
+          created_at: string
+          end_minute: number
+          id: string
+          min_notice_hours: number
+          slot_minutes: number
+          start_minute: number
+          timezone: string
+          updated_at: string
+          weekday: number
+        }
+        Insert: {
+          active?: boolean
+          buffer_minutes?: number
+          created_at?: string
+          end_minute: number
+          id?: string
+          min_notice_hours?: number
+          slot_minutes?: number
+          start_minute: number
+          timezone?: string
+          updated_at?: string
+          weekday: number
+        }
+        Update: {
+          active?: boolean
+          buffer_minutes?: number
+          created_at?: string
+          end_minute?: number
+          id?: string
+          min_notice_hours?: number
+          slot_minutes?: number
+          start_minute?: number
+          timezone?: string
+          updated_at?: string
+          weekday?: number
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string
+          ends_at: string
+          id: string
+          intake: Json
+          reschedule_count: number
+          service_slug: string
+          starts_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string
+          ends_at: string
+          id?: string
+          intake?: Json
+          reschedule_count?: number
+          service_slug: string
+          starts_at: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string
+          ends_at?: string
+          id?: string
+          intake?: Json
+          reschedule_count?: number
+          service_slug?: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          active: boolean
+          body: string
+          created_at: string
+          id: string
+          slug: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body: string
+          created_at?: string
+          id?: string
+          slug: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body?: string
+          created_at?: string
+          id?: string
+          slug?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      event_attendees: {
+        Row: {
+          answers: Json
+          business_name: string | null
+          consent_email: boolean
+          consent_sms: boolean
+          created_at: string
+          email: string | null
+          event_id: string
+          full_name: string | null
+          id: string
+          profile_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          business_name?: string | null
+          consent_email?: boolean
+          consent_sms?: boolean
+          created_at?: string
+          email?: string | null
+          event_id: string
+          full_name?: string | null
+          id?: string
+          profile_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          business_name?: string | null
+          consent_email?: boolean
+          consent_sms?: boolean
+          created_at?: string
+          email?: string | null
+          event_id?: string
+          full_name?: string | null
+          id?: string
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          city: string | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          published: boolean
+          slug: string
+          starts_at: string
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          published?: boolean
+          slug: string
+          starts_at: string
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          published?: boolean
+          slug?: string
+          starts_at?: string
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
       industries: {
         Row: {
           created_at: string
@@ -38,38 +248,117 @@ export type Database = {
         }
         Relationships: []
       }
+      person_handles: {
+        Row: {
+          created_at: string
+          handle: string
+          id: string
+          platform: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          handle: string
+          id?: string
+          platform: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          handle?: string
+          id?: string
+          platform?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_handles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      person_notes: {
+        Row: {
+          author_id: string | null
+          body: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_notes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           business_name: string | null
+          consent_community: boolean
+          consent_email: boolean
+          consent_sms: boolean
           created_at: string
           email: string | null
           full_name: string | null
           id: string
           industry_id: string | null
+          lead_stage: string
           phone: string | null
           primary_source: string | null
+          tags: string[]
           updated_at: string
         }
         Insert: {
           business_name?: string | null
+          consent_community?: boolean
+          consent_email?: boolean
+          consent_sms?: boolean
           created_at?: string
           email?: string | null
           full_name?: string | null
           id: string
           industry_id?: string | null
+          lead_stage?: string
           phone?: string | null
           primary_source?: string | null
+          tags?: string[]
           updated_at?: string
         }
         Update: {
           business_name?: string | null
+          consent_community?: boolean
+          consent_email?: boolean
+          consent_sms?: boolean
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
           industry_id?: string | null
+          lead_stage?: string
           phone?: string | null
           primary_source?: string | null
+          tags?: string[]
           updated_at?: string
         }
         Relationships: [

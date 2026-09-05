@@ -9,7 +9,9 @@ import { RoseMark } from "@/components/brand/RoseMark";
 const links = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Ways to work with us" },
-  { to: "/score/quiz", label: "Take the quiz" },
+  { to: "/podcast", label: "Podcast" },
+  { to: "/learn", label: "Learn" },
+  { to: "/about", label: "About" },
 ] as const;
 
 export function SiteHeader() {

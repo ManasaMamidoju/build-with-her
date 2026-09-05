@@ -29,5 +29,6 @@ Disallow: /score/quiz
 Disallow: /score/r/
 Disallow: /app/
 Disallow: /admin/
+Disallow: /e/
 
 Sitemap: https://buildwithhermedia.com/sitemap.xml
