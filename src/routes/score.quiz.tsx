@@ -212,11 +212,11 @@ function QuizPage() {
               />
             </div>
             <div>
-              <Label htmlFor="website">Website or social handle</Label>
+              <Label htmlFor="website">Website</Label>
               <Input
                 id="website"
                 maxLength={255}
-                placeholder="yourbusiness.com or @yourbusiness"
+                placeholder="yourbusiness.com"
                 value={details.website}
                 onChange={(e) => setDetails({ ...details, website: e.target.value })}
                 className="mt-2 h-12"
@@ -234,6 +234,91 @@ function QuizPage() {
               />
             </div>
           </div>
+
+          <fieldset className="mt-10 rounded-2xl border border-border bg-card p-6">
+            <legend className="px-2 text-lg font-medium">All of your handles</legend>
+            <p className="text-sm text-muted-foreground">
+              Every place you show up, even the quiet ones. We look at all of them before your call,
+              so leave nothing out. Skip the ones you do not use.
+            </p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {HANDLE_FIELDS.map((field) => (
+                <div key={field.key}>
+                  <Label htmlFor={`handle-${field.key}`}>{field.label}</Label>
+                  <Input
+                    id={`handle-${field.key}`}
+                    maxLength={160}
+                    placeholder={field.placeholder}
+                    value={details.handles[field.key]}
+                    onChange={(e) =>
+                      setDetails({
+                        ...details,
+                        handles: { ...details.handles, [field.key]: e.target.value },
+                      })
+                    }
+                    className="mt-2 h-12"
+                  />
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mt-8 rounded-2xl bg-secondary p-6">
+            <legend className="px-2 text-lg font-medium">Before you see your score</legend>
+            <div className="mt-2 space-y-4">
+              <label className="flex items-start gap-3 text-base">
+                <Checkbox
+                  checked={details.consentEmail}
+                  onCheckedChange={(v) => setDetails({ ...details, consentEmail: v === true })}
+                  className="mt-1"
+                />
+                <span>
+                  Email me my score, my fixes, and what other women are doing that works. You can
+                  stop any time in one click.
+                </span>
+              </label>
+              <label className="flex items-start gap-3 text-base">
+                <Checkbox
+                  checked={details.consentSms}
+                  onCheckedChange={(v) => setDetails({ ...details, consentSms: v === true })}
+                  className="mt-1"
+                />
+                <span>
+                  Text me about my clarity call time. Only if you left a phone number, and only about
+                  your call.
+                </span>
+              </label>
+              <label className="flex items-start gap-3 text-base">
+                <Checkbox
+                  checked={details.consentCommunity}
+                  onCheckedChange={(v) => setDetails({ ...details, consentCommunity: v === true })}
+                  className="mt-1"
+                />
+                <span>Invite me to the community of women building alongside me.</span>
+              </label>
+              <label className="flex items-start gap-3 text-base">
+                <Checkbox
+                  checked={details.consentTerms}
+                  onCheckedChange={(v) => setDetails({ ...details, consentTerms: v === true })}
+                  className="mt-1"
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link to="/terms" className="underline">
+                    terms
+                  </Link>{" "}
+                  and the{" "}
+                  <Link to="/privacy" className="underline">
+                    privacy notice
+                  </Link>
+                  . Required.
+                </span>
+              </label>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              We never sell your details and we never share your handles outside our team.
+            </p>
+          </fieldset>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Button type="submit" size="lg" className="h-12 px-7 text-base" disabled={saving}>
