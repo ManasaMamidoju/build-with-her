@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      industries: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           business_name: string | null
@@ -21,6 +45,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          industry_id: string | null
           phone: string | null
           primary_source: string | null
           updated_at: string
@@ -31,6 +56,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          industry_id?: string | null
           phone?: string | null
           primary_source?: string | null
           updated_at?: string
@@ -41,11 +67,20 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          industry_id?: string | null
           phone?: string | null
           primary_source?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       score_submissions: {
         Row: {
@@ -103,6 +138,44 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      touchpoints: {
+        Row: {
+          created_at: string
+          detail: Json
+          email: string | null
+          id: string
+          kind: string
+          profile_id: string | null
+          source: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: Json
+          email?: string | null
+          id?: string
+          kind: string
+          profile_id?: string | null
+          source?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: Json
+          email?: string | null
+          id?: string
+          kind?: string
+          profile_id?: string | null
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "touchpoints_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
