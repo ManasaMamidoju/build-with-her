@@ -29,6 +29,8 @@ import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
+import { Route as AuthenticatedAdminPipelineRouteImport } from './routes/_authenticated/admin.pipeline'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppScoreRouteImport } from './routes/_authenticated/app.score'
@@ -138,6 +140,18 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminCalendarRoute =
+  AuthenticatedAdminCalendarRouteImport.update({
+    id: '/calendar',
+    path: '/calendar',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPipelineRoute =
+  AuthenticatedAdminPipelineRouteImport.update({
+    id: '/pipeline',
+    path: '/pipeline',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/app/',
   path: '/app/',
@@ -208,6 +222,8 @@ export interface FileRoutesByFullPath {
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -237,6 +253,8 @@ export interface FileRoutesByTo {
   '/services/$slug': typeof ServicesSlugRoute
   '/learn': typeof LearnIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -269,6 +287,8 @@ export interface FileRoutesById {
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -301,6 +321,8 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/learn/'
     | '/services/'
+    | '/admin/calendar'
+    | '/admin/pipeline'
     | '/app/billing'
     | '/app/score'
     | '/app/settings'
@@ -330,6 +352,8 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/learn'
     | '/services'
+    | '/admin/calendar'
+    | '/admin/pipeline'
     | '/app/billing'
     | '/app/score'
     | '/app/settings'
@@ -361,6 +385,8 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/learn/'
     | '/services/'
+    | '/_authenticated/admin/calendar'
+    | '/_authenticated/admin/pipeline'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
     | '/_authenticated/app/settings'
@@ -537,6 +563,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/calendar': {
+      id: '/_authenticated/admin/calendar'
+      path: '/calendar'
+      fullPath: '/admin/calendar'
+      preLoaderRoute: typeof AuthenticatedAdminCalendarRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/pipeline': {
+      id: '/_authenticated/admin/pipeline'
+      path: '/pipeline'
+      fullPath: '/admin/pipeline'
+      preLoaderRoute: typeof AuthenticatedAdminPipelineRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
       path: '/app'
@@ -604,6 +644,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminCalendarRoute: typeof AuthenticatedAdminCalendarRoute
+  AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminPeopleIdRoute: typeof AuthenticatedAdminPeopleIdRoute
   AuthenticatedAdminPeopleIndexRoute: typeof AuthenticatedAdminPeopleIndexRoute
@@ -611,6 +653,8 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminCalendarRoute: AuthenticatedAdminCalendarRoute,
+    AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminPeopleIdRoute: AuthenticatedAdminPeopleIdRoute,
     AuthenticatedAdminPeopleIndexRoute: AuthenticatedAdminPeopleIndexRoute,
