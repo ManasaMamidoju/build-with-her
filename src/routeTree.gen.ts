@@ -36,6 +36,7 @@ import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminImportRouteImport } from './routes/_authenticated/admin.import'
 import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin.interviews'
 import { Route as AuthenticatedAdminPipelineRouteImport } from './routes/_authenticated/admin.pipeline'
+import { Route as AuthenticatedAdminPodcastRouteImport } from './routes/_authenticated/admin.podcast'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
@@ -186,6 +187,12 @@ const AuthenticatedAdminPipelineRoute =
     path: '/pipeline',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPodcastRoute =
+  AuthenticatedAdminPodcastRouteImport.update({
+    id: '/podcast',
+    path: '/podcast',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -269,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/admin/import': typeof AuthenticatedAdminImportRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
+  '/admin/podcast': typeof AuthenticatedAdminPodcastRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
@@ -306,6 +314,7 @@ export interface FileRoutesByTo {
   '/admin/import': typeof AuthenticatedAdminImportRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
+  '/admin/podcast': typeof AuthenticatedAdminPodcastRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
@@ -346,6 +355,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/import': typeof AuthenticatedAdminImportRoute
   '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
+  '/_authenticated/admin/podcast': typeof AuthenticatedAdminPodcastRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/admin/import'
     | '/admin/interviews'
     | '/admin/pipeline'
+    | '/admin/podcast'
     | '/admin/settings'
     | '/app/billing'
     | '/app/score'
@@ -423,6 +434,7 @@ export interface FileRouteTypes {
     | '/admin/import'
     | '/admin/interviews'
     | '/admin/pipeline'
+    | '/admin/podcast'
     | '/admin/settings'
     | '/app/billing'
     | '/app/score'
@@ -462,6 +474,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/import'
     | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/pipeline'
+    | '/_authenticated/admin/podcast'
     | '/_authenticated/admin/settings'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
@@ -689,6 +702,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPipelineRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/podcast': {
+      id: '/_authenticated/admin/podcast'
+      path: '/podcast'
+      fullPath: '/admin/podcast'
+      preLoaderRoute: typeof AuthenticatedAdminPodcastRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -768,6 +788,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
   AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
+  AuthenticatedAdminPodcastRoute: typeof AuthenticatedAdminPodcastRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminPeopleIdRoute: typeof AuthenticatedAdminPeopleIdRoute
@@ -781,6 +802,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
     AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
     AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
+    AuthenticatedAdminPodcastRoute: AuthenticatedAdminPodcastRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminPeopleIdRoute: AuthenticatedAdminPeopleIdRoute,
