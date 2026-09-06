@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,12 @@ export const Route = createFileRoute("/_authenticated/admin/projects/$id")({
   component: ProjectDetail,
 });
 
+const STAGE_LABELS: Record<string, string> = {
+  todo: "Not started",
+  doing: "In progress",
+  done: "Done",
+};
+
 function ProjectDetail() {
   const { id } = Route.useParams();
   const fetchProject = useServerFn(getProjectForTeam);
@@ -33,6 +40,7 @@ function ProjectDetail() {
   const persistProject = useServerFn(saveProject);
   const persistDeliverable = useServerFn(saveDeliverable);
   const queryClient = useQueryClient();
+  const [newTitle, setNewTitle] = useState("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "project", id],
@@ -52,7 +60,8 @@ function ProjectDetail() {
   });
 
   const projectMutation = useMutation({
-    mutationFn: (input: Record<string, unknown>) => persistProject({ data: { id, ...input } as any }),
+    mutationFn: (input: Record<string, unknown>) =>
+      persistProject({ data: { id, ...input } as any }),
     onSuccess: () => {
       toast.success("Saved");
       invalidate();
@@ -64,6 +73,7 @@ function ProjectDetail() {
     mutationFn: (input: Record<string, unknown>) => persistDeliverable({ data: input as any }),
     onSuccess: () => {
       toast.success("Saved");
+      setNewTitle("");
       invalidate();
     },
     onError: () => toast.error("That did not save."),
@@ -82,6 +92,7 @@ function ProjectDetail() {
   }
 
   const project = data.project as any;
+  const editors = (data.editors ?? []) as { id: string; full_name: string | null; email: string | null }[];
 
   return (
     <div>
@@ -91,10 +102,10 @@ function ProjectDetail() {
       <h1 className="mt-3 text-3xl">{project.name}</h1>
       <p className="mt-2 text-base text-muted-foreground">
         {projectTypeLabel(project.type)}
-        {data.person?.full_name ? ` · ${data.person.full_name}` : ""}
+        {data.person?.full_name ? ` · ${data.person.full_name}` : " · no one linked yet"}
       </p>
 
-      <div className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl border border-border p-5">
+      <div className="mt-6 flex flex-wrap items-end gap-4 rounded-2xl border border-border p-5">
         <div>
           <Label htmlFor="status">Status</Label>
           <select
@@ -106,6 +117,7 @@ function ProjectDetail() {
             <option value="active">Active</option>
             <option value="on_hold">On hold</option>
             <option value="done">Done</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </div>
         <div>
@@ -115,23 +127,39 @@ function ProjectDetail() {
             type="date"
             className="mt-2"
             defaultValue={project.due_at ? String(project.due_at).slice(0, 10) : ""}
-            onBlur={(event) =>
-              projectMutation.mutate({ dueAt: event.target.value ? event.target.value : null })
-            }
+            onBlur={(event) => projectMutation.mutate({ dueAt: event.target.value || null })}
           />
         </div>
+        {data.person?.id ? (
+          <Button asChild variant="outline">
+            <Link to="/admin/people/$id" params={{ id: data.person.id }}>
+              Open her page
+            </Link>
+          </Button>
+        ) : null}
+      </div>
+
+      <div className="mt-4">
+        <Label htmlFor="project-notes">Your notes</Label>
+        <Textarea
+          id="project-notes"
+          rows={3}
+          className="mt-2"
+          defaultValue={project.notes ?? ""}
+          onBlur={(event) => projectMutation.mutate({ notes: event.target.value })}
+        />
       </div>
 
       <section className="mt-10">
         <h2 className="text-2xl">Steps</h2>
         <ol className="mt-4 space-y-2">
-          {(data.stages ?? []).map((stage: any) => (
+          {(data.stages ?? []).map((stage: any, index: number) => (
             <li
               key={stage.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4"
             >
               <span className="text-base">
-                {stage.position}. {stage.name}
+                {index + 1}. {stage.name}
               </span>
               <select
                 value={stage.status}
@@ -140,10 +168,11 @@ function ProjectDetail() {
                 }
                 className="h-9 rounded-md border border-input bg-background px-3 text-sm"
               >
-                <option value="pending">Not started</option>
-                <option value="in_progress">In progress</option>
-                <option value="done">Done</option>
-                <option value="skipped">Skipped</option>
+                {Object.entries(STAGE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </li>
           ))}
@@ -153,17 +182,41 @@ function ProjectDetail() {
       <section className="mt-10">
         <h2 className="text-2xl">Deliverables</h2>
         <p className="mt-2 text-base text-muted-foreground">
-          What she sees and approves. Move a deliverable to her review when the link is in.
+          What she sees and approves. Move a piece to her review once the final link is in; that
+          starts her five working day window.
         </p>
+
+        <form
+          className="mt-4 flex flex-wrap items-end gap-3 rounded-2xl border border-border p-5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (newTitle.trim()) {
+              deliverableMutation.mutate({ projectId: id, title: newTitle, stage: "not_started" });
+            }
+          }}
+        >
+          <div className="min-w-[220px] flex-1">
+            <Label htmlFor="new-deliverable">Add a deliverable</Label>
+            <Input
+              id="new-deliverable"
+              className="mt-2"
+              placeholder="Reel 1: her origin story"
+              value={newTitle}
+              onChange={(event) => setNewTitle(event.target.value)}
+            />
+          </div>
+          <Button type="submit">Add it</Button>
+        </form>
+
         <div className="mt-4 space-y-3">
           {(data.deliverables ?? []).map((item: any) => (
-            <div key={item.id} className="rounded-2xl border border-border bg-card p-5">
+            <div key={item.id} className="rounded-2xl border border-border bg-card p-5 shadow-card">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-lg font-medium">{item.title}</p>
                 <select
-                  value={item.status}
+                  value={item.stage}
                   onChange={(event) =>
-                    deliverableMutation.mutate({ id: item.id, status: event.target.value })
+                    deliverableMutation.mutate({ id: item.id, stage: event.target.value })
                   }
                   className="h-9 rounded-md border border-input bg-background px-3 text-sm"
                 >
@@ -174,61 +227,141 @@ function ProjectDetail() {
                   ))}
                 </select>
               </div>
+
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <UrlField
+                  id={`raw-${item.id}`}
+                  label="Raw footage link"
+                  value={item.raw_url}
+                  onSave={(value) => deliverableMutation.mutate({ id: item.id, rawUrl: value })}
+                />
+                <UrlField
+                  id={`edited-${item.id}`}
+                  label="Edited link"
+                  value={item.edited_url}
+                  onSave={(value) => deliverableMutation.mutate({ id: item.id, editedUrl: value })}
+                />
+                <UrlField
+                  id={`final-${item.id}`}
+                  label="Final link"
+                  value={item.final_url}
+                  onSave={(value) => deliverableMutation.mutate({ id: item.id, finalUrl: value })}
+                />
+                <UrlField
+                  id={`published-${item.id}`}
+                  label="Posted link"
+                  value={item.published_url}
+                  onSave={(value) =>
+                    deliverableMutation.mutate({ id: item.id, publishedUrl: value })
+                  }
+                />
                 <div>
-                  <Label htmlFor={`draft-${item.id}`}>Draft link</Label>
-                  <Input
-                    id={`draft-${item.id}`}
-                    className="mt-2"
-                    defaultValue={item.draft_url ?? ""}
-                    onBlur={(event) =>
-                      deliverableMutation.mutate({ id: item.id, draftUrl: event.target.value })
+                  <Label htmlFor={`editor-${item.id}`}>Editor</Label>
+                  <select
+                    id={`editor-${item.id}`}
+                    value={item.assigned_to ?? ""}
+                    onChange={(event) =>
+                      deliverableMutation.mutate({ id: item.id, assignedTo: event.target.value })
                     }
-                  />
+                    className="mt-2 block h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    <option value="">No one yet</option>
+                    {editors.map((editor) => (
+                      <option key={editor.id} value={editor.id}>
+                        {editor.full_name ?? editor.email ?? "Editor"}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
-                  <Label htmlFor={`final-${item.id}`}>Final link</Label>
+                  <Label htmlFor={`editor-due-${item.id}`}>Editor due date</Label>
                   <Input
-                    id={`final-${item.id}`}
+                    id={`editor-due-${item.id}`}
+                    type="date"
                     className="mt-2"
-                    defaultValue={item.final_url ?? ""}
+                    defaultValue={item.editor_due_at ? String(item.editor_due_at).slice(0, 10) : ""}
                     onBlur={(event) =>
-                      deliverableMutation.mutate({ id: item.id, finalUrl: event.target.value })
+                      deliverableMutation.mutate({
+                        id: item.id,
+                        editorDueAt: event.target.value || null,
+                      })
                     }
                   />
                 </div>
               </div>
+
               <div className="mt-3">
-                <Label htmlFor={`caption-${item.id}`}>Caption</Label>
+                <Label htmlFor={`notes-${item.id}`}>Notes she can read</Label>
                 <Textarea
-                  id={`caption-${item.id}`}
+                  id={`notes-${item.id}`}
                   rows={2}
                   className="mt-2"
-                  defaultValue={item.caption ?? ""}
+                  defaultValue={item.team_notes ?? ""}
                   onBlur={(event) =>
-                    deliverableMutation.mutate({ id: item.id, caption: event.target.value })
+                    deliverableMutation.mutate({ id: item.id, teamNotes: event.target.value })
                   }
                 />
               </div>
-              {(item.reviews ?? []).length > 0 ? (
-                <div className="mt-4 border-t border-border pt-4">
-                  <p className="text-sm text-muted-foreground">What she said</p>
-                  <ul className="mt-2 space-y-2">
-                    {item.reviews.map((review: any) => (
-                      <li key={review.id} className="text-base">
-                        <span className="font-medium">
-                          {review.decision === "approved" ? "Approved" : "Changes asked for"}
-                        </span>
-                        {review.comment ? ` — ${review.comment}` : ""}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
+
+              <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    defaultChecked={item.cm_approved}
+                    onChange={(event) =>
+                      deliverableMutation.mutate({
+                        id: item.id,
+                        cmApproved: event.target.checked,
+                      })
+                    }
+                  />
+                  Content manager signed off
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    defaultChecked={item.admin_approved}
+                    onChange={(event) =>
+                      deliverableMutation.mutate({
+                        id: item.id,
+                        adminApproved: event.target.checked,
+                      })
+                    }
+                  />
+                  You signed off
+                </label>
+                <span>
+                  Changes used: {item.revisions_used ?? 0} of {item.revisions_allowed ?? 1}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+function UrlField({
+  id,
+  label,
+  value,
+  onSave,
+}: {
+  id: string;
+  label: string;
+  value: string | null;
+  onSave: (value: string) => void;
+}) {
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        className="mt-2"
+        defaultValue={value ?? ""}
+        onBlur={(event) => onSave(event.target.value)}
+      />
     </div>
   );
 }
