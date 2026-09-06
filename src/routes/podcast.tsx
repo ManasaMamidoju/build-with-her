@@ -16,7 +16,7 @@ const FAQS = [
   },
   {
     q: "How do I apply?",
-    a: "Applications open in October. Take the Findability Score and we will contact you when they do, before it is public.",
+    a: "Fill in the guest application on this page. Six short questions, and we reply within five working days either with a booking link or with the one thing we would fix first.",
   },
 ];
 
@@ -104,12 +104,12 @@ function Podcast() {
       <section className="mt-12 rounded-2xl bg-secondary p-8">
         <h2 className="text-2xl">Want to be a guest?</h2>
         <p className="mt-3 text-base text-muted-foreground">
-          Applications open in October. Take the score now and we will come to you first, because we
-          book guests whose businesses can handle the attention.
+          Six short questions about what you built and who you serve. We reply within five working
+          days, and we film in Miami.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="h-12 px-7 text-base">
-            <Link to="/score/quiz">Take the quiz</Link>
+            <Link to="/podcast/apply">Apply to be a guest</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="h-12 px-7 text-base">
             <Link to="/contact">Ask about a guest spot</Link>

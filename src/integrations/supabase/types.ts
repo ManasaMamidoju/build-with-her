@@ -98,6 +98,121 @@ export type Database = {
         }
         Relationships: []
       }
+      deliverable_reviews: {
+        Row: {
+          action: string
+          comment: string | null
+          created_at: string
+          deliverable_id: string
+          id: string
+          reviewer_id: string
+        }
+        Insert: {
+          action: string
+          comment?: string | null
+          created_at?: string
+          deliverable_id: string
+          id?: string
+          reviewer_id: string
+        }
+        Update: {
+          action?: string
+          comment?: string | null
+          created_at?: string
+          deliverable_id?: string
+          id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliverable_reviews_deliverable_id_fkey"
+            columns: ["deliverable_id"]
+            isOneToOne: false
+            referencedRelation: "deliverables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deliverables: {
+        Row: {
+          admin_approved: boolean
+          approved_for_posting: boolean
+          assigned_to: string | null
+          cm_approved: boolean
+          created_at: string
+          edited_url: string | null
+          editor_due_at: string | null
+          final_url: string | null
+          id: string
+          internal_notes: string | null
+          kind: string
+          project_id: string
+          published_url: string | null
+          raw_url: string | null
+          review_due_at: string | null
+          revisions_allowed: number
+          revisions_used: number
+          stage: string
+          team_notes: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_approved?: boolean
+          approved_for_posting?: boolean
+          assigned_to?: string | null
+          cm_approved?: boolean
+          created_at?: string
+          edited_url?: string | null
+          editor_due_at?: string | null
+          final_url?: string | null
+          id?: string
+          internal_notes?: string | null
+          kind?: string
+          project_id: string
+          published_url?: string | null
+          raw_url?: string | null
+          review_due_at?: string | null
+          revisions_allowed?: number
+          revisions_used?: number
+          stage?: string
+          team_notes?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_approved?: boolean
+          approved_for_posting?: boolean
+          assigned_to?: string | null
+          cm_approved?: boolean
+          created_at?: string
+          edited_url?: string | null
+          editor_due_at?: string | null
+          final_url?: string | null
+          id?: string
+          internal_notes?: string | null
+          kind?: string
+          project_id?: string
+          published_url?: string | null
+          raw_url?: string | null
+          review_due_at?: string | null
+          revisions_allowed?: number
+          revisions_used?: number
+          stage?: string
+          team_notes?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliverables_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_templates: {
         Row: {
           active: boolean
@@ -127,6 +242,85 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      episodes: {
+        Row: {
+          article_md: string | null
+          collaborator_added: boolean
+          created_at: string
+          guest_profile_id: string | null
+          id: string
+          interview_id: string | null
+          is_public: boolean
+          note_image_url: string | null
+          project_id: string | null
+          published_at: string | null
+          slug: string
+          summary: string | null
+          title: string
+          transcript_url: string | null
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          article_md?: string | null
+          collaborator_added?: boolean
+          created_at?: string
+          guest_profile_id?: string | null
+          id?: string
+          interview_id?: string | null
+          is_public?: boolean
+          note_image_url?: string | null
+          project_id?: string | null
+          published_at?: string | null
+          slug: string
+          summary?: string | null
+          title: string
+          transcript_url?: string | null
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          article_md?: string | null
+          collaborator_added?: boolean
+          created_at?: string
+          guest_profile_id?: string | null
+          id?: string
+          interview_id?: string | null
+          is_public?: boolean
+          note_image_url?: string | null
+          project_id?: string | null
+          published_at?: string | null
+          slug?: string
+          summary?: string | null
+          title?: string
+          transcript_url?: string | null
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episodes_guest_profile_id_fkey"
+            columns: ["guest_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "episodes_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "episodes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       event_attendees: {
         Row: {
@@ -223,6 +417,82 @@ export type Database = {
           venue?: string | null
         }
         Relationships: []
+      }
+      guest_pages: {
+        Row: {
+          bio: string | null
+          business_name: string | null
+          city: string | null
+          created_at: string
+          episode_id: string | null
+          full_name: string
+          id: string
+          interview_id: string | null
+          is_public: boolean
+          links: Json
+          photo_url: string | null
+          profile_id: string | null
+          slug: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          bio?: string | null
+          business_name?: string | null
+          city?: string | null
+          created_at?: string
+          episode_id?: string | null
+          full_name: string
+          id?: string
+          interview_id?: string | null
+          is_public?: boolean
+          links?: Json
+          photo_url?: string | null
+          profile_id?: string | null
+          slug: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          bio?: string | null
+          business_name?: string | null
+          city?: string | null
+          created_at?: string
+          episode_id?: string | null
+          full_name?: string
+          id?: string
+          interview_id?: string | null
+          is_public?: boolean
+          links?: Json
+          photo_url?: string | null
+          profile_id?: string | null
+          slug?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_pages_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_pages_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_pages_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       industries: {
         Row: {
@@ -343,6 +613,89 @@ export type Database = {
           },
         ]
       }
+      metrics_entries: {
+        Row: {
+          created_at: string
+          id: string
+          metric_key: string
+          period: string
+          profile_id: string
+          source: string
+          stage: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_key: string
+          period: string
+          profile_id: string
+          source?: string
+          stage: string
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_key?: string
+          period?: string
+          profile_id?: string
+          source?: string
+          stage?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metrics_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partners: {
+        Row: {
+          active: boolean
+          commission_pct: number
+          company: string | null
+          contact_email: string | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          referral_code: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          commission_pct?: number
+          company?: string | null
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          referral_code: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          commission_pct?: number
+          company?: string | null
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          referral_code?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       person_handles: {
         Row: {
           created_at: string
@@ -407,6 +760,77 @@ export type Database = {
           },
         ]
       }
+      podcast_applications: {
+        Row: {
+          answers: Json
+          business_name: string | null
+          city: string | null
+          created_at: string
+          email: string
+          format: string
+          full_name: string
+          id: string
+          instagram: string | null
+          notes: string | null
+          phone: string | null
+          profile_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source: string | null
+          status: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          answers?: Json
+          business_name?: string | null
+          city?: string | null
+          created_at?: string
+          email: string
+          format?: string
+          full_name: string
+          id?: string
+          instagram?: string | null
+          notes?: string | null
+          phone?: string | null
+          profile_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          answers?: Json
+          business_name?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string
+          format?: string
+          full_name?: string
+          id?: string
+          instagram?: string | null
+          notes?: string | null
+          phone?: string | null
+          profile_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcast_applications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           business_name: string | null
@@ -462,6 +886,158 @@ export type Database = {
             columns: ["industry_id"]
             isOneToOne: false
             referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_stages: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          name: string
+          project_id: string
+          sort_order: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          project_id: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          project_id?: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_stages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          due_at: string | null
+          id: string
+          interview_id: string | null
+          name: string
+          notes: string | null
+          owner_id: string | null
+          profile_id: string | null
+          stage: string | null
+          started_at: string | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          interview_id?: string | null
+          name: string
+          notes?: string | null
+          owner_id?: string | null
+          profile_id?: string | null
+          stage?: string | null
+          started_at?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          interview_id?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string | null
+          profile_id?: string | null
+          stage?: string | null
+          started_at?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referrals: {
+        Row: {
+          attributed_at: string
+          commission_cents: number
+          converted: boolean
+          created_at: string
+          email: string | null
+          id: string
+          partner_id: string
+          profile_id: string | null
+        }
+        Insert: {
+          attributed_at?: string
+          commission_cents?: number
+          converted?: boolean
+          created_at?: string
+          email?: string | null
+          id?: string
+          partner_id: string
+          profile_id?: string | null
+        }
+        Update: {
+          attributed_at?: string
+          commission_cents?: number
+          converted?: boolean
+          created_at?: string
+          email?: string | null
+          id?: string
+          partner_id?: string
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

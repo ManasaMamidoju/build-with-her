@@ -14,6 +14,9 @@
 - Spam protection on the public forms
 - Manasa's account can open the studio
 
+- Podcast guest application form, studio podcast pipeline
+- Projects: steps, deliverables, editor queue, her approval view
+
 ## Next
 - Bootcamp waitlist form and band-aware first step on the services pages
 - Email sending with Resend (confirmations, reminders, score result)

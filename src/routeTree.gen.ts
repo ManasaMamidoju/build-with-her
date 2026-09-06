@@ -26,6 +26,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as PodcastApplyRouteImport } from './routes/podcast.apply'
 import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
@@ -35,6 +36,8 @@ import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminImportRouteImport } from './routes/_authenticated/admin.import'
 import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin.interviews'
 import { Route as AuthenticatedAdminPipelineRouteImport } from './routes/_authenticated/admin.pipeline'
+import { Route as AuthenticatedAdminPodcastRouteImport } from './routes/_authenticated/admin.podcast'
+import { Route as AuthenticatedAdminQueueRouteImport } from './routes/_authenticated/admin.queue'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
@@ -43,8 +46,12 @@ import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenti
 import { Route as ScoreRTokenRouteImport } from './routes/score.r.$token'
 import { Route as AuthenticatedAdminPeopleIndexRouteImport } from './routes/_authenticated/admin.people.index'
 import { Route as AuthenticatedAdminPeopleIdRouteImport } from './routes/_authenticated/admin.people.$id'
+import { Route as AuthenticatedAdminProjectsIndexRouteImport } from './routes/_authenticated/admin.projects.index'
+import { Route as AuthenticatedAdminProjectsIdRouteImport } from './routes/_authenticated/admin.projects.$id'
 import { Route as AuthenticatedAppBookIndexRouteImport } from './routes/_authenticated/app.book.index'
 import { Route as AuthenticatedAppBookSlugRouteImport } from './routes/_authenticated/app.book.$slug'
+import { Route as AuthenticatedAppProjectsIndexRouteImport } from './routes/_authenticated/app.projects.index'
+import { Route as AuthenticatedAppProjectsIdRouteImport } from './routes/_authenticated/app.projects.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -130,6 +137,11 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
   path: '/learn/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PodcastApplyRoute = PodcastApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => PodcastRoute,
+} as any)
 const ScoreQuizRoute = ScoreQuizRouteImport.update({
   id: '/score/quiz',
   path: '/score/quiz',
@@ -180,6 +192,17 @@ const AuthenticatedAdminPipelineRoute =
     path: '/pipeline',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPodcastRoute =
+  AuthenticatedAdminPodcastRouteImport.update({
+    id: '/podcast',
+    path: '/podcast',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminQueueRoute = AuthenticatedAdminQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -224,6 +247,18 @@ const AuthenticatedAdminPeopleIdRoute =
     path: '/people/$id',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminProjectsIndexRoute =
+  AuthenticatedAdminProjectsIndexRouteImport.update({
+    id: '/projects/',
+    path: '/projects/',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminProjectsIdRoute =
+  AuthenticatedAdminProjectsIdRouteImport.update({
+    id: '/projects/$id',
+    path: '/projects/$id',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAppBookIndexRoute =
   AuthenticatedAppBookIndexRouteImport.update({
     id: '/app/book/',
@@ -236,6 +271,18 @@ const AuthenticatedAppBookSlugRoute =
     path: '/app/book/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppProjectsIndexRoute =
+  AuthenticatedAppProjectsIndexRouteImport.update({
+    id: '/app/projects/',
+    path: '/app/projects/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppProjectsIdRoute =
+  AuthenticatedAppProjectsIdRouteImport.update({
+    id: '/app/projects/$id',
+    path: '/app/projects/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -246,13 +293,14 @@ export interface FileRoutesByFullPath {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRoute
+  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
+  '/podcast/apply': typeof PodcastApplyRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
@@ -262,6 +310,8 @@ export interface FileRoutesByFullPath {
   '/admin/import': typeof AuthenticatedAdminImportRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
+  '/admin/podcast': typeof AuthenticatedAdminPodcastRoute
+  '/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
@@ -270,9 +320,13 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
+  '/admin/projects/$id': typeof AuthenticatedAdminProjectsIdRoute
   '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/app/projects/$id': typeof AuthenticatedAppProjectsIdRoute
   '/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
+  '/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book/': typeof AuthenticatedAppBookIndexRoute
+  '/app/projects/': typeof AuthenticatedAppProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -283,12 +337,13 @@ export interface FileRoutesByTo {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRoute
+  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
+  '/podcast/apply': typeof PodcastApplyRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn': typeof LearnIndexRoute
@@ -298,6 +353,8 @@ export interface FileRoutesByTo {
   '/admin/import': typeof AuthenticatedAdminImportRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
+  '/admin/podcast': typeof AuthenticatedAdminPodcastRoute
+  '/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
@@ -306,9 +363,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
+  '/admin/projects/$id': typeof AuthenticatedAdminProjectsIdRoute
   '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/app/projects/$id': typeof AuthenticatedAppProjectsIdRoute
   '/admin/people': typeof AuthenticatedAdminPeopleIndexRoute
+  '/admin/projects': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book': typeof AuthenticatedAppBookIndexRoute
+  '/app/projects': typeof AuthenticatedAppProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -321,13 +382,14 @@ export interface FileRoutesById {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRoute
+  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
+  '/podcast/apply': typeof PodcastApplyRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
@@ -337,6 +399,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/import': typeof AuthenticatedAdminImportRoute
   '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
+  '/_authenticated/admin/podcast': typeof AuthenticatedAdminPodcastRoute
+  '/_authenticated/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
@@ -345,9 +409,13 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
+  '/_authenticated/admin/projects/$id': typeof AuthenticatedAdminProjectsIdRoute
   '/_authenticated/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/_authenticated/app/projects/$id': typeof AuthenticatedAppProjectsIdRoute
   '/_authenticated/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
+  '/_authenticated/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/_authenticated/app/book/': typeof AuthenticatedAppBookIndexRoute
+  '/_authenticated/app/projects/': typeof AuthenticatedAppProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -367,6 +435,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/e/$slug'
     | '/learn/$slug'
+    | '/podcast/apply'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn/'
@@ -376,6 +445,8 @@ export interface FileRouteTypes {
     | '/admin/import'
     | '/admin/interviews'
     | '/admin/pipeline'
+    | '/admin/podcast'
+    | '/admin/queue'
     | '/admin/settings'
     | '/app/billing'
     | '/app/score'
@@ -384,9 +455,13 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/admin/people/$id'
+    | '/admin/projects/$id'
     | '/app/book/$slug'
+    | '/app/projects/$id'
     | '/admin/people/'
+    | '/admin/projects/'
     | '/app/book/'
+    | '/app/projects/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -403,6 +478,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/e/$slug'
     | '/learn/$slug'
+    | '/podcast/apply'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn'
@@ -412,6 +488,8 @@ export interface FileRouteTypes {
     | '/admin/import'
     | '/admin/interviews'
     | '/admin/pipeline'
+    | '/admin/podcast'
+    | '/admin/queue'
     | '/admin/settings'
     | '/app/billing'
     | '/app/score'
@@ -420,9 +498,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/admin/people/$id'
+    | '/admin/projects/$id'
     | '/app/book/$slug'
+    | '/app/projects/$id'
     | '/admin/people'
+    | '/admin/projects'
     | '/app/book'
+    | '/app/projects'
   id:
     | '__root__'
     | '/'
@@ -441,6 +523,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/e/$slug'
     | '/learn/$slug'
+    | '/podcast/apply'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn/'
@@ -450,6 +533,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/import'
     | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/pipeline'
+    | '/_authenticated/admin/podcast'
+    | '/_authenticated/admin/queue'
     | '/_authenticated/admin/settings'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
@@ -458,9 +543,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/app/'
     | '/_authenticated/admin/people/$id'
+    | '/_authenticated/admin/projects/$id'
     | '/_authenticated/app/book/$slug'
+    | '/_authenticated/app/projects/$id'
     | '/_authenticated/admin/people/'
+    | '/_authenticated/admin/projects/'
     | '/_authenticated/app/book/'
+    | '/_authenticated/app/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -473,7 +562,7 @@ export interface RootRouteChildren {
   InterviewsRoute: typeof InterviewsRoute
   LoginRoute: typeof LoginRoute
   MissionRoute: typeof MissionRoute
-  PodcastRoute: typeof PodcastRoute
+  PodcastRoute: typeof PodcastRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -607,6 +696,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/podcast/apply': {
+      id: '/podcast/apply'
+      path: '/apply'
+      fullPath: '/podcast/apply'
+      preLoaderRoute: typeof PodcastApplyRouteImport
+      parentRoute: typeof PodcastRoute
+    }
     '/score/quiz': {
       id: '/score/quiz'
       path: '/score/quiz'
@@ -670,6 +766,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPipelineRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/podcast': {
+      id: '/_authenticated/admin/podcast'
+      path: '/podcast'
+      fullPath: '/admin/podcast'
+      preLoaderRoute: typeof AuthenticatedAdminPodcastRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/queue': {
+      id: '/_authenticated/admin/queue'
+      path: '/queue'
+      fullPath: '/admin/queue'
+      preLoaderRoute: typeof AuthenticatedAdminQueueRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -726,6 +836,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPeopleIdRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/projects/': {
+      id: '/_authenticated/admin/projects/'
+      path: '/projects'
+      fullPath: '/admin/projects/'
+      preLoaderRoute: typeof AuthenticatedAdminProjectsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/projects/$id': {
+      id: '/_authenticated/admin/projects/$id'
+      path: '/projects/$id'
+      fullPath: '/admin/projects/$id'
+      preLoaderRoute: typeof AuthenticatedAdminProjectsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/app/book/': {
       id: '/_authenticated/app/book/'
       path: '/app/book'
@@ -740,6 +864,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppBookSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/projects/': {
+      id: '/_authenticated/app/projects/'
+      path: '/app/projects'
+      fullPath: '/app/projects/'
+      preLoaderRoute: typeof AuthenticatedAppProjectsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/projects/$id': {
+      id: '/_authenticated/app/projects/$id'
+      path: '/app/projects/$id'
+      fullPath: '/app/projects/$id'
+      preLoaderRoute: typeof AuthenticatedAppProjectsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -749,10 +887,14 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
   AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
+  AuthenticatedAdminPodcastRoute: typeof AuthenticatedAdminPodcastRoute
+  AuthenticatedAdminQueueRoute: typeof AuthenticatedAdminQueueRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminPeopleIdRoute: typeof AuthenticatedAdminPeopleIdRoute
+  AuthenticatedAdminProjectsIdRoute: typeof AuthenticatedAdminProjectsIdRoute
   AuthenticatedAdminPeopleIndexRoute: typeof AuthenticatedAdminPeopleIndexRoute
+  AuthenticatedAdminProjectsIndexRoute: typeof AuthenticatedAdminProjectsIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
@@ -762,10 +904,14 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
     AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
     AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
+    AuthenticatedAdminPodcastRoute: AuthenticatedAdminPodcastRoute,
+    AuthenticatedAdminQueueRoute: AuthenticatedAdminQueueRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminPeopleIdRoute: AuthenticatedAdminPeopleIdRoute,
+    AuthenticatedAdminProjectsIdRoute: AuthenticatedAdminProjectsIdRoute,
     AuthenticatedAdminPeopleIndexRoute: AuthenticatedAdminPeopleIndexRoute,
+    AuthenticatedAdminProjectsIndexRoute: AuthenticatedAdminProjectsIndexRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =
@@ -780,7 +926,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppBookSlugRoute: typeof AuthenticatedAppBookSlugRoute
+  AuthenticatedAppProjectsIdRoute: typeof AuthenticatedAppProjectsIdRoute
   AuthenticatedAppBookIndexRoute: typeof AuthenticatedAppBookIndexRoute
+  AuthenticatedAppProjectsIndexRoute: typeof AuthenticatedAppProjectsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -790,11 +938,24 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppBookSlugRoute: AuthenticatedAppBookSlugRoute,
+  AuthenticatedAppProjectsIdRoute: AuthenticatedAppProjectsIdRoute,
   AuthenticatedAppBookIndexRoute: AuthenticatedAppBookIndexRoute,
+  AuthenticatedAppProjectsIndexRoute: AuthenticatedAppProjectsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface PodcastRouteChildren {
+  PodcastApplyRoute: typeof PodcastApplyRoute
+}
+
+const PodcastRouteChildren: PodcastRouteChildren = {
+  PodcastApplyRoute: PodcastApplyRoute,
+}
+
+const PodcastRouteWithChildren =
+  PodcastRoute._addFileChildren(PodcastRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -806,7 +967,7 @@ const rootRouteChildren: RootRouteChildren = {
   InterviewsRoute: InterviewsRoute,
   LoginRoute: LoginRoute,
   MissionRoute: MissionRoute,
-  PodcastRoute: PodcastRoute,
+  PodcastRoute: PodcastRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
