@@ -52,7 +52,7 @@ function InterviewsTracker() {
   });
 
   const mutation = useMutation({
-    mutationFn: (input: Parameters<typeof saveInterview>[0]["data"]) => save({ data: input }),
+    mutationFn: (input: Record<string, unknown>) => save({ data: input as any }),
     onSuccess: () => {
       toast.success("Saved");
       queryClient.invalidateQueries({ queryKey: ["admin", "interviews"] });
