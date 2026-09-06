@@ -50,6 +50,7 @@ import { Route as AuthenticatedAdminProjectsIdRouteImport } from './routes/_auth
 import { Route as AuthenticatedAppBookIndexRouteImport } from './routes/_authenticated/app.book.index'
 import { Route as AuthenticatedAppBookSlugRouteImport } from './routes/_authenticated/app.book.$slug'
 import { Route as AuthenticatedAppProjectsIndexRouteImport } from './routes/_authenticated/app.projects.index'
+import { Route as AuthenticatedAppProjectsIdRouteImport } from './routes/_authenticated/app.projects.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -270,6 +271,12 @@ const AuthenticatedAppProjectsIndexRoute =
     path: '/app/projects/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppProjectsIdRoute =
+  AuthenticatedAppProjectsIdRouteImport.update({
+    id: '/app/projects/$id',
+    path: '/app/projects/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -308,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
   '/admin/projects/$id': typeof AuthenticatedAdminProjectsIdRoute
   '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/app/projects/$id': typeof AuthenticatedAppProjectsIdRoute
   '/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
   '/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book/': typeof AuthenticatedAppBookIndexRoute
@@ -349,6 +357,7 @@ export interface FileRoutesByTo {
   '/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
   '/admin/projects/$id': typeof AuthenticatedAdminProjectsIdRoute
   '/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/app/projects/$id': typeof AuthenticatedAppProjectsIdRoute
   '/admin/people': typeof AuthenticatedAdminPeopleIndexRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book': typeof AuthenticatedAppBookIndexRoute
@@ -393,6 +402,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/people/$id': typeof AuthenticatedAdminPeopleIdRoute
   '/_authenticated/admin/projects/$id': typeof AuthenticatedAdminProjectsIdRoute
   '/_authenticated/app/book/$slug': typeof AuthenticatedAppBookSlugRoute
+  '/_authenticated/app/projects/$id': typeof AuthenticatedAppProjectsIdRoute
   '/_authenticated/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
   '/_authenticated/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/_authenticated/app/book/': typeof AuthenticatedAppBookIndexRoute
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/admin/people/$id'
     | '/admin/projects/$id'
     | '/app/book/$slug'
+    | '/app/projects/$id'
     | '/admin/people/'
     | '/admin/projects/'
     | '/app/book/'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/people/$id'
     | '/admin/projects/$id'
     | '/app/book/$slug'
+    | '/app/projects/$id'
     | '/admin/people'
     | '/admin/projects'
     | '/app/book'
@@ -521,6 +533,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/people/$id'
     | '/_authenticated/admin/projects/$id'
     | '/_authenticated/app/book/$slug'
+    | '/_authenticated/app/projects/$id'
     | '/_authenticated/admin/people/'
     | '/_authenticated/admin/projects/'
     | '/_authenticated/app/book/'
@@ -839,6 +852,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppProjectsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/projects/$id': {
+      id: '/_authenticated/app/projects/$id'
+      path: '/app/projects/$id'
+      fullPath: '/app/projects/$id'
+      preLoaderRoute: typeof AuthenticatedAppProjectsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -885,6 +905,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppBookSlugRoute: typeof AuthenticatedAppBookSlugRoute
+  AuthenticatedAppProjectsIdRoute: typeof AuthenticatedAppProjectsIdRoute
   AuthenticatedAppBookIndexRoute: typeof AuthenticatedAppBookIndexRoute
   AuthenticatedAppProjectsIndexRoute: typeof AuthenticatedAppProjectsIndexRoute
 }
@@ -896,6 +917,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppBookSlugRoute: AuthenticatedAppBookSlugRoute,
+  AuthenticatedAppProjectsIdRoute: AuthenticatedAppProjectsIdRoute,
   AuthenticatedAppBookIndexRoute: AuthenticatedAppBookIndexRoute,
   AuthenticatedAppProjectsIndexRoute: AuthenticatedAppProjectsIndexRoute,
 }
