@@ -165,7 +165,7 @@ function EventCard({ event, onEdit }: { event: StudioEvent; onEdit: () => void }
         <div>
           <h2 className="text-xl">{event.title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {new Date(event.starts_at).toLocaleString()} {event.venue ? `at ${event.venue}` : ""}{" "}
+            {formatWhen(event.starts_at)} {event.venue ? `at ${event.venue}` : ""}{" "}
             {event.city ?? ""}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
