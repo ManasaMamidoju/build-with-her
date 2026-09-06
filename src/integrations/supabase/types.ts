@@ -248,6 +248,101 @@ export type Database = {
         }
         Relationships: []
       }
+      interviews: {
+        Row: {
+          approved_for_posting: boolean
+          business_name: string | null
+          caption: string | null
+          consent_confirmed: boolean
+          created_at: string
+          editing_notes: string | null
+          editing_status: string | null
+          email: string | null
+          event_name: string | null
+          final_video_link: string | null
+          full_name: string
+          id: string
+          instagram: string | null
+          interview_date: string | null
+          notes: string | null
+          other_links: string | null
+          overall_status: string | null
+          phone: string | null
+          photo_link: string | null
+          posted_links: string | null
+          posting_status: string | null
+          profile_id: string | null
+          slug: string
+          updated_at: string
+          video_approved: boolean
+          video_link: string | null
+        }
+        Insert: {
+          approved_for_posting?: boolean
+          business_name?: string | null
+          caption?: string | null
+          consent_confirmed?: boolean
+          created_at?: string
+          editing_notes?: string | null
+          editing_status?: string | null
+          email?: string | null
+          event_name?: string | null
+          final_video_link?: string | null
+          full_name: string
+          id?: string
+          instagram?: string | null
+          interview_date?: string | null
+          notes?: string | null
+          other_links?: string | null
+          overall_status?: string | null
+          phone?: string | null
+          photo_link?: string | null
+          posted_links?: string | null
+          posting_status?: string | null
+          profile_id?: string | null
+          slug: string
+          updated_at?: string
+          video_approved?: boolean
+          video_link?: string | null
+        }
+        Update: {
+          approved_for_posting?: boolean
+          business_name?: string | null
+          caption?: string | null
+          consent_confirmed?: boolean
+          created_at?: string
+          editing_notes?: string | null
+          editing_status?: string | null
+          email?: string | null
+          event_name?: string | null
+          final_video_link?: string | null
+          full_name?: string
+          id?: string
+          instagram?: string | null
+          interview_date?: string | null
+          notes?: string | null
+          other_links?: string | null
+          overall_status?: string | null
+          phone?: string | null
+          photo_link?: string | null
+          posted_links?: string | null
+          posting_status?: string | null
+          profile_id?: string | null
+          slug?: string
+          updated_at?: string
+          video_approved?: boolean
+          video_link?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interviews_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       person_handles: {
         Row: {
           created_at: string
