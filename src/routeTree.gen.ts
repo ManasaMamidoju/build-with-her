@@ -37,6 +37,7 @@ import { Route as AuthenticatedAdminImportRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin.interviews'
 import { Route as AuthenticatedAdminPipelineRouteImport } from './routes/_authenticated/admin.pipeline'
 import { Route as AuthenticatedAdminPodcastRouteImport } from './routes/_authenticated/admin.podcast'
+import { Route as AuthenticatedAdminQueueRouteImport } from './routes/_authenticated/admin.queue'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
@@ -197,6 +198,11 @@ const AuthenticatedAdminPodcastRoute =
     path: '/podcast',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminQueueRoute = AuthenticatedAdminQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/admin/podcast': typeof AuthenticatedAdminPodcastRoute
+  '/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/admin/podcast': typeof AuthenticatedAdminPodcastRoute
+  '/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/_authenticated/admin/podcast': typeof AuthenticatedAdminPodcastRoute
+  '/_authenticated/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
@@ -437,6 +446,7 @@ export interface FileRouteTypes {
     | '/admin/interviews'
     | '/admin/pipeline'
     | '/admin/podcast'
+    | '/admin/queue'
     | '/admin/settings'
     | '/app/billing'
     | '/app/score'
@@ -479,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/interviews'
     | '/admin/pipeline'
     | '/admin/podcast'
+    | '/admin/queue'
     | '/admin/settings'
     | '/app/billing'
     | '/app/score'
@@ -523,6 +534,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/pipeline'
     | '/_authenticated/admin/podcast'
+    | '/_authenticated/admin/queue'
     | '/_authenticated/admin/settings'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
@@ -761,6 +773,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPodcastRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/queue': {
+      id: '/_authenticated/admin/queue'
+      path: '/queue'
+      fullPath: '/admin/queue'
+      preLoaderRoute: typeof AuthenticatedAdminQueueRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -869,6 +888,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
   AuthenticatedAdminPodcastRoute: typeof AuthenticatedAdminPodcastRoute
+  AuthenticatedAdminQueueRoute: typeof AuthenticatedAdminQueueRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminPeopleIdRoute: typeof AuthenticatedAdminPeopleIdRoute
@@ -885,6 +905,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
     AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
     AuthenticatedAdminPodcastRoute: AuthenticatedAdminPodcastRoute,
+    AuthenticatedAdminQueueRoute: AuthenticatedAdminQueueRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminPeopleIdRoute: AuthenticatedAdminPeopleIdRoute,
