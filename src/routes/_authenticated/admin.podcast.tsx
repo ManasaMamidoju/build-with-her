@@ -5,8 +5,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { listApplications, startPodcastProject, updateApplication } from "@/lib/podcast.functions";
+import { listInterviews } from "@/lib/interviews.functions";
 import { APPLICATION_LABELS, APPLICATION_STAGES } from "@/lib/project-templates";
 
 export const Route = createFileRoute("/_authenticated/admin/podcast")({
@@ -177,6 +179,125 @@ function PodcastPipeline() {
           </div>
         ))}
       </div>
+
+      <InterviewTracker />
     </div>
+  );
+}
+
+function InterviewTracker() {
+  const fetchInterviews = useServerFn(listInterviews);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "podcast-interviews", search, status],
+    queryFn: () => fetchInterviews({ data: { search, status } }),
+  });
+
+  const rows = (data ?? []) as any[];
+  const statuses = Array.from(
+    new Set(((data ?? []) as any[]).map((row) => row.overall_status).filter(Boolean)),
+  ) as string[];
+
+  return (
+    <section className="mt-14 border-t border-border pt-10">
+      <h2 className="text-2xl">Everyone in the interview tracker</h2>
+      <p className="mt-2 text-base text-muted-foreground">
+        Every woman we have filmed so far, with where her interview stands. Open the tracker to edit
+        her details.
+      </p>
+
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <Input
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search by name, business, event or handle"
+          className="max-w-sm"
+        />
+        <select
+          value={status}
+          onChange={(event) => setStatus(event.target.value)}
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="">Every status</option>
+          {statuses.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+        <Button asChild size="sm" variant="outline">
+          <Link to="/admin/interviews">Open the tracker</Link>
+        </Button>
+        <p className="numeric text-sm text-muted-foreground">{rows.length} women</p>
+      </div>
+
+      {isLoading ? <p className="mt-6 text-muted-foreground">Fetching her details.</p> : null}
+
+      {!isLoading && rows.length === 0 ? (
+        <p className="mt-6 text-muted-foreground">Nobody matches that search.</p>
+      ) : null}
+
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card shadow-card">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-blush text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3 font-normal">Her name</th>
+              <th className="px-4 py-3 font-normal">Business</th>
+              <th className="px-4 py-3 font-normal">Where we filmed</th>
+              <th className="px-4 py-3 font-normal">Filmed on</th>
+              <th className="px-4 py-3 font-normal">Where it stands</th>
+              <th className="px-4 py-3 font-normal">Editing</th>
+              <th className="px-4 py-3 font-normal">Posting</th>
+              <th className="px-4 py-3 font-normal">Said yes</th>
+              <th className="px-4 py-3 font-normal">Links</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.id} className="border-t border-border align-top">
+                <td className="px-4 py-3">{row.full_name}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.business_name || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.event_name || "—"}</td>
+                <td className="numeric px-4 py-3 text-muted-foreground">
+                  {row.interview_date || "—"}
+                </td>
+                <td className="px-4 py-3">{row.overall_status || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.editing_status || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.posting_status || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {row.consent_confirmed ? "Yes" : "Not yet"}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-col gap-1">
+                    {row.instagram ? (
+                      <a
+                        className="underline"
+                        href={`https://instagram.com/${String(row.instagram).replace(/^@|^https?:\/\/(www\.)?instagram\.com\//, "")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Instagram
+                      </a>
+                    ) : null}
+                    {row.final_video_link || row.video_link ? (
+                      <a
+                        className="underline"
+                        href={row.final_video_link || row.video_link}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Her video
+                      </a>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
