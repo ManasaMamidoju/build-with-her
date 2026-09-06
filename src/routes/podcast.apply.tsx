@@ -25,7 +25,7 @@ export const Route = createFileRoute("/podcast/apply")({
   component: Apply,
 });
 
-const QUESTIONS = [
+const QUESTIONS: { id: string; label: string; helper?: string }[] = [
   {
     id: "story",
     label: "What did you build, and what did it cost you to build it?",
@@ -43,7 +43,7 @@ const QUESTIONS = [
     id: "anything_else",
     label: "Anything we should know before we film?",
   },
-] as const;
+];
 
 function Apply() {
   const submit = useServerFn(applyForPodcast);
@@ -64,7 +64,7 @@ function Apply() {
           website: fields['website'] ?? "",
           city: fields['city'] ?? "",
           format,
-          source: getCapturedSource()?.source ?? "",
+          source: getCapturedSource()?.src ?? "",
           answers,
         },
       }),
