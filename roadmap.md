@@ -8,13 +8,17 @@
 - Studio area: today view, people list, person 360 with notes and stage
 - sitemap.xml route and robots rules
 
+- Studio pipeline board, week calendar, studio settings (hours, email wording, industries, team)
+- Studio events screen with printable sign-in code and spreadsheet download
+- People import from a spreadsheet export with a dry run
+- Spam protection on the public forms
+- Manasa's account can open the studio
+
 ## Next
 - Bootcamp waitlist form and band-aware first step on the services pages
-- People import from a spreadsheet export
-- Studio pipeline board and studio settings (availability, templates)
 - Email sending with Resend (confirmations, reminders, score result)
 - Payments with Stripe
-- Full site audit: spam protection on public forms, link check, SEO pass
+- Full site audit: link check, SEO pass
 
 ## Answered
 - Backend is already enabled on this project (Lovable Cloud); nothing to switch on.
