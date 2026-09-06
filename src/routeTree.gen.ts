@@ -26,6 +26,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as PodcastApplyRouteImport } from './routes/podcast.apply'
 import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
@@ -129,6 +130,11 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
   id: '/learn/$slug',
   path: '/learn/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastApplyRoute = PodcastApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => PodcastRoute,
 } as any)
 const ScoreQuizRoute = ScoreQuizRouteImport.update({
   id: '/score/quiz',
@@ -246,13 +252,14 @@ export interface FileRoutesByFullPath {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRoute
+  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
+  '/podcast/apply': typeof PodcastApplyRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
@@ -283,12 +290,13 @@ export interface FileRoutesByTo {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRoute
+  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
+  '/podcast/apply': typeof PodcastApplyRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn': typeof LearnIndexRoute
@@ -321,13 +329,14 @@ export interface FileRoutesById {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRoute
+  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
+  '/podcast/apply': typeof PodcastApplyRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/e/$slug'
     | '/learn/$slug'
+    | '/podcast/apply'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn/'
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/e/$slug'
     | '/learn/$slug'
+    | '/podcast/apply'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn'
@@ -441,6 +452,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/e/$slug'
     | '/learn/$slug'
+    | '/podcast/apply'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn/'
@@ -473,7 +485,7 @@ export interface RootRouteChildren {
   InterviewsRoute: typeof InterviewsRoute
   LoginRoute: typeof LoginRoute
   MissionRoute: typeof MissionRoute
-  PodcastRoute: typeof PodcastRoute
+  PodcastRoute: typeof PodcastRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -606,6 +618,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/learn/$slug'
       preLoaderRoute: typeof LearnSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/podcast/apply': {
+      id: '/podcast/apply'
+      path: '/apply'
+      fullPath: '/podcast/apply'
+      preLoaderRoute: typeof PodcastApplyRouteImport
+      parentRoute: typeof PodcastRoute
     }
     '/score/quiz': {
       id: '/score/quiz'
@@ -796,6 +815,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface PodcastRouteChildren {
+  PodcastApplyRoute: typeof PodcastApplyRoute
+}
+
+const PodcastRouteChildren: PodcastRouteChildren = {
+  PodcastApplyRoute: PodcastApplyRoute,
+}
+
+const PodcastRouteWithChildren =
+  PodcastRoute._addFileChildren(PodcastRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -806,7 +836,7 @@ const rootRouteChildren: RootRouteChildren = {
   InterviewsRoute: InterviewsRoute,
   LoginRoute: LoginRoute,
   MissionRoute: MissionRoute,
-  PodcastRoute: PodcastRoute,
+  PodcastRoute: PodcastRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
