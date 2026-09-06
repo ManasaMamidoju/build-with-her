@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: StudioSettings;
+  component: StudioSettings,
 });
 
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
