@@ -406,7 +406,11 @@ export const importPeople = createServerFn({ method: "POST" })
       for (const item of withEmail) {
         const id = existingByEmail.get(item.email);
         if (id) {
-          const patch: Record<string, string> = {};
+          const patch: {
+            full_name?: string;
+            business_name?: string;
+            phone?: string;
+          } = {};
           if (item.row.fullName) patch['full_name'] = item.row.fullName;
           if (item.row.businessName) patch['business_name'] = item.row.businessName;
           if (item.row.phone) patch['phone'] = item.row.phone;
