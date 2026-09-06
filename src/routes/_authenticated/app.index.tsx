@@ -86,6 +86,19 @@ function AppHome() {
         </Button>
       </section>
 
+      <section className="mt-8 rounded-2xl border border-border bg-card p-8 shadow-card">
+        <h2 className="text-2xl">Your work with us</h2>
+        <p className="mt-3 text-base text-muted-foreground">
+          Every project we are running for you, the step it is on, and anything waiting on your
+          approval.
+        </p>
+        <Button asChild variant="outline" className="mt-6">
+          <Link to="/app/projects">See your work</Link>
+        </Button>
+      </section>
+
+
+
       <section className="mt-8">
         <h2 className="text-2xl">Your sessions</h2>
         {overview.data && overview.data.bookings.length > 0 ? (
