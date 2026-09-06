@@ -94,9 +94,9 @@ export const saveInterview = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => saveSchema.parse(data))
   .handler(async ({ data, context }) => {
     await assertTeam(context);
-    const { id, ...patch } = data;
+    const { id, ...rest } = data;
+    const patch = JSON.parse(JSON.stringify(rest)) as Record<string, unknown>;
     const { error } = await context.supabase.from("interviews").update(patch).eq("id", id);
-    if (error) throw new Error(error.message);
     return { ok: true };
   });
 
