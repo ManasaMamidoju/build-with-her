@@ -7,6 +7,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const LINKS = [
   { to: "/admin", label: "Today" },
   { to: "/admin/people", label: "People" },
+  { to: "/admin/pipeline", label: "Pipeline" },
+  { to: "/admin/calendar", label: "Calendar" },
+  { to: "/admin/events", label: "Events" },
+  { to: "/admin/import", label: "Bring people in" },
+  { to: "/admin/settings", label: "Settings" },
 ] as const;
 
 function AdminLayout() {

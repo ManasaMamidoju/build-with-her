@@ -14,6 +14,9 @@ export const sendContactMessage = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => contactSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertNotFlooding } = await import("@/lib/rate-limit.server");
+    await assertNotFlooding({ email: data.email.toLowerCase(), kind: "contact_message" });
+
     const { error } = await supabaseAdmin.from("touchpoints").insert({
       email: data.email.toLowerCase(),
       kind: "contact_message",

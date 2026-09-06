@@ -96,6 +96,13 @@ export const submitScore = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => submitSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertNotFlooding } = await import("@/lib/rate-limit.server");
+    await assertNotFlooding({
+      email: data.details.email.toLowerCase(),
+      kind: "score_submit",
+      maxInWindow: 5,
+      message: "You have taken this a few times just now. Come back in an hour.",
+    });
     const result = score(data.answers);
     const token = makeToken();
 

@@ -18,6 +18,15 @@ export const joinWaitlist = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const email = data.email.toLowerCase();
 
+    const { assertNotFlooding } = await import("@/lib/rate-limit.server");
+    await assertNotFlooding({
+      email,
+      kind: "waitlist_join",
+      maxInWindow: 3,
+      message: "You are already on this list. We will be in touch.",
+    });
+
+
     const { error } = await supabaseAdmin.from("waitlists").insert({
       service_slug: data.serviceSlug,
       full_name: data.fullName,
