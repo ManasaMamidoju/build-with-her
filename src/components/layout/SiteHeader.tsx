@@ -1,10 +1,13 @@
 import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
+import { amIAdmin } from "@/lib/admin.functions";
 
 const links = [
   { to: "/", label: "Home" },
@@ -35,6 +38,15 @@ export function SiteHeader() {
     };
   }, []);
 
+  const checkAdmin = useServerFn(amIAdmin);
+  const { data: adminCheck } = useQuery({
+    queryKey: ["me", "is-admin"],
+    queryFn: () => checkAdmin(),
+    enabled: signedIn,
+    staleTime: 5 * 60 * 1000,
+  });
+  const isAdmin = signedIn && adminCheck?.isAdmin === true;
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="container-editorial flex h-16 items-center justify-between gap-4">
@@ -57,9 +69,15 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          <Button asChild size="sm" variant={signedIn ? "outline" : "default"}>
-            <Link to="/login">{signedIn ? "My account" : "Sign in"}</Link>
-          </Button>
+          {isAdmin ? (
+            <Button asChild size="sm">
+              <Link to="/admin">Studio</Link>
+            </Button>
+          ) : (
+            <Button asChild size="sm" variant={signedIn ? "outline" : "default"}>
+              <Link to="/login">{signedIn ? "My account" : "Sign in"}</Link>
+            </Button>
+          )}
         </nav>
 
         <button
@@ -86,9 +104,19 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            <Link to="/login" onClick={() => setOpen(false)} className="py-3 text-base text-primary">
-              {signedIn ? "My account" : "Sign in"}
-            </Link>
+            {isAdmin ? (
+              <Link to="/admin" onClick={() => setOpen(false)} className="py-3 text-base text-primary">
+                Studio
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="py-3 text-base text-primary"
+              >
+                {signedIn ? "My account" : "Sign in"}
+              </Link>
+            )}
           </div>
         </nav>
       ) : null}
