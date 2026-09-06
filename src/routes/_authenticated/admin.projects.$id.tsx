@@ -13,7 +13,7 @@ import {
   saveProject,
   setStageStatus,
 } from "@/lib/projects.functions";
-import { DELIVERABLE_LABELS, DELIVERABLE_STAGES, projectTypeLabel } from "@/lib/project-templates";
+import { DELIVERABLE_STAGES, projectTypeLabel } from "@/lib/project-templates";
 
 export const Route = createFileRoute("/_authenticated/admin/projects/$id")({
   head: () => ({
@@ -168,8 +168,8 @@ function ProjectDetail() {
                   className="h-9 rounded-md border border-input bg-background px-3 text-sm"
                 >
                   {DELIVERABLE_STAGES.map((stage) => (
-                    <option key={stage} value={stage}>
-                      {DELIVERABLE_LABELS[stage]}
+                    <option key={stage.value} value={stage.value}>
+                      {stage.label}
                     </option>
                   ))}
                 </select>
