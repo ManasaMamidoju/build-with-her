@@ -49,6 +49,7 @@ import { Route as AuthenticatedAdminProjectsIndexRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminProjectsIdRouteImport } from './routes/_authenticated/admin.projects.$id'
 import { Route as AuthenticatedAppBookIndexRouteImport } from './routes/_authenticated/app.book.index'
 import { Route as AuthenticatedAppBookSlugRouteImport } from './routes/_authenticated/app.book.$slug'
+import { Route as AuthenticatedAppProjectsIndexRouteImport } from './routes/_authenticated/app.projects.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -263,6 +264,12 @@ const AuthenticatedAppBookSlugRoute =
     path: '/app/book/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppProjectsIndexRoute =
+  AuthenticatedAppProjectsIndexRouteImport.update({
+    id: '/app/projects/',
+    path: '/app/projects/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -304,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
   '/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book/': typeof AuthenticatedAppBookIndexRoute
+  '/app/projects/': typeof AuthenticatedAppProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -344,6 +352,7 @@ export interface FileRoutesByTo {
   '/admin/people': typeof AuthenticatedAdminPeopleIndexRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book': typeof AuthenticatedAppBookIndexRoute
+  '/app/projects': typeof AuthenticatedAppProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -387,6 +396,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/people/': typeof AuthenticatedAdminPeopleIndexRoute
   '/_authenticated/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/_authenticated/app/book/': typeof AuthenticatedAppBookIndexRoute
+  '/_authenticated/app/projects/': typeof AuthenticatedAppProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -430,6 +440,7 @@ export interface FileRouteTypes {
     | '/admin/people/'
     | '/admin/projects/'
     | '/app/book/'
+    | '/app/projects/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -470,6 +481,7 @@ export interface FileRouteTypes {
     | '/admin/people'
     | '/admin/projects'
     | '/app/book'
+    | '/app/projects'
   id:
     | '__root__'
     | '/'
@@ -512,6 +524,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/people/'
     | '/_authenticated/admin/projects/'
     | '/_authenticated/app/book/'
+    | '/_authenticated/app/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -819,6 +832,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppBookSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/projects/': {
+      id: '/_authenticated/app/projects/'
+      path: '/app/projects'
+      fullPath: '/app/projects/'
+      preLoaderRoute: typeof AuthenticatedAppProjectsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -866,6 +886,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppBookSlugRoute: typeof AuthenticatedAppBookSlugRoute
   AuthenticatedAppBookIndexRoute: typeof AuthenticatedAppBookIndexRoute
+  AuthenticatedAppProjectsIndexRoute: typeof AuthenticatedAppProjectsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -876,6 +897,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppBookSlugRoute: AuthenticatedAppBookSlugRoute,
   AuthenticatedAppBookIndexRoute: AuthenticatedAppBookIndexRoute,
+  AuthenticatedAppProjectsIndexRoute: AuthenticatedAppProjectsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
