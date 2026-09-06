@@ -227,7 +227,8 @@ export const saveProject = createServerFn({ method: "POST" })
     if (data.dueAt !== undefined) {
       patch['due_at'] = data.dueAt ? new Date(data.dueAt).toISOString() : null;
     }
-    const { error } = await supabaseAdmin.from("projects").update(patch).eq("id", data.id);
+    const projectsTable = supabaseAdmin.from("projects") as any;
+    const { error } = await projectsTable.update(patch).eq("id", data.id);
     if (error) throw new Error("We could not save that.");
     return { ok: true as const };
   });
@@ -284,14 +285,15 @@ export const saveDeliverable = createServerFn({ method: "POST" })
     }
 
     if (data.id) {
-      const { error } = await supabaseAdmin.from("deliverables").update(patch).eq("id", data.id);
+      const table = supabaseAdmin.from("deliverables") as any;
+      const { error } = await table.update(patch).eq("id", data.id);
       if (error) throw new Error("We could not save that.");
       return { id: data.id };
     }
 
     if (!data.projectId) throw new Error("Pick a project first.");
-    const { data: row, error } = await supabaseAdmin
-      .from("deliverables")
+    const insertTable = supabaseAdmin.from("deliverables") as any;
+    const { data: row, error } = await insertTable
       .insert({ project_id: data.projectId, title: data.title ?? "New deliverable", ...patch })
       .select("id")
       .single();
