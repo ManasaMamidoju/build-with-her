@@ -1,41 +1,103 @@
-# Sprint plan vs. the site as it stands
+# Database cleanup: one canonical person record
 
-I compared your sprint document against the live site. Here is the honest read.
+Migrations only. The site keeps working exactly as it does today; the app keeps reading
+services and band routing from code. No new features.
 
-## Already built (Phase 1, and a good chunk of Phase 2)
+## What the data looks like right now
 
-- Foundation: theme, layout, Google sign-in, people records, roles, Terms, Privacy, search-engine files, sitemap.
-- Findability Score: quiz, scoring, private result page, band routing, where each visitor came from.
-- Services: the ladder page, a page per service, band-aware first step, bootcamp waitlist form.
-- Her private area: dashboard, her score, settings, payments page (teaching empty state), booking flow with intake and times.
-- Your studio: today view, people list with search, full person page with notes and stage, pipeline board, week calendar, settings (hours, email wording, industries, team).
-- Events: create and edit, printable sign-in code, her one-minute sign-in page, spreadsheet download, public events page.
-- Bringing your Notion people in, with a dry run first.
-- Interview tracker (79 women) plus the public interviews page.
-- Podcast: application form, studio pipeline, projects with steps and deliverables, editor queue, her approval and changes view.
+- 79 interview rows, none with an email, 73 with an Instagram handle
+- 80 profile rows: 79 of them are the imported interview contacts (no email), 1 is a real signed-in account
+- 3 score submissions, 2 touchpoints, 73 handles
+- bookings, projects, episodes, guest pages, referrals, metrics, deliverables, waitlists, applications, attendees: all empty
 
-So Sprints 0-3 in your document are essentially complete, and Sprint 4 and half of Sprint 5 landed early.
+So the only real backfill work is the 79 interview women plus a handful of score and
+touchpoint rows. Everything else gets its new column and stays empty.
 
-## Missing, in the order I would build it
+## Step 1 - the `people` table
 
-1. **Emails that actually send.** The wording is written and stored, nothing leaves the building yet. Needed: score result, booking confirmation, 24-hour reminder, cancellation, waitlist thank-you. Waiting on your sending account and domain.
-2. **Taking payment.** No card payment anywhere: paid sessions, the $200 consult, podcast packages, and receipts on her payments page. Waiting on your payment account.
-3. **Real calendar times.** Times come from the rules you set in studio settings, not from your actual Google calendars, so double-booking is possible. Your document already suggests one calendar first, the second later.
-4. **Public episode and guest pages.** The tables exist, the pages do not. Each interview should have its own shareable page with a proper sharing preview.
-5. **Reminder and no-show handling.** No automatic reminders, and nothing stops a repeat no-show from rebooking.
-6. **Money screens.** Custom offers, invoices, and your partner and referral tracking have tables but no screens.
-7. **Content track.** Articles, the content calendar, the approval ladder and the n8n hooks.
-8. **Growth screens.** Metrics dashboard, daily digest, newsletter.
-9. **Launch check.** Link check, every page's title and sharing preview, your own Findability audit run against the site.
+One row per person, whether or not she has ever given us an email.
 
-## What your document listed but I would not build now
+Fields: full_name, email (case-insensitive, unique only across rows that have one),
+business_name, phone, primary_source, source_detail, industry_id, business_type,
+website, city, photo_url, consent_confirmed (+ timestamp), research_status,
+research_summary, blocked (+ reason), tags, profile_id (unique, nullable, set when she
+signs in), identity_status ('email' | 'handle' | 'name_only'), created_at, updated_at.
 
-SMS, auto-posting, the tech role, Skool membership and the network directory are Phase 3 in your own plan. Leave them.
+Access: only signed-in team roles can read or write; nothing public. Updated-at trigger,
+plus indexes on normalized name, email, and profile_id.
 
-## Technical notes
+## Step 2 - backfill and link
 
-- Emails: Resend called from server functions, reading `email_templates`; a `/api/public/cron/reminders` route for the 24-hour reminder.
-- Payments: Stripe Checkout via server functions plus a signature-verified webhook under `src/routes/api/public/`; an `invoices` table.
-- Calendar: Google Calendar OAuth with refresh tokens stored server-side, merged against `availability_rules` in `booking.functions.ts`.
-- Episode/guest pages: `src/routes/episodes.$slug.tsx` and `src/routes/guests.$slug.tsx` reading `episodes` and `guest_pages`, public-read policies only for `is_public`, with schema markup and sitemap entries.
-- Metrics read `metrics_entries`; partners and referrals get studio screens gated on `has_role(auth.uid(),'admin')`.
+Matching order per source row, run inside the migration:
+
+1. Has an email -> normalize, find or create on email, identity_status 'email'
+2. No email but has a handle (instagram / other_links) -> normalize the handle, look it
+   up in person_handles; link to that person if found, otherwise create from her name as
+   'handle' and record the handle
+3. Name only -> create as 'name_only'
+
+If the source row already has profile_id, that profile's email drives the lookup and
+people.profile_id is set. Missing emails never fail or skip a row.
+
+Then each of score_submissions, waitlists, podcast_applications, event_attendees,
+interviews, touchpoints, person_handles, person_notes gets a nullable
+person_id -> people(id).
+
+## Step 3 - manual review queue
+
+A view listing merge candidates, no automatic merging on names:
+
+- same normalized name, different or missing email
+- a 'name_only' person whose name closely matches someone who does have an email or
+  handle (this is the case that matters)
+
+Exposed on a studio screen as a read-only list with both records side by side and a
+"merge these two" action that only runs when clicked. Exact-email duplicates are the
+only thing that merges without review.
+
+## Step 4 - point the work tables at people
+
+projects, bookings, episodes, guest_pages, referrals, metrics_entries each gain
+person_id alongside the existing profile_id. Nothing is dropped, no existing logic
+changes; all of these tables are empty today so there is nothing to backfill.
+
+## Step 5 - missing fields
+
+- deliverables.frameio_url
+- deliverable_notes (deliverable_id, author_id, author_role, body, created_at) so admin,
+  content manager and editor share one thread; existing team_notes / internal_notes stay
+- bookings.google_event_id, bookings.meet_link
+
+## Step 6 - services and band rules as tables
+
+- `services`: slug, name, step, price, price_note, duration, summary, best_for, includes,
+  requires, faqs, cta_label, cta_note, waitlist, sort_order, active - seeded with the
+  seven offers exactly as they read today
+- `band_rules`: band, min score, max score, headline, primary offer, secondary offer -
+  seeded from the current band logic
+
+Tables only. The site still reads the code files, so nothing visible changes.
+
+## Step 7 - one people screen
+
+/admin/interviews and /admin/people become a single People screen joined through
+person_id, so each woman appears once whichever door she came in by. Her row shows
+identity_status as a plain badge (Email on file / Handle only / Name only) and her
+interview details open inline. The old interview-only route redirects to the merged
+screen.
+
+## Judgment calls I am making
+
+- The 79 imported profiles rows have no email, so they backfill through the handle path.
+  Profiles stays as the sign-in record; people becomes the canonical person record.
+- Handle normalization: lowercase, strip @, strip instagram.com/ prefixes and trailing
+  slashes. other_links is only used when it parses to a recognisable platform handle.
+- "Closely matches" for the review queue means same normalized name or a close
+  similarity score, surfaced for a human to judge, never acted on automatically.
+- Empty tables get columns but no backfill.
+- Nothing is dropped anywhere in this pass.
+
+## Deliverables at the end
+
+The migration files, a people count broken down by identity_status, and the list of
+judgment calls actually hit while running it.
