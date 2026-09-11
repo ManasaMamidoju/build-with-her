@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { SITE } from "@/lib/site";
+
 const waitlistSchema = z.object({
   serviceSlug: z.string().trim().min(1).max(60),
   fullName: z.string().trim().min(1, "Tell us your name").max(120),
@@ -81,8 +83,8 @@ export const joinWaitlist = createServerFn({ method: "POST" })
         recipient: { email, fullName: data.fullName },
         data: {
           serviceName: data.serviceSlug === "bootcamp" ? "Bootcamp" : data.serviceSlug,
-          serviceUrl: `https://buildwithhermedia.com/services/${data.serviceSlug}`,
-          scoreUrl: "https://buildwithhermedia.com/score/quiz",
+          serviceUrl: `${SITE.url}/services/${data.serviceSlug}`,
+          scoreUrl: `${SITE.url}/score/quiz`,
         },
       });
     }

@@ -19,7 +19,7 @@
 - Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
 
 ## Next
-- Sprint A email automations through n8n: score result and waitlist confirmation
+- Sprint A email automations through n8n: app triggers complete; reconnect n8n to create and verify workflows
 - Later email automations through n8n: booking confirmations and reminders
 - Payments with Stripe
 - Full site audit: link check, SEO pass

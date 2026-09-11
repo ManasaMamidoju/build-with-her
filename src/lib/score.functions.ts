@@ -8,6 +8,7 @@ import {
   QUESTIONS,
   type AreaKey,
 } from "@/lib/score-rubric";
+import { SITE } from "@/lib/site";
 
 const handle = z.string().trim().max(160).optional().or(z.literal(""));
 
@@ -175,7 +176,7 @@ export const submitScore = createServerFn({ method: "POST" })
           total: result.total,
           band: result.band.name,
           bandLine: result.band.line,
-          resultUrl: `https://buildwithhermedia.com/score/r/${token}`,
+          resultUrl: `${SITE.url}/score/r/${token}`,
         },
       });
     }
