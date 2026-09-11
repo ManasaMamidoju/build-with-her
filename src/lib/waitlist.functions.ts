@@ -32,8 +32,8 @@ export const joinWaitlist = createServerFn({ method: "POST" })
       {
         _full_name: data.fullName,
         _email: email,
-        _business_name: data.businessName || undefined,
-        _phone: data.phone || undefined,
+        ...(data.businessName ? { _business_name: data.businessName } : {}),
+        ...(data.phone ? { _phone: data.phone } : {}),
         _source: data.source || "waitlist",
       },
     );
