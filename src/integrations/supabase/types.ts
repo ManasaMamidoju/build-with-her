@@ -1003,7 +1003,7 @@ export type Database = {
           created_at: string
           id: string
           person_id: string | null
-          profile_id: string
+          profile_id: string | null
         }
         Insert: {
           author_id?: string | null
@@ -1011,7 +1011,7 @@ export type Database = {
           created_at?: string
           id?: string
           person_id?: string | null
-          profile_id: string
+          profile_id?: string | null
         }
         Update: {
           author_id?: string | null
@@ -1019,7 +1019,7 @@ export type Database = {
           created_at?: string
           id?: string
           person_id?: string | null
-          profile_id?: string
+          profile_id?: string | null
         }
         Relationships: [
           {
