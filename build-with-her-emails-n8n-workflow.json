@@ -1,0 +1,273 @@
+{
+  "name": "Build With Her Emails",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "build-with-her-emails",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "build-with-her-emails"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\nconst item = items[0].json;\nconst signature = item.headers['x-bwh-signature'] || item.headers['X-BWH-Signature'];\nconst rawBody = typeof item.body === 'string' ? item.body : JSON.stringify(item.body);\nconst secret = process.env.N8N_EMAIL_WEBHOOK_SECRET || 'PASTE_N8N_EMAIL_WEBHOOK_SECRET_HERE';\nconst expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');\nif (signature !== expected) {\n  return [{ json: { valid: false, reason: 'signature mismatch' } }];\n}\nconst payload = JSON.parse(rawBody);\nreturn [{ json: { valid: true, ...payload } }];"
+      },
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Verify Signature",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "value": "score_result",
+              "output": 0
+            },
+            {
+              "value": "waitlist_confirm",
+              "output": 1
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.event }}",
+        "fallbackOutput": 2
+      },
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "Route by Event",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "Your Findability Score is {{ $json.data.total }} — here is what it means"
+            },
+            {
+              "name": "text",
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nYour Findability Score is {{ $json.data.total }} out of 100.\n\nThat puts you in the {{ $json.data.band }} band.\n\n{{ $json.data.bandLine }}\n\nView your full result and the three fixes to do first here:\n{{ $json.data.resultUrl }}\n\nManasa\nBuild With Her Media"
+            },
+            {
+              "name": "html",
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>Your Findability Score is <strong>{{ $json.data.total }} out of 100</strong>.</p><p>That puts you in the <strong>{{ $json.data.band }}</strong> band.</p><p>{{ $json.data.bandLine }}</p><p><a href=\"{{ $json.data.resultUrl }}\">View your full result and the three fixes to do first</a></p><p>Manasa<br>Build With Her Media</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6a7-b8c9-0123-def1-234567890123",
+      "name": "Prepare Score Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [850, 150]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "You are on the {{ $json.data.serviceName }} waitlist"
+            },
+            {
+              "name": "text",
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nThank you for joining the {{ $json.data.serviceName }} waitlist. You will be the first to know when dates open.\n\nWhile you wait, take the Findability Score so your first session starts with real answers:\n{{ $json.data.scoreUrl }}\n\nManasa\nBuild With Her Media"
+            },
+            {
+              "name": "html",
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>Thank you for joining the <strong>{{ $json.data.serviceName }}</strong> waitlist. You will be the first to know when dates open.</p><p>While you wait, <a href=\"{{ $json.data.scoreUrl }}\">take the Findability Score</a> so your first session starts with real answers.</p><p>Manasa<br>Build With Her Media</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e5f6a7b8-c9d0-1234-ef12-345678901234",
+      "name": "Prepare Waitlist Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [850, 450]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "f6a7b8c9-d0e1-2345-f123-456789012345",
+      "name": "Send Score Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1050, 150]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "a7b8c9d0-e1f2-3456-a123-567890123456",
+      "name": "Send Waitlist Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1050, 450]
+    },
+    {
+      "parameters": {
+        "statusCode": 200,
+        "body": "{ \"ok\": true }"
+      },
+      "id": "b8c9d0e1-f2a3-4567-b234-678901234567",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "statusCode": 401,
+        "body": "{ \"ok\": false, \"error\": \"invalid signature\" }"
+      },
+      "id": "c9d0e1f2-a3b4-5678-c345-789012345678",
+      "name": "Respond Forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 500]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Signature": {
+      "main": [
+        [
+          {
+            "node": "Route by Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Event": {
+      "main": [
+        [
+          {
+            "node": "Prepare Score Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Waitlist Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Score Email": {
+      "main": [
+        [
+          {
+            "node": "Send Score Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Waitlist Email": {
+      "main": [
+        [
+          {
+            "node": "Send Waitlist Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Score Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Waitlist Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": []
+}
