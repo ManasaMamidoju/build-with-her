@@ -333,6 +333,7 @@ export type Database = {
           event_id: string
           full_name: string | null
           id: string
+          person_id: string | null
           profile_id: string | null
         }
         Insert: {
@@ -345,6 +346,7 @@ export type Database = {
           event_id: string
           full_name?: string | null
           id?: string
+          person_id?: string | null
           profile_id?: string | null
         }
         Update: {
@@ -357,6 +359,7 @@ export type Database = {
           event_id?: string
           full_name?: string | null
           id?: string
+          person_id?: string | null
           profile_id?: string | null
         }
         Relationships: [
@@ -365,6 +368,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
             referencedColumns: ["id"]
           },
           {
@@ -537,6 +547,7 @@ export type Database = {
           notes: string | null
           other_links: string | null
           overall_status: string | null
+          person_id: string | null
           phone: string | null
           photo_link: string | null
           posted_links: string | null
@@ -565,6 +576,7 @@ export type Database = {
           notes?: string | null
           other_links?: string | null
           overall_status?: string | null
+          person_id?: string | null
           phone?: string | null
           photo_link?: string | null
           posted_links?: string | null
@@ -593,6 +605,7 @@ export type Database = {
           notes?: string | null
           other_links?: string | null
           overall_status?: string | null
+          person_id?: string | null
           phone?: string | null
           photo_link?: string | null
           posted_links?: string | null
@@ -604,6 +617,13 @@ export type Database = {
           video_link?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "interviews_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "interviews_profile_id_fkey"
             columns: ["profile_id"]
@@ -696,29 +716,132 @@ export type Database = {
         }
         Relationships: []
       }
+      people: {
+        Row: {
+          blocked: boolean
+          blocked_reason: string | null
+          business_name: string | null
+          business_type: string | null
+          city: string | null
+          consent_confirmed: boolean
+          consent_confirmed_at: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          identity_status: string
+          industry_id: string | null
+          phone: string | null
+          photo_url: string | null
+          primary_source: string | null
+          profile_id: string | null
+          research_status: string
+          research_summary: string | null
+          source_detail: string | null
+          tags: string[]
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          blocked?: boolean
+          blocked_reason?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          consent_confirmed?: boolean
+          consent_confirmed_at?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          identity_status?: string
+          industry_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          primary_source?: string | null
+          profile_id?: string | null
+          research_status?: string
+          research_summary?: string | null
+          source_detail?: string | null
+          tags?: string[]
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          blocked?: boolean
+          blocked_reason?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          consent_confirmed?: boolean
+          consent_confirmed_at?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          identity_status?: string
+          industry_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          primary_source?: string | null
+          profile_id?: string | null
+          research_status?: string
+          research_summary?: string | null
+          source_detail?: string | null
+          tags?: string[]
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "people_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       person_handles: {
         Row: {
           created_at: string
           handle: string
           id: string
+          person_id: string | null
           platform: string
-          profile_id: string
+          profile_id: string | null
         }
         Insert: {
           created_at?: string
           handle: string
           id?: string
+          person_id?: string | null
           platform: string
-          profile_id: string
+          profile_id?: string | null
         }
         Update: {
           created_at?: string
           handle?: string
           id?: string
+          person_id?: string | null
           platform?: string
-          profile_id?: string
+          profile_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "person_handles_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "person_handles_profile_id_fkey"
             columns: ["profile_id"]
@@ -734,6 +857,7 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          person_id: string | null
           profile_id: string
         }
         Insert: {
@@ -741,6 +865,7 @@ export type Database = {
           body: string
           created_at?: string
           id?: string
+          person_id?: string | null
           profile_id: string
         }
         Update: {
@@ -748,9 +873,17 @@ export type Database = {
           body?: string
           created_at?: string
           id?: string
+          person_id?: string | null
           profile_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "person_notes_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "person_notes_profile_id_fkey"
             columns: ["profile_id"]
@@ -772,6 +905,7 @@ export type Database = {
           id: string
           instagram: string | null
           notes: string | null
+          person_id: string | null
           phone: string | null
           profile_id: string | null
           reviewed_at: string | null
@@ -792,6 +926,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           notes?: string | null
+          person_id?: string | null
           phone?: string | null
           profile_id?: string | null
           reviewed_at?: string | null
@@ -812,6 +947,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           notes?: string | null
+          person_id?: string | null
           phone?: string | null
           profile_id?: string | null
           reviewed_at?: string | null
@@ -822,6 +958,13 @@ export type Database = {
           website?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "podcast_applications_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "podcast_applications_profile_id_fkey"
             columns: ["profile_id"]
@@ -1058,6 +1201,7 @@ export type Database = {
           full_name: string
           handles: Json
           id: string
+          person_id: string | null
           phone: string | null
           primary_source: string | null
           token: string
@@ -1081,6 +1225,7 @@ export type Database = {
           full_name: string
           handles?: Json
           id?: string
+          person_id?: string | null
           phone?: string | null
           primary_source?: string | null
           token: string
@@ -1104,6 +1249,7 @@ export type Database = {
           full_name?: string
           handles?: Json
           id?: string
+          person_id?: string | null
           phone?: string | null
           primary_source?: string | null
           token?: string
@@ -1112,7 +1258,15 @@ export type Database = {
           updated_at?: string
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "score_submissions_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       touchpoints: {
         Row: {
@@ -1121,6 +1275,7 @@ export type Database = {
           email: string | null
           id: string
           kind: string
+          person_id: string | null
           profile_id: string | null
           source: string | null
         }
@@ -1130,6 +1285,7 @@ export type Database = {
           email?: string | null
           id?: string
           kind: string
+          person_id?: string | null
           profile_id?: string | null
           source?: string | null
         }
@@ -1139,10 +1295,18 @@ export type Database = {
           email?: string | null
           id?: string
           kind?: string
+          person_id?: string | null
           profile_id?: string | null
           source?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "touchpoints_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "touchpoints_profile_id_fkey"
             columns: ["profile_id"]
@@ -1182,6 +1346,7 @@ export type Database = {
           full_name: string
           id: string
           note: string | null
+          person_id: string | null
           phone: string | null
           service_slug: string
           source: string | null
@@ -1194,6 +1359,7 @@ export type Database = {
           full_name: string
           id?: string
           note?: string | null
+          person_id?: string | null
           phone?: string | null
           service_slug: string
           source?: string | null
@@ -1206,15 +1372,38 @@ export type Database = {
           full_name?: string
           id?: string
           note?: string | null
+          person_id?: string | null
           phone?: string | null
           service_slug?: string
           source?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "waitlists_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
-      [_ in never]: never
+      people_merge_candidates: {
+        Row: {
+          name_similarity: number | null
+          person_a_email: string | null
+          person_a_id: string | null
+          person_a_identity: string | null
+          person_a_name: string | null
+          person_b_email: string | null
+          person_b_id: string | null
+          person_b_identity: string | null
+          person_b_name: string | null
+          reason: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
@@ -1224,6 +1413,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      people_find_or_create: {
+        Args: {
+          _business_name?: string
+          _email?: string
+          _full_name: string
+          _handle?: string
+          _phone?: string
+          _platform?: string
+          _profile_id?: string
+          _source?: string
+        }
+        Returns: string
+      }
+      people_normalize_email: { Args: { _value: string }; Returns: string }
+      people_normalize_handle: { Args: { _value: string }; Returns: string }
+      people_normalize_name: { Args: { _value: string }; Returns: string }
     }
     Enums: {
       app_role:
