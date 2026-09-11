@@ -1,0 +1,1 @@
+ALTER TABLE public.person_notes ALTER COLUMN profile_id DROP NOT NULL;
