@@ -170,7 +170,7 @@ export const setLeadStage = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z
       .object({
-        profileId: z.string().uuid(),
+        personId: z.string().uuid(),
         stage: z.enum(["new", "contacted", "call_booked", "proposal", "client", "past"]),
       })
       .parse(data),
@@ -179,9 +179,9 @@ export const setLeadStage = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
-      .from("profiles")
+      .from("people")
       .update({ lead_stage: data.stage })
-      .eq("id", data.profileId);
+      .eq("id", data.personId);
     if (error) throw new Error("We could not move her.");
     return { ok: true as const };
   });

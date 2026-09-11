@@ -876,6 +876,7 @@ export type Database = {
           id: string
           identity_status: string
           industry_id: string | null
+          lead_stage: string
           phone: string | null
           photo_url: string | null
           primary_source: string | null
@@ -901,6 +902,7 @@ export type Database = {
           id?: string
           identity_status?: string
           industry_id?: string | null
+          lead_stage?: string
           phone?: string | null
           photo_url?: string | null
           primary_source?: string | null
@@ -926,6 +928,7 @@ export type Database = {
           id?: string
           identity_status?: string
           industry_id?: string | null
+          lead_stage?: string
           phone?: string | null
           photo_url?: string | null
           primary_source?: string | null
