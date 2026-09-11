@@ -27,6 +27,22 @@ export const joinWaitlist = createServerFn({ method: "POST" })
     });
 
 
+    const { data: personId, error: personError } = await supabaseAdmin.rpc(
+      "people_find_or_create",
+      {
+        _full_name: data.fullName,
+        _email: email,
+        _business_name: data.businessName || undefined,
+        _phone: data.phone || undefined,
+        _source: data.source || "waitlist",
+      },
+    );
+
+    if (personError || !personId) {
+      console.error("waitlist person link failed", personError?.message);
+      throw new Error("We could not add you to the list. Please try again.");
+    }
+
     const { error } = await supabaseAdmin.from("waitlists").insert({
       service_slug: data.serviceSlug,
       full_name: data.fullName,
@@ -36,6 +52,7 @@ export const joinWaitlist = createServerFn({ method: "POST" })
       note: data.note || null,
       source: data.source || null,
       consent_email: data.consentEmail ?? false,
+      person_id: personId,
     });
 
     if (error) {
@@ -45,6 +62,7 @@ export const joinWaitlist = createServerFn({ method: "POST" })
 
     const { error: touchError } = await supabaseAdmin.from("touchpoints").insert({
       email,
+      person_id: personId,
       kind: "waitlist_join",
       source: data.source || null,
       detail: { service: data.serviceSlug },

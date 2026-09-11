@@ -42,6 +42,8 @@ export const Route = createFileRoute("/services/")({
         content:
           "Free call, strategy consult, automation build, bootcamp and podcast. Pick the one your score points at.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: canonical("/services") }],
   }),
