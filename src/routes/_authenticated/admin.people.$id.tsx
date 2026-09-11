@@ -123,6 +123,9 @@ function PersonPage() {
               ))}
             </ul>
           )}
+          <Link to="/admin/interviews" className="mt-3 inline-block text-sm text-primary hover:underline">
+            Update interview details
+          </Link>
         </div>
 
         <div>
