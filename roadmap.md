@@ -16,9 +16,9 @@
 
 - Podcast guest application form, studio podcast pipeline
 - Projects: steps, deliverables, editor queue, her approval view
+- Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
 
 ## Next
-- Bootcamp waitlist form and band-aware first step on the services pages
 - Email sending with Resend (confirmations, reminders, score result)
 - Payments with Stripe
 - Full site audit: link check, SEO pass
