@@ -61,8 +61,11 @@ export type Database = {
           cancelled_at: string | null
           created_at: string
           ends_at: string
+          google_event_id: string | null
           id: string
           intake: Json
+          meet_link: string | null
+          person_id: string | null
           reschedule_count: number
           service_slug: string
           starts_at: string
@@ -74,8 +77,11 @@ export type Database = {
           cancelled_at?: string | null
           created_at?: string
           ends_at: string
+          google_event_id?: string | null
           id?: string
           intake?: Json
+          meet_link?: string | null
+          person_id?: string | null
           reschedule_count?: number
           service_slug: string
           starts_at: string
@@ -87,8 +93,11 @@ export type Database = {
           cancelled_at?: string | null
           created_at?: string
           ends_at?: string
+          google_event_id?: string | null
           id?: string
           intake?: Json
+          meet_link?: string | null
+          person_id?: string | null
           reschedule_count?: number
           service_slug?: string
           starts_at?: string
@@ -96,7 +105,50 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deliverable_notes: {
+        Row: {
+          author_id: string | null
+          author_role: string
+          body: string
+          created_at: string
+          deliverable_id: string
+          id: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_role?: string
+          body: string
+          created_at?: string
+          deliverable_id: string
+          id?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_role?: string
+          body?: string
+          created_at?: string
+          deliverable_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliverable_notes_deliverable_id_fkey"
+            columns: ["deliverable_id"]
+            isOneToOne: false
+            referencedRelation: "deliverables"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       deliverable_reviews: {
         Row: {
@@ -143,6 +195,7 @@ export type Database = {
           edited_url: string | null
           editor_due_at: string | null
           final_url: string | null
+          frameio_url: string | null
           id: string
           internal_notes: string | null
           kind: string
@@ -166,6 +219,7 @@ export type Database = {
           edited_url?: string | null
           editor_due_at?: string | null
           final_url?: string | null
+          frameio_url?: string | null
           id?: string
           internal_notes?: string | null
           kind?: string
@@ -189,6 +243,7 @@ export type Database = {
           edited_url?: string | null
           editor_due_at?: string | null
           final_url?: string | null
+          frameio_url?: string | null
           id?: string
           internal_notes?: string | null
           kind?: string
@@ -248,6 +303,7 @@ export type Database = {
           article_md: string | null
           collaborator_added: boolean
           created_at: string
+          guest_person_id: string | null
           guest_profile_id: string | null
           id: string
           interview_id: string | null
@@ -266,6 +322,7 @@ export type Database = {
           article_md?: string | null
           collaborator_added?: boolean
           created_at?: string
+          guest_person_id?: string | null
           guest_profile_id?: string | null
           id?: string
           interview_id?: string | null
@@ -284,6 +341,7 @@ export type Database = {
           article_md?: string | null
           collaborator_added?: boolean
           created_at?: string
+          guest_person_id?: string | null
           guest_profile_id?: string | null
           id?: string
           interview_id?: string | null
@@ -299,6 +357,13 @@ export type Database = {
           youtube_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "episodes_guest_person_id_fkey"
+            columns: ["guest_person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "episodes_guest_profile_id_fkey"
             columns: ["guest_profile_id"]
@@ -440,6 +505,7 @@ export type Database = {
           interview_id: string | null
           is_public: boolean
           links: Json
+          person_id: string | null
           photo_url: string | null
           profile_id: string | null
           slug: string
@@ -457,6 +523,7 @@ export type Database = {
           interview_id?: string | null
           is_public?: boolean
           links?: Json
+          person_id?: string | null
           photo_url?: string | null
           profile_id?: string | null
           slug: string
@@ -474,6 +541,7 @@ export type Database = {
           interview_id?: string | null
           is_public?: boolean
           links?: Json
+          person_id?: string | null
           photo_url?: string | null
           profile_id?: string | null
           slug?: string
@@ -493,6 +561,13 @@ export type Database = {
             columns: ["interview_id"]
             isOneToOne: false
             referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_pages_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
             referencedColumns: ["id"]
           },
           {
@@ -639,6 +714,7 @@ export type Database = {
           id: string
           metric_key: string
           period: string
+          person_id: string | null
           profile_id: string
           source: string
           stage: string
@@ -650,6 +726,7 @@ export type Database = {
           id?: string
           metric_key: string
           period: string
+          person_id?: string | null
           profile_id: string
           source?: string
           stage: string
@@ -661,6 +738,7 @@ export type Database = {
           id?: string
           metric_key?: string
           period?: string
+          person_id?: string | null
           profile_id?: string
           source?: string
           stage?: string
@@ -668,6 +746,13 @@ export type Database = {
           value?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "metrics_entries_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "metrics_entries_profile_id_fkey"
             columns: ["profile_id"]
@@ -1083,6 +1168,7 @@ export type Database = {
           name: string
           notes: string | null
           owner_id: string | null
+          person_id: string | null
           profile_id: string | null
           stage: string | null
           started_at: string | null
@@ -1098,6 +1184,7 @@ export type Database = {
           name: string
           notes?: string | null
           owner_id?: string | null
+          person_id?: string | null
           profile_id?: string | null
           stage?: string | null
           started_at?: string | null
@@ -1113,6 +1200,7 @@ export type Database = {
           name?: string
           notes?: string | null
           owner_id?: string | null
+          person_id?: string | null
           profile_id?: string | null
           stage?: string | null
           started_at?: string | null
@@ -1126,6 +1214,13 @@ export type Database = {
             columns: ["interview_id"]
             isOneToOne: false
             referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
             referencedColumns: ["id"]
           },
           {
@@ -1146,6 +1241,7 @@ export type Database = {
           email: string | null
           id: string
           partner_id: string
+          person_id: string | null
           profile_id: string | null
         }
         Insert: {
@@ -1156,6 +1252,7 @@ export type Database = {
           email?: string | null
           id?: string
           partner_id: string
+          person_id?: string | null
           profile_id?: string | null
         }
         Update: {
@@ -1166,6 +1263,7 @@ export type Database = {
           email?: string | null
           id?: string
           partner_id?: string
+          person_id?: string | null
           profile_id?: string | null
         }
         Relationships: [
@@ -1174,6 +1272,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
             referencedColumns: ["id"]
           },
           {
@@ -1424,6 +1529,10 @@ export type Database = {
           _profile_id?: string
           _source?: string
         }
+        Returns: string
+      }
+      people_merge: {
+        Args: { _keep_id: string; _merge_id: string }
         Returns: string
       }
       people_normalize_email: { Args: { _value: string }; Returns: string }
