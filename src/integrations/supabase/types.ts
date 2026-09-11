@@ -56,6 +56,66 @@ export type Database = {
         }
         Relationships: []
       }
+      band_rules: {
+        Row: {
+          active: boolean
+          band: string
+          created_at: string
+          headline: string | null
+          id: string
+          line: string | null
+          max_score: number
+          min_score: number
+          primary_service_slug: string | null
+          secondary_service_slug: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          band: string
+          created_at?: string
+          headline?: string | null
+          id?: string
+          line?: string | null
+          max_score: number
+          min_score: number
+          primary_service_slug?: string | null
+          secondary_service_slug?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          band?: string
+          created_at?: string
+          headline?: string | null
+          id?: string
+          line?: string | null
+          max_score?: number
+          min_score?: number
+          primary_service_slug?: string | null
+          secondary_service_slug?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "band_rules_primary_service_slug_fkey"
+            columns: ["primary_service_slug"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "band_rules_secondary_service_slug_fkey"
+            columns: ["secondary_service_slug"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           cancelled_at: string | null
@@ -1372,6 +1432,72 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      services: {
+        Row: {
+          active: boolean
+          best_for: string | null
+          created_at: string
+          cta_label: string | null
+          cta_note: string | null
+          duration: string | null
+          faqs: Json
+          id: string
+          includes: string[]
+          name: string
+          price: string | null
+          price_note: string | null
+          requires: string[]
+          slug: string
+          sort_order: number
+          step: string | null
+          summary: string | null
+          updated_at: string
+          waitlist: boolean
+        }
+        Insert: {
+          active?: boolean
+          best_for?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_note?: string | null
+          duration?: string | null
+          faqs?: Json
+          id?: string
+          includes?: string[]
+          name: string
+          price?: string | null
+          price_note?: string | null
+          requires?: string[]
+          slug: string
+          sort_order?: number
+          step?: string | null
+          summary?: string | null
+          updated_at?: string
+          waitlist?: boolean
+        }
+        Update: {
+          active?: boolean
+          best_for?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_note?: string | null
+          duration?: string | null
+          faqs?: Json
+          id?: string
+          includes?: string[]
+          name?: string
+          price?: string | null
+          price_note?: string | null
+          requires?: string[]
+          slug?: string
+          sort_order?: number
+          step?: string | null
+          summary?: string | null
+          updated_at?: string
+          waitlist?: boolean
+        }
+        Relationships: []
       }
       touchpoints: {
         Row: {
