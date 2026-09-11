@@ -9,7 +9,7 @@ const LINKS = [
   { to: "/admin/people", label: "People" },
   { to: "/admin/pipeline", label: "Pipeline" },
   { to: "/admin/calendar", label: "Calendar" },
-  { to: "/admin/interviews", label: "Interviews" },
+  { to: "/admin/duplicates", label: "Possible duplicates" },
   { to: "/admin/podcast", label: "Podcast" },
   { to: "/admin/projects", label: "Projects" },
   { to: "/admin/queue", label: "My queue" },
