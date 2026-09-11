@@ -43,17 +43,21 @@ export const joinWaitlist = createServerFn({ method: "POST" })
       throw new Error("We could not add you to the list. Please try again.");
     }
 
-    const { error } = await supabaseAdmin.from("waitlists").insert({
-      service_slug: data.serviceSlug,
-      full_name: data.fullName,
-      email,
-      phone: data.phone || null,
-      business_name: data.businessName || null,
-      note: data.note || null,
-      source: data.source || null,
-      consent_email: data.consentEmail ?? false,
-      person_id: personId,
-    });
+    const { data: waitlistEntry, error } = await supabaseAdmin
+      .from("waitlists")
+      .insert({
+        service_slug: data.serviceSlug,
+        full_name: data.fullName,
+        email,
+        phone: data.phone || null,
+        business_name: data.businessName || null,
+        note: data.note || null,
+        source: data.source || null,
+        consent_email: data.consentEmail ?? false,
+        person_id: personId,
+      })
+      .select("id")
+      .single();
 
     if (error) {
       console.error("waitlist join failed", error.message);
@@ -68,6 +72,20 @@ export const joinWaitlist = createServerFn({ method: "POST" })
       detail: { service: data.serviceSlug },
     });
     if (touchError) console.error("touchpoint write failed", touchError.message);
+
+    if (waitlistEntry) {
+      const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
+      await triggerN8nEmail({
+        event: "waitlist_confirm",
+        idempotencyKey: `waitlist_confirm:${waitlistEntry.id}`,
+        recipient: { email, fullName: data.fullName },
+        data: {
+          serviceName: data.serviceSlug === "bootcamp" ? "Bootcamp" : data.serviceSlug,
+          serviceUrl: `https://buildwithhermedia.com/services/${data.serviceSlug}`,
+          scoreUrl: "https://buildwithhermedia.com/score/quiz",
+        },
+      });
+    }
 
     return { ok: true as const };
   });
