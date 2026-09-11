@@ -31,4 +31,5 @@
 - placeholder profiles from the interview import removed; profiles now only for people who signed in
 - duplicate review queue at /admin/duplicates, manual merge only
 - services and band_rules tables seeded; app still reads the code files (switch later)
-- next: move pipeline/lead stage and remaining screens off profiles onto people
+- pipeline and lead stages now use canonical people records; profiles keeps its old field temporarily for compatibility
+- next: move remaining signed-in-account lookups off profiles where the work belongs to a person

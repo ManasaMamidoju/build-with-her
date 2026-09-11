@@ -20,6 +20,10 @@ export const Route = createFileRoute("/_authenticated/admin/people/$id")({
     meta: [
       { title: "Person | Build With Her Media studio" },
       { name: "description", content: "Everything we know about her, in one place." },
+      { property: "og:title", content: "Person | Build With Her Media studio" },
+      { property: "og:description", content: "Everything we know about her, in one place." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -84,6 +88,7 @@ function PersonPage() {
         </p>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
           <Tag>{IDENTITY_LABEL[person.identity_status] ?? person.identity_status}</Tag>
+          <Tag>Pipeline: {(person.lead_stage ?? "new").replace("_", " ")}</Tag>
           <Tag>{person.profile_id ? "Signed in" : "Has not signed in"}</Tag>
           <Tag>Came from {person.primary_source ?? "unknown"}</Tag>
           {person.consent_confirmed ? <Tag>Consent confirmed</Tag> : null}

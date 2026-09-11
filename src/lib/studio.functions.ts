@@ -30,8 +30,8 @@ export const getPipeline = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
-      .from("profiles")
-      .select("id, full_name, email, business_name, lead_stage, primary_source, created_at")
+      .from("people")
+      .select("id, full_name, email, business_name, lead_stage, primary_source, identity_status, created_at")
       .order("created_at", { ascending: false })
       .limit(500);
     return data ?? [];

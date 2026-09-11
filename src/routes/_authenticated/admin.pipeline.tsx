@@ -12,6 +12,10 @@ export const Route = createFileRoute("/_authenticated/admin/pipeline")({
     meta: [
       { title: "Pipeline | Build With Her Media" },
       { name: "description", content: "Every woman by stage, from first hello to client." },
+      { property: "og:title", content: "Pipeline | Build With Her Media" },
+      { property: "og:description", content: "Every woman by stage, from first hello to client." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -26,9 +30,9 @@ function Pipeline() {
     queryFn: () => listFn({}),
   });
 
-  async function move(profileId: string, stage: StageKey) {
+  async function move(personId: string, stage: StageKey) {
     try {
-      await moveFn({ data: { profileId, stage } });
+      await moveFn({ data: { personId, stage } });
       await refetch();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "We could not move her.");

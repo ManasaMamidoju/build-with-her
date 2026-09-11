@@ -20,6 +20,7 @@ export const listPeopleRecords = createServerFn({ method: "GET" })
       .object({
         search: z.string().trim().max(120).optional(),
         identity: z.enum(IDENTITY).optional(),
+        stage: z.enum(["new", "contacted", "call_booked", "proposal", "client", "past"]).optional(),
       })
       .parse(data ?? {}),
   )
@@ -30,12 +31,13 @@ export const listPeopleRecords = createServerFn({ method: "GET" })
     let query = supabaseAdmin
       .from("people")
       .select(
-        "id, full_name, email, business_name, phone, city, primary_source, identity_status, profile_id, consent_confirmed, created_at, person_handles(platform, handle), interviews(id, overall_status, event_name, interview_date, consent_confirmed, approved_for_posting)",
+        "id, full_name, email, business_name, phone, city, primary_source, identity_status, lead_stage, profile_id, consent_confirmed, created_at, person_handles(platform, handle), interviews(id, overall_status, event_name, interview_date, consent_confirmed, approved_for_posting)",
       )
       .order("created_at", { ascending: false })
       .limit(500);
 
     if (data.identity) query = query.eq("identity_status", data.identity);
+    if (data.stage) query = query.eq("lead_stage", data.stage);
     if (data.search) {
       const term = `%${data.search}%`;
       query = query.or(
