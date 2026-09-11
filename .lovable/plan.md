@@ -86,10 +86,29 @@ identity_status as a plain badge (Email on file / Handle only / Name only) and h
 interview details open inline. The old interview-only route redirects to the merged
 screen.
 
+## Step 8 - remove the placeholder accounts
+
+The 79 profile rows from the interview import have no sign-in account behind them at all
+(checked: none of them exist in the auth users table, so there is nothing to delete there
+and nothing to cascade). They are placeholder rows only.
+
+For each one, in this order:
+
+1. Confirm her data now lives on a people row through step 2's handle path
+2. Confirm nothing meaningful hangs off the placeholder profile - no notes, no touchpoints
+3. Repoint her handles and her interview row at her people row
+4. Delete the placeholder profile row
+
+Anything with real activity attached is left alone and listed by name in the summary
+instead of being deleted. After this, a profile exists only for someone who has actually
+signed in.
+
 ## Judgment calls I am making
 
 - The 79 imported profiles rows have no email, so they backfill through the handle path.
   Profiles stays as the sign-in record; people becomes the canonical person record.
+- Those 79 have no sign-in account behind them, so step 8 is a plain profile-row cleanup,
+  not an account deletion.
 - Handle normalization: lowercase, strip @, strip instagram.com/ prefixes and trailing
   slashes. other_links is only used when it parses to a recognisable platform handle.
 - "Closely matches" for the review queue means same normalized name or a close
