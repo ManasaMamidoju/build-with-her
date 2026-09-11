@@ -107,6 +107,8 @@ signed in.
 
 - The 79 imported profiles rows have no email, so they backfill through the handle path.
   Profiles stays as the sign-in record; people becomes the canonical person record.
+- Those 79 have no sign-in account behind them, so step 8 is a plain profile-row cleanup,
+  not an account deletion.
 - Handle normalization: lowercase, strip @, strip instagram.com/ prefixes and trailing
   slashes. other_links is only used when it parses to a recognisable platform handle.
 - "Closely matches" for the review queue means same normalized name or a close
