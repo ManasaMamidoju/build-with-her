@@ -8,6 +8,7 @@ import {
   QUESTIONS,
   type AreaKey,
 } from "@/lib/score-rubric";
+import { SITE } from "@/lib/site";
 
 const handle = z.string().trim().max(160).optional().or(z.literal(""));
 
@@ -106,27 +107,48 @@ export const submitScore = createServerFn({ method: "POST" })
     const result = score(data.answers);
     const token = makeToken();
 
-    const { error } = await supabaseAdmin.from("score_submissions").insert({
-      token,
-      full_name: data.details.fullName,
-      email: data.details.email.toLowerCase(),
-      business_name: data.details.businessName || null,
-      website: data.details.website || null,
-      phone: data.details.phone || null,
-      primary_source: data.details.source || null,
-      handles: Object.fromEntries(
-        Object.entries(data.details.handles ?? {}).filter(([, value]) => Boolean(value)),
-      ),
-      consent_email: data.details.consentEmail ?? false,
-      consent_sms: data.details.consentSms ?? false,
-      consent_community: data.details.consentCommunity ?? false,
-      consent_terms_at: new Date().toISOString(),
-      answers: data.answers,
-      area_scores: result.areaScores,
-      total_score: result.total,
-      band: result.band.name,
-      top_fixes: result.topFixes,
-    });
+    const email = data.details.email.toLowerCase();
+    const { data: personId, error: personError } = await supabaseAdmin.rpc(
+      "people_find_or_create",
+      {
+        _full_name: data.details.fullName,
+        _email: email,
+        ...(data.details.businessName ? { _business_name: data.details.businessName } : {}),
+        ...(data.details.phone ? { _phone: data.details.phone } : {}),
+        _source: data.details.source || "findability_score",
+      },
+    );
+    if (personError || !personId) {
+      console.error("score person link failed", personError?.message);
+      throw new Error("We could not save your score. Please try again.");
+    }
+
+    const { data: submission, error } = await supabaseAdmin
+      .from("score_submissions")
+      .insert({
+        token,
+        full_name: data.details.fullName,
+        email,
+        business_name: data.details.businessName || null,
+        website: data.details.website || null,
+        phone: data.details.phone || null,
+        primary_source: data.details.source || null,
+        handles: Object.fromEntries(
+          Object.entries(data.details.handles ?? {}).filter(([, value]) => Boolean(value)),
+        ),
+        consent_email: data.details.consentEmail ?? false,
+        consent_sms: data.details.consentSms ?? false,
+        consent_community: data.details.consentCommunity ?? false,
+        consent_terms_at: new Date().toISOString(),
+        answers: data.answers,
+        area_scores: result.areaScores,
+        total_score: result.total,
+        band: result.band.name,
+        top_fixes: result.topFixes,
+        person_id: personId,
+      })
+      .select("id")
+      .single();
 
     if (error) {
       console.error("score submit failed", error.message);
@@ -134,13 +156,29 @@ export const submitScore = createServerFn({ method: "POST" })
     }
 
     const { error: touchError } = await supabaseAdmin.from("touchpoints").insert({
-      email: data.details.email.toLowerCase(),
+      email,
+      person_id: personId,
       kind: "score_submit",
       source: data.details.source || null,
       detail: { token, total: result.total, band: result.band.name },
     });
     if (touchError) {
       console.error("touchpoint write failed", touchError.message);
+    }
+
+    if (submission) {
+      const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
+      await triggerN8nEmail({
+        event: "score_result",
+        idempotencyKey: `score_result:${submission.id}`,
+        recipient: { email, fullName: data.details.fullName },
+        data: {
+          total: result.total,
+          band: result.band.name,
+          bandLine: result.band.line,
+          resultUrl: `${SITE.url}/score/r/${token}`,
+        },
+      });
     }
 
     return { token };

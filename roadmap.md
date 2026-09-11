@@ -19,7 +19,8 @@
 - Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
 
 ## Next
-- Email sending with Resend (confirmations, reminders, score result)
+- Sprint A email automations through n8n: app triggers complete; reconnect n8n to create and verify workflows
+- Later email automations through n8n: booking confirmations and reminders
 - Payments with Stripe
 - Full site audit: link check, SEO pass
 
