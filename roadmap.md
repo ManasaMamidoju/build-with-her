@@ -19,7 +19,7 @@
 - Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
 
 ## Next
-- Diagnose the owner Google sign-in return error; provider opens correctly, but the external project still has no signed-in user
+- Verify the owner account, admin role, person link, and studio interview access after successful Google sign-in
 - Sprint A email automations through n8n: app triggers complete; reconnect n8n to create and verify workflows
 - Later email automations through n8n: booking confirmations and reminders
 - Payments with Stripe
