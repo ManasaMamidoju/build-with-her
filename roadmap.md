@@ -19,13 +19,14 @@
 - Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
 
 ## Next
+- Diagnose the owner Google sign-in return error; provider opens correctly, but the external project still has no signed-in user
 - Sprint A email automations through n8n: app triggers complete; reconnect n8n to create and verify workflows
 - Later email automations through n8n: booking confirmations and reminders
 - Payments with Stripe
 - Full site audit: link check, SEO pass
 
 ## Answered
-- Backend is already enabled on this project (Lovable Cloud); nothing to switch on.
+- Backend is enabled and the app is connected to the owner's external database; the public data API is responding successfully.
 
 ## Database cleanup (done)
 - people table is the one canonical person record; all sources backfilled and linked by person_id
