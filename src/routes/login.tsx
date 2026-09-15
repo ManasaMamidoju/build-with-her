@@ -1,8 +1,7 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
@@ -30,7 +29,6 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
 
@@ -51,17 +49,17 @@ function LoginPage() {
 
   const signIn = async () => {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    // Sign-in runs against the owner's own Supabase project, so use its Google
+    // provider directly rather than the Lovable broker (which targets the built-in project).
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
     });
-    if (result.error) {
+    if (error) {
       setBusy(false);
       toast.error("That sign in did not go through. Try once more.");
       return;
     }
-    if (result.redirected) return;
-    setBusy(false);
-    navigate({ to: "/" });
   };
 
   const signOut = async () => {
