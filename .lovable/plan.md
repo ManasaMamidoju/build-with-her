@@ -1,19 +1,14 @@
-# Fix the Google sign-in 403
+# Verify Google sign-in and admin access
 
 ## What the screenshot tells us
 
-Your Google app is set to **External** and **In production**, and Google is asking you to submit it for **verification**. That combination is what produces the "403: you do not have access to this page" screen you saw: an unverified app in production blocks sign-in.
+Google sign-in now works in a private window after moving the OAuth app to Testing and adding your complete email as a test user. The regular browser was retaining stale Google authorization state.
 
 The app and database are fine. Nothing in the code needs changing. This is a setting on the Google side.
 
-## The fix (fastest path, no verification needed)
+## Keep the working Google configuration
 
-In Google Auth Platform → Audience:
-
-1. Click **Back to testing**. This moves the app out of production so verification is no longer required.
-2. Under **Test users**, click **Add users** and add `mamidoju.manasa@gmail.com` (plus any other address that needs to sign in during build-out).
-3. Save.
-4. Retry sign-in in a fresh private browser window. Google will show an "unverified app" warning screen; choose Advanced → continue.
+In Google Auth Platform → Audience, keep the app in **Testing** and retain `mamidoju.manasa@gmail.com` under **Test users**.
 
 Testing mode allows up to 100 test users and does not expire for basic email/profile sign-in, so it is fine for now. When you are ready for the public launch we submit the app for verification and switch back to production.
 
@@ -25,10 +20,13 @@ Testing mode allows up to 100 test users and does not expire for basic email/pro
   - Site URL: `https://buildwithhermedia.com`
   - Redirect URLs: `https://id-preview--7f33a9f7-60dc-4bb6-9d8a-1e362ad4422f.lovable.app/**` and `https://buildwithhermedia.com/**`
 
-## What happens after you sign in
+## Verify the account landed correctly
 
-Your account is created in your own database, the admin role is granted to your email automatically, and your name is linked to the existing records, so interviews and people are yours to manage immediately. Tell me once you are in and I will verify the admin role landed and that interview management works end to end.
+1. Confirm the new account, profile, and admin role exist in your database.
+2. Confirm the account is linked to the existing canonical person record.
+3. Open Studio, People, and interview management as the signed-in admin.
+4. Confirm the regular browser also works after clearing Google/Supabase site data or signing out of the stale Google session.
 
 ## Notes
 
-No code changes are part of this plan. If sign-in still fails after the steps above, send me the exact error text or URL from the failing screen and I will trace it from the sign-in flow.
+No sign-in code change is currently indicated. The OAuth request uses the correct client and callback; the private-window success confirms the provider configuration is now valid.
