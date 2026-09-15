@@ -17,9 +17,9 @@
 - Podcast guest application form, studio podcast pipeline
 - Projects: steps, deliverables, editor queue, her approval view
 - Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
+- Owner Google sign-in verified; account, profile, admin role, and canonical person link confirmed in the external database
 
 ## Next
-- Verify the owner account, admin role, person link, and studio interview access after successful Google sign-in
 - Sprint A email automations through n8n: app triggers complete; reconnect n8n to create and verify workflows
 - Later email automations through n8n: booking confirmations and reminders
 - Payments with Stripe
@@ -36,4 +36,4 @@
 - pipeline and lead stages now use canonical people records; profiles keeps its old field temporarily for compatibility
 - next: move remaining signed-in-account lookups off profiles where the work belongs to a person
 
-- App now runs entirely on the owner Supabase project (srqnyhwknkpqrajefwjs): browser keys pinned in vite.config.ts, server env re-pointed in src/lib/supabase-target.server.ts, Google sign-in via that project directly, owner auto-admin trigger installed. Remaining: owner must enable the Google provider in her Supabase project.
+- App now runs entirely on the owner's external database: browser and server access are pointed there, Google sign-in works, and the owner account has admin access.
