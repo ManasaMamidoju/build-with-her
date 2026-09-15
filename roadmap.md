@@ -34,3 +34,5 @@
 - services and band_rules tables seeded; app still reads the code files (switch later)
 - pipeline and lead stages now use canonical people records; profiles keeps its old field temporarily for compatibility
 - next: move remaining signed-in-account lookups off profiles where the work belongs to a person
+
+- App now runs entirely on the owner Supabase project (srqnyhwknkpqrajefwjs): browser keys pinned in vite.config.ts, server env re-pointed in src/lib/supabase-target.server.ts, Google sign-in via that project directly, owner auto-admin trigger installed. Remaining: owner must enable the Google provider in her Supabase project.
