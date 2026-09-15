@@ -30,3 +30,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code local settings (may contain local-only tokens)
+.claude/settings.local.json
+
+# Plugin skill installs (separate git repos, not part of this project)
+skills/marketing/
+skills/n8n-skills/

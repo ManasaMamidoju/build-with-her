@@ -1,0 +1,327 @@
+{
+  "name": "BWH Interview Pipeline",
+  "nodes": [
+    {
+      "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+      "name": "Webhook — Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "a1b2c3d4-e5f6-7890-abcd-111122223333",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bwh-interview",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      }
+    },
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "Google Drive — List Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [460, 300],
+      "parameters": {
+        "resource": "file",
+        "operation": "getAll",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "123Yn9N4F0v15L4IIQWYA6mNS-Tcm8iHW",
+            "mode": "id"
+          },
+          "whatToSearch": "files",
+          "queryString": "mimeType contains 'video/'"
+        }
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "REPLACE_GDRIVE_CRED_ID",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "name": "Pick File by Index",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "parameters": {
+        "jsCode": "const files = $input.all();\nconst fileIndex = parseInt($node['Webhook — Trigger'].json.body.file_index ?? 0);\n\nif (files.length === 0) {\n  throw new Error('No video files found in the Google Drive folder.');\n}\nif (fileIndex >= files.length) {\n  throw new Error(`file_index ${fileIndex} out of range — folder contains ${files.length} video(s).`);\n}\n\nconst file = files[fileIndex];\nconst fileName = file.json.name || 'interview.mp4';\nconst fileExt = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'mp4';\n\nreturn [{\n  json: {\n    file_id: file.json.id,\n    file_name: fileName,\n    file_ext: fileExt,\n    file_index: fileIndex,\n    total_files: files.length\n  }\n}];"
+      }
+    },
+    {
+      "id": "f1e2d3c4-b5a6-7890-bcde-f01234567890",
+      "name": "Google Drive — Download Video",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [900, 300],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{$json.file_id}}",
+          "mode": "id"
+        },
+        "binaryPropertyName": "data",
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "REPLACE_GDRIVE_CRED_ID",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "id": "a2b3c4d5-e6f7-8901-cdef-012345678901",
+      "name": "Write Video to Temp",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "parameters": {
+        "fileName": "={{ '/tmp/bwh_' + $node['Pick File by Index'].json.file_id + '_in.' + $node['Pick File by Index'].json.file_ext }}",
+        "dataPropertyName": "data"
+      }
+    },
+    {
+      "id": "b3c4d5e6-f7a8-9012-defa-123456789012",
+      "name": "ffmpeg — Extract Audio",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1340, 300],
+      "parameters": {
+        "command": "={{ 'ffmpeg -y -i /tmp/bwh_' + $node['Pick File by Index'].json.file_id + '_in.' + $node['Pick File by Index'].json.file_ext + ' -vn -acodec libmp3lame -ar 16000 -ac 1 -b:a 64k /tmp/bwh_' + $node['Pick File by Index'].json.file_id + '_out.mp3 2>&1' }}"
+      }
+    },
+    {
+      "id": "c4d5e6f7-a8b9-0123-efab-234567890123",
+      "name": "Read MP3 from Temp",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [1560, 300],
+      "parameters": {
+        "filePath": "={{ '/tmp/bwh_' + $node['Pick File by Index'].json.file_id + '_out.mp3' }}"
+      }
+    },
+    {
+      "id": "2e9880a7-8d09-4c5a-b0c6-2c4e0a5b7c8e",
+      "name": "OpenAI Whisper — Transcribe",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": false,
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "parameterType": "formData",
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "parameterType": "formData",
+              "name": "response_format",
+              "value": "verbose_json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_OPENAI_CRED_ID",
+          "name": "OpenAI API Key"
+        }
+      }
+    },
+    {
+      "id": "4b7bac5c-7e89-4c70-89b1-50e123a4b5c6",
+      "name": "Format Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 300],
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst segments = data.segments || [];\n\nconst lines = segments.map(seg => {\n  const totalSecs = Math.floor(seg.start);\n  const mins = Math.floor(totalSecs / 60);\n  const secs = totalSecs % 60;\n  const ts = `[${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}]`;\n  return `${ts} ${seg.text.trim()}`;\n});\n\nreturn [{\n  json: {\n    transcript: lines.join('\\n'),\n    duration: data.duration,\n    language: data.language || 'en',\n    segment_count: segments.length\n  }\n}];"
+      }
+    },
+    {
+      "id": "6c84fb90-12c5-471d-abcd-ef0123456789",
+      "name": "Claude — Extract Hook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'claude-opus-4-7', max_tokens: 1024, messages: [{ role: 'user', content: 'You are analyzing a street interview with a woman entrepreneur. Find the single most surprising or relatable quote. Return JSON only (no markdown, no explanation) with exactly these fields: hook_quote, timestamp_start, timestamp_end, why_it_works, editor_brief_card (formatted for WhatsApp).\\n\\nTranscript:\\n' + $json.transcript }] }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ANTHROPIC_CRED_ID",
+          "name": "Anthropic API Key"
+        }
+      }
+    },
+    {
+      "id": "8a5c3e1f-9b2d-4e6a-b7c8-d9e0f1a2b3c4",
+      "name": "Parse Claude Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 300],
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst rawText = data.content?.[0]?.text || '';\n\nlet parsed;\ntry {\n  const cleaned = rawText.replace(/^```json\\n?/, '').replace(/\\n?```$/, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = {\n    hook_quote: rawText.substring(0, 300),\n    timestamp_start: '00:00',\n    timestamp_end: '00:00',\n    why_it_works: 'Manual review needed — Claude response could not be parsed',\n    editor_brief_card: rawText.substring(0, 500)\n  };\n}\n\nreturn [{\n  json: {\n    hook_quote: parsed.hook_quote || '',\n    timestamp_start: parsed.timestamp_start || '00:00',\n    timestamp_end: parsed.timestamp_end || '00:00',\n    why_it_works: parsed.why_it_works || '',\n    editor_brief_card: parsed.editor_brief_card || ''\n  }\n}];"
+      }
+    },
+    {
+      "id": "c5d6e7f8-a9b0-4c1d-e2f3-a4b5c6d7e8f9",
+      "name": "Notion — Update Interview Row",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [2660, 300],
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{$node[\"Webhook — Trigger\"].json.body.notion_page_id}}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Hook Quote",
+              "type": "richText",
+              "richText": "={{$json.hook_quote}}"
+            },
+            {
+              "key": "Hook Timestamp",
+              "type": "richText",
+              "richText": "={{$json.timestamp_start + ' – ' + $json.timestamp_end}}"
+            },
+            {
+              "key": "AI Brief Sent",
+              "type": "checkbox",
+              "checkbox": true
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "notionApi": {
+          "id": "REPLACE_NOTION_CRED_ID",
+          "name": "Notion API"
+        }
+      }
+    },
+    {
+      "id": "e1f2a3b4-c5d6-4e7f-a8b9-c0d1e2f3a4b5",
+      "name": "WhatsApp — Send Brief Card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2880, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "={{\"https://graph.facebook.com/v18.0/\" + $node[\"Webhook — Trigger\"].json.body.whatsapp_phone_number_id + \"/messages\"}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $node['Webhook — Trigger'].json.body.recipient_phone, type: 'text', text: { body: $json.editor_brief_card } }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "REPLACE_WHATSAPP_CRED_ID",
+          "name": "WhatsApp Bearer Token"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook — Trigger": {
+      "main": [[{"node": "Google Drive — List Folder", "type": "main", "index": 0}]]
+    },
+    "Google Drive — List Folder": {
+      "main": [[{"node": "Pick File by Index", "type": "main", "index": 0}]]
+    },
+    "Pick File by Index": {
+      "main": [[{"node": "Google Drive — Download Video", "type": "main", "index": 0}]]
+    },
+    "Google Drive — Download Video": {
+      "main": [[{"node": "Write Video to Temp", "type": "main", "index": 0}]]
+    },
+    "Write Video to Temp": {
+      "main": [[{"node": "ffmpeg — Extract Audio", "type": "main", "index": 0}]]
+    },
+    "ffmpeg — Extract Audio": {
+      "main": [[{"node": "Read MP3 from Temp", "type": "main", "index": 0}]]
+    },
+    "Read MP3 from Temp": {
+      "main": [[{"node": "OpenAI Whisper — Transcribe", "type": "main", "index": 0}]]
+    },
+    "OpenAI Whisper — Transcribe": {
+      "main": [[{"node": "Format Transcript", "type": "main", "index": 0}]]
+    },
+    "Format Transcript": {
+      "main": [[{"node": "Claude — Extract Hook", "type": "main", "index": 0}]]
+    },
+    "Claude — Extract Hook": {
+      "main": [[{"node": "Parse Claude Response", "type": "main", "index": 0}]]
+    },
+    "Parse Claude Response": {
+      "main": [[{"node": "Notion — Update Interview Row", "type": "main", "index": 0}]]
+    },
+    "Notion — Update Interview Row": {
+      "main": [[{"node": "WhatsApp — Send Brief Card", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

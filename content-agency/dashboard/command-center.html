@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manasa — Command Center</title>
+<style>
+  :root {
+    --bg:          #000000;
+    --sidebar:     #0d0d0d;
+    --card:        #141414;
+    --card-hover:  #1c1c1c;
+    --border:      #282828;
+    --border-soft: #1e1e1e;
+    --text:        #ffffff;
+    --text-muted:  #888888;
+    --text-dim:    #444444;
+    --red:         #dc2626;
+    --red-light:   #ef4444;
+    --red-dim:     #3d0a0a;
+    --green:       #16a34a;
+    --green-light: #22c55e;
+    --yellow:      #ca8a04;
+    --yellow-light:#eab308;
+    --blue:        #2563eb;
+    --blue-light:  #3b82f6;
+    --purple:      #7c3aed;
+    --purple-light:#a78bfa;
+    --radius:      8px;
+    --radius-sm:   5px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ────────────────────────────────── */
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 0 8px 16px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo .brand {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+  .sidebar-logo .brand span { color: var(--red); }
+  .sidebar-logo .sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-section {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 14px 8px 4px;
+  }
+
+  .nav-item {
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    transition: all 0.12s;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active {
+    background: var(--red-dim);
+    color: var(--text);
+    border-left: 2px solid var(--red);
+    padding-left: 8px;
+  }
+  .nav-item .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .refresh-btn {
+    width: 100%;
+    padding: 8px;
+    background: var(--red);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    transition: opacity 0.12s;
+  }
+  .refresh-btn:hover { opacity: 0.85; }
+  .last-refresh {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 10px;
+  }
+
+  /* ── MAIN ───────────────────────────────────── */
+  .main {
+    flex: 1;
+    padding: 28px 28px 60px;
+    overflow-y: auto;
+    max-width: calc(100vw - 220px);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .page-title span { color: var(--red); }
+  .page-date { color: var(--text-muted); font-size: 12px; }
+
+  /* ── SECTION ────────────────────────────────── */
+  .section { margin-bottom: 40px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: var(--red);
+    border-radius: 2px;
+  }
+
+  /* ── METRICS ────────────────────────────────── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .metric-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .metric-card:hover { border-color: var(--red); }
+  .metric-value {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 5px;
+    color: var(--red-light);
+  }
+  .metric-label { color: var(--text-muted); font-size: 11px; line-height: 1.4; }
+
+  /* ── PERSONAL CONTENT CARDS ─────────────────── */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .video-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+  }
+  .video-card:hover {
+    border-color: var(--red);
+    background: var(--card-hover);
+    transform: translateY(-1px);
+  }
+  .video-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .video-date { font-size: 11px; color: var(--text-muted); }
+  .video-type {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .type-bip    { background: #1e1230; color: var(--purple-light); }
+  .type-iv     { background: #0e1e35; color: var(--blue-light); }
+  .type-fw     { background: #0b1e14; color: var(--green-light); }
+  .type-vf     { background: #2a1500; color: #fb923c; }
+  .type-wdw    { background: var(--red-dim); color: var(--red-light); }
+  .type-ditl   { background: #1e1900; color: var(--yellow-light); }
+  .type-st     { background: #1e0e1a; color: #f0abfc; }
+
+  .video-hook {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .video-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .video-status {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 3px 7px;
+    border-radius: 20px;
+  }
+  .status-notstarted { background: #1e1e1e; color: var(--text-muted); }
+  .status-inprogress { background: #0e1e35; color: var(--blue-light); }
+  .status-done       { background: #0b1e14; color: var(--green-light); }
+
+  .video-open {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.12s;
+  }
+  .video-card:hover .video-open { color: var(--red-light); }
+
+  /* Upload indicator */
+  .video-has-footage {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green-light);
+  }
+
+  /* ── WEEK CALENDAR (per-account lists) ───────── */
+  .cal-accounts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .cal-acct {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .cal-acct-header {
+    padding: 10px 14px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cal-acct-header.dm  { border-top: 3px solid var(--purple); color: var(--purple-light); }
+  .cal-acct-header.pm  { border-top: 3px solid var(--red);    color: var(--red-light); }
+  .cal-acct-header.bwh { border-top: 3px solid #f97316;       color: #fb923c; }
+
+  .cal-row {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    border-bottom: 1px solid var(--border-soft);
+    transition: background 0.1s;
+    cursor: default;
+  }
+  .cal-row:last-child { border-bottom: none; }
+  .cal-row:hover { background: var(--card-hover); }
+  .cal-row.today-row { background: #1a0808; }
+
+  .cal-date {
+    padding: 10px 8px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border-right: 1px solid var(--border-soft);
+    flex-shrink: 0;
+  }
+  .cal-date .dow { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+  .cal-date .dom { font-size: 17px; font-weight: 800; }
+  .cal-row.today-row .cal-date .dom { color: var(--red); }
+
+  .cal-info {
+    padding: 9px 10px;
+    display: flex; flex-direction: column; gap: 4px;
+    justify-content: center;
+  }
+  .cal-info-title { font-size: 12px; font-weight: 600; line-height: 1.3; }
+  .cal-info-type  { font-size: 10px; color: var(--text-muted); }
+
+  .cal-post-title { font-size: 11px; font-weight: 600; line-height: 1.3; }
+  .cal-post-meta  { font-size: 10px; color: var(--text-muted); }
+
+  /* ── VIDEO MODAL ────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 100%; max-width: 680px;
+    max-height: 90vh; overflow-y: auto;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; color: var(--text-muted);
+    font-size: 22px; cursor: pointer; line-height: 1;
+    z-index: 1;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-type-badge {
+    padding: 14px 20px 0;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+  .modal-hook {
+    padding: 16px 20px 20px;
+    font-size: 32px; font-weight: 900;
+    line-height: 1.15; letter-spacing: -0.5px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-points {
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-point {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .modal-point-num {
+    font-size: 20px; font-weight: 900; color: var(--red);
+    flex-shrink: 0; line-height: 1.3; min-width: 24px;
+  }
+  .modal-point-text {
+    font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--text);
+  }
+  .modal-footer {
+    padding: 14px 20px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .modal-btn {
+    padding: 9px 16px; border-radius: 6px;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    border: none; transition: opacity 0.12s;
+  }
+  .modal-btn:hover { opacity: 0.85; }
+  .modal-btn.primary { background: var(--red); color: white; }
+  .modal-btn.secondary { background: var(--border); color: var(--text); }
+  .modal-date-meta { margin-left: auto; color: var(--text-muted); font-size: 11px; align-self: center; }
+
+  .pill {
+    display: inline-flex; align-items: center;
+    padding: 2px 6px; border-radius: 20px;
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    width: fit-content;
+  }
+  .pill-draft     { background: #1e1e1e; color: #666; }
+  .pill-filming   { background: #1a0808; color: var(--red-light); }
+  .pill-ready     { background: #0b1e14; color: var(--green-light); }
+  .pill-posted    { background: #122018; color: #34d399; }
+  .pill-missing   { background: #2a1a00; color: #fb923c; }
+
+  /* ── KANBAN ─────────────────────────────────── */
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+  .kanban-col {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .kanban-col-header {
+    padding: 9px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .kanban-count {
+    background: var(--border);
+    border-radius: 20px;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .kanban-cards { padding: 8px; display: flex; flex-direction: column; gap: 5px; min-height: 50px; }
+  .kanban-card {
+    background: var(--sidebar);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px;
+    cursor: pointer;
+    transition: border-color 0.12s;
+  }
+  .kanban-card:hover { border-color: var(--red); }
+  .kanban-card .name { font-weight: 700; font-size: 12px; margin-bottom: 2px; }
+  .kanban-card .handle { color: var(--text-muted); font-size: 10px; margin-bottom: 4px; }
+  .kanban-card .hook {
+    font-size: 10px; color: var(--text-muted); font-style: italic;
+    border-left: 2px solid var(--red); padding-left: 5px; line-height: 1.4;
+    overflow: hidden; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .kanban-card .due { font-size: 9px; color: var(--yellow-light); margin-top: 4px; }
+
+  /* ── TASK BOARD ─────────────────────────────── */
+  .task-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .task-col {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .task-col-header {
+    padding: 11px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-col-header.todo   { border-top: 3px solid var(--red); }
+  .task-col-header.editor { border-top: 3px solid var(--yellow-light); }
+  .task-col-header.done   { border-top: 3px solid var(--green-light); }
+
+  .task-add-btn {
+    background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: color 0.12s;
+  }
+  .task-add-btn:hover { color: var(--red); }
+
+  .task-list { padding: 6px; display: flex; flex-direction: column; gap: 3px; min-height: 36px; }
+  .task-item {
+    background: var(--sidebar);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    display: flex; align-items: center; gap: 8px;
+    cursor: grab; transition: all 0.12s;
+    font-size: 12px; line-height: 1.4; user-select: none;
+  }
+  .task-item:hover { border-color: var(--red); background: var(--card-hover); }
+  .task-item.done-item { color: var(--text-dim); text-decoration: line-through; }
+  .task-item.dragging { opacity: 0.4; }
+
+  .task-check {
+    width: 15px; height: 15px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px; flex-shrink: 0;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; transition: all 0.12s;
+  }
+  .task-check:hover { border-color: var(--red); }
+  .task-check.checked { background: var(--red); border-color: var(--red); }
+  .task-drag-handle { color: var(--text-dim); font-size: 11px; cursor: grab; flex-shrink: 0; }
+
+  .task-input-row { padding: 5px 6px; display: none; }
+  .task-input-row.visible { display: flex; gap: 5px; }
+  .task-input-row input {
+    flex: 1; background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 9px; color: var(--text); font-size: 12px; outline: none;
+  }
+  .task-input-row input:focus { border-color: var(--red); }
+  .task-input-row button {
+    background: var(--red); border: none;
+    border-radius: var(--radius-sm); color: white;
+    padding: 6px 11px; cursor: pointer; font-size: 11px; font-weight: 700;
+  }
+
+  /* ── LOADING / EMPTY ───────────────────────── */
+  .loading { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
+  .loading::after { content: ''; animation: dots 1.5s infinite; }
+  @keyframes dots { 0%,20%{content:'.'} 40%{content:'..'} 60%,100%{content:'...'} }
+
+  .empty { color: var(--text-dim); font-size: 11px; padding: 4px 0; }
+
+  /* ── RESPONSIVE ────────────────────────────── */
+  @media (max-width: 900px) {
+    .sidebar { width: 48px; }
+    .sidebar-logo .sub, .sidebar-logo .brand, .nav-label, .nav-section, .last-refresh { display: none; }
+    .nav-item { justify-content: center; padding: 8px; }
+    .nav-item .dot { margin: 0; }
+    .main { max-width: calc(100vw - 48px); padding: 16px; }
+    .kanban { grid-template-columns: repeat(2, 1fr); }
+    .task-board { grid-template-columns: 1fr; }
+    .video-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .cal-accounts { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .modal-hook { font-size: 22px; }
+    .modal-point-text { font-size: 15px; }
+  }
+</style>
+  <script src="analytics-data.js"></script>
+  <script src="config.local.js"></script>
+</head>
+<body>
+
+<script>
+const CONFIG = Object.assign({
+  NOTION_PERSONAL_KEY:     '',
+  NOTION_DIGIMAIDS_KEY:    '',
+  BWH_INTERVIEWS_DB_ID:    'e7d8155bee154b2fa685ccd46cc87f2f',
+  PERSONAL_CALENDAR_DB_ID: 'bf128d29af114825b63666c6fea65c1c',
+  DIGIMAIDS_CALENDAR_DB_ID:'305b8948348d80999df2d1b209800cec',
+  PROXY_URL:               'http://localhost:8765/notion-proxy',
+  REFRESH_INTERVAL:        300000
+}, window.LOCAL_CONFIG || {})
+</script>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Digi<span>MAIDS</span></div>
+    <div class="sub">Command Center</div>
+  </div>
+
+  <div class="nav-section nav-label">Overview</div>
+  <div class="nav-item active" onclick="navTo(this,'metrics')">📊 <span class="nav-label">Status</span></div>
+  <div class="nav-item" onclick="navTo(this,'analytics')">📈 <span class="nav-label">Analytics</span></div>
+  <div class="nav-item" onclick="navTo(this,'movement')">🏃 <span class="nav-label">Movement</span></div>
+  <div class="nav-item" onclick="navTo(this,'personal')">🎬 <span class="nav-label">My Videos</span></div>
+  <div class="nav-item" onclick="navTo(this,'calendar')">📅 <span class="nav-label">This Week</span></div>
+  <div class="nav-item" onclick="navTo(this,'pipeline')">🎤 <span class="nav-label">Interviews</span></div>
+  <div class="nav-item" onclick="navTo(this,'ai-news')">🔥 <span class="nav-label">AI News</span></div>
+  <div class="nav-item" onclick="navTo(this,'debrief')">📝 <span class="nav-label">Debrief</span></div>
+  <div class="nav-item" onclick="navTo(this,'tasks')">✅ <span class="nav-label">Tasks</span></div>
+
+  <div class="nav-section nav-label">Accounts</div>
+  <div class="nav-item" onclick="filterCalendar(this,'dm')">
+    <span class="dot" style="background:#a78bfa"></span>
+    <span class="nav-label">@digimaids</span>
+  </div>
+  <div class="nav-item" onclick="filterCalendar(this,'pm')">
+    <span class="dot" style="background:var(--red-light)"></span>
+    <span class="nav-label">@manasa_mdoju</span>
+  </div>
+  <div class="nav-item" onclick="filterCalendar(this,'bwh')">
+    <span class="dot" style="background:#fb923c"></span>
+    <span class="nav-label">@buildwithher</span>
+  </div>
+
+  <div class="nav-section nav-label">Quick Links</div>
+  <a class="nav-item" href="https://calendly.com/mamidoju-manasa/ai-audit-call-w-digimaids" target="_blank">📞 <span class="nav-label">Audit Call</span></a>
+  <a class="nav-item" href="https://digimaids.app.n8n.cloud" target="_blank">⚡ <span class="nav-label">n8n</span></a>
+  <a class="nav-item" href="https://www.notion.so/305b8948348d80999df2d1b209800cec" target="_blank">📋 <span class="nav-label">DigiMAIDS DB</span></a>
+  <a class="nav-item" href="https://www.notion.so/bf128d29af114825b63666c6fea65c1c" target="_blank">📋 <span class="nav-label">Personal DB</span></a>
+
+  <div class="sidebar-bottom">
+    <button class="refresh-btn" onclick="refreshAll()">↺ Refresh</button>
+    <div class="last-refresh" id="last-refresh">Never</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="page-header">
+    <div class="page-title">Command <span>Center</span></div>
+    <div class="page-date" id="page-date"></div>
+  </div>
+
+  <!-- SECTION 1: METRICS -->
+  <section class="section" id="metrics">
+    <div class="section-header">
+      <div class="section-title">Daily Status</div>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-value" id="m-backlog">—</div><div class="metric-label">Interviews in backlog</div></div>
+      <div class="metric-card"><div class="metric-value" id="m-ready">—</div><div class="metric-label">Clips ready to post</div></div>
+      <div class="metric-card"><div class="metric-value" id="m-posted-week">—</div><div class="metric-label">Posted this week</div></div>
+      <div class="metric-card"><div class="metric-value" id="m-digi-scheduled">—</div><div class="metric-label">DigiMAIDS scheduled</div></div>
+      <div class="metric-card"><div class="metric-value" id="m-personal-ready">—</div><div class="metric-label">Personal videos ready</div></div>
+    </div>
+  </section>
+
+  <!-- SECTION 1a: ANALYTICS -->
+  <section class="section" id="analytics">
+    <div class="section-header">
+      <div class="section-title">Account Analytics</div>
+      <span style="font-size:10px;color:var(--text-dim)">Tap any number to update</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+
+      <!-- DigiMAIDS -->
+      <div style="background:var(--card);border:1px solid var(--border);border-top:3px solid var(--purple);border-radius:8px;overflow:hidden">
+        <div style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--purple-light);border-bottom:1px solid var(--border)">@digimaids</div>
+        <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('digi','ig_followers')">
+            <div class="metric-value" id="s-digi-ig_followers" style="font-size:20px">—</div>
+            <div class="metric-label">IG Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('digi','tiktok_followers')">
+            <div class="metric-value" id="s-digi-tiktok_followers" style="font-size:20px">—</div>
+            <div class="metric-label">TikTok Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('digi','linkedin_followers')">
+            <div class="metric-value" id="s-digi-linkedin_followers" style="font-size:20px">—</div>
+            <div class="metric-label">LinkedIn Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('digi','youtube_subs')">
+            <div class="metric-value" id="s-digi-youtube_subs" style="font-size:20px">—</div>
+            <div class="metric-label">YouTube Subs</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('digi','avg_views')">
+            <div class="metric-value" id="s-digi-avg_views" style="font-size:20px">—</div>
+            <div class="metric-label">Avg Views/Reel</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('digi','posts_month')">
+            <div class="metric-value" id="s-digi-posts_month" style="font-size:20px">—</div>
+            <div class="metric-label">Posts This Month</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- @manasa_mdoju -->
+      <div style="background:var(--card);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:8px;overflow:hidden">
+        <div style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--red-light);border-bottom:1px solid var(--border)">@manasa_mdoju</div>
+        <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('manasa','ig_followers')">
+            <div class="metric-value" id="s-manasa-ig_followers" style="font-size:20px">—</div>
+            <div class="metric-label">IG Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('manasa','tiktok_followers')">
+            <div class="metric-value" id="s-manasa-tiktok_followers" style="font-size:20px">—</div>
+            <div class="metric-label">TikTok Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('manasa','linkedin_followers')">
+            <div class="metric-value" id="s-manasa-linkedin_followers" style="font-size:20px">—</div>
+            <div class="metric-label">LinkedIn Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('manasa','avg_views')">
+            <div class="metric-value" id="s-manasa-avg_views" style="font-size:20px">—</div>
+            <div class="metric-label">Avg Views/Reel</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('manasa','best_reel')">
+            <div class="metric-value" id="s-manasa-best_reel" style="font-size:13px;line-height:1.2">—</div>
+            <div class="metric-label">Best Reel (views)</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('manasa','posts_month')">
+            <div class="metric-value" id="s-manasa-posts_month" style="font-size:20px">—</div>
+            <div class="metric-label">Posts This Month</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- @buildwithher -->
+      <div style="background:var(--card);border:1px solid var(--border);border-top:3px solid #f97316;border-radius:8px;overflow:hidden">
+        <div style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#fb923c;border-bottom:1px solid var(--border)">@buildwithher</div>
+        <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('bwh','ig_followers')">
+            <div class="metric-value" id="s-bwh-ig_followers" style="font-size:20px">—</div>
+            <div class="metric-label">IG Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('bwh','tiktok_followers')">
+            <div class="metric-value" id="s-bwh-tiktok_followers" style="font-size:20px">—</div>
+            <div class="metric-label">TikTok Followers</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('bwh','total_interviews')">
+            <div class="metric-value" id="s-bwh-total_interviews" style="font-size:20px">—</div>
+            <div class="metric-label">Total Interviews</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('bwh','avg_views')">
+            <div class="metric-value" id="s-bwh-avg_views" style="font-size:20px">—</div>
+            <div class="metric-label">Avg Views/Reel</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('bwh','best_reel')">
+            <div class="metric-value" id="s-bwh-best_reel" style="font-size:13px;line-height:1.2">—</div>
+            <div class="metric-label">Best Reel (views)</div>
+          </div>
+          <div class="metric-card" style="cursor:pointer;padding:10px" onclick="editStat('bwh','posts_month')">
+            <div class="metric-value" id="s-bwh-posts_month" style="font-size:20px">—</div>
+            <div class="metric-label">Posts This Month</div>
+          </div>
+        </div>
+        <div style="padding:6px 14px 10px;font-size:10px;color:var(--text-dim)">
+          Updated: <span id="s-bwh-updated">never</span>
+        </div>
+      </div>
+
+    </div>
+    <div style="text-align:right;margin-top:8px;font-size:10px;color:var(--text-dim)">
+      Last updated: <span id="analytics-updated">never</span> —
+      <span style="cursor:pointer;color:var(--red-light)" onclick="resetAnalytics()">reset all</span>
+    </div>
+  </section>
+
+  <!-- SECTION 1b: MOVEMENT TRACKER -->
+  <section class="section" id="movement">
+    <div class="section-header">
+      <div class="section-title">Build With Her — Movement Tracker</div>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value" id="mv-interviewed">—</div>
+        <div class="metric-label">Women Interviewed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="mv-posted">—</div>
+        <div class="metric-label">Stories Posted</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="mv-ready">—</div>
+        <div class="metric-label">Ready to Post</div>
+      </div>
+      <div class="metric-card" style="cursor:pointer" onclick="editMovementStat('followers')">
+        <div class="metric-value" id="mv-followers">—</div>
+        <div class="metric-label">Followers (tap to update)</div>
+      </div>
+      <div class="metric-card" style="cursor:pointer" onclick="editMovementStat('workshops')">
+        <div class="metric-value" id="mv-workshops">—</div>
+        <div class="metric-label">Workshop Attendees (tap to update)</div>
+      </div>
+      <div class="metric-card" style="cursor:pointer" onclick="editMovementStat('emaillist')">
+        <div class="metric-value" id="mv-emaillist">—</div>
+        <div class="metric-label">Email List (tap to update)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: PERSONAL CONTENT (MY VIDEOS) -->
+  <section class="section" id="personal">
+    <div class="section-header">
+      <div class="section-title">@manasa_mdoju — Batch Session</div>
+      <a href="https://www.notion.so/bf128d29af114825b63666c6fea65c1c" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none;">Open in Notion →</a>
+    </div>
+    <div class="video-grid" id="video-grid">
+      <div class="loading">Loading videos</div>
+    </div>
+  </section>
+
+  <!-- SECTION 2b: WEEKLY DEBRIEF -->
+  <section class="section" id="debrief">
+    <div class="section-header">
+      <div class="section-title">Weekly Debrief</div>
+      <button onclick="runDebrief()" style="background:var(--red);border:none;color:white;padding:6px 14px;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;">Run Debrief</button>
+    </div>
+    <div id="debrief-content">
+      <div class="empty" style="padding:24px;text-align:center;color:var(--text-muted)">
+        Run the weekly debrief agent to generate content ideas and movement insights.<br>
+        <code style="font-size:11px;color:var(--text-dim);margin-top:8px;display:block">python agents/09-weekly-debrief/weekly_debrief.py</code>
+      </div>
+    </div>
+    <div id="debrief-ideas" style="margin-top:16px;display:none">
+      <div class="section-title" style="margin-bottom:12px;font-size:11px">LAST GENERATED VIDEO IDEAS</div>
+      <div class="video-grid" id="debrief-video-grid"></div>
+    </div>
+  </section>
+
+  <!-- AI NEWS FINDER -->
+  <section class="section" id="ai-news">
+    <div class="section-header">
+      <div class="section-title">DigiMAIDS — Trending AI News Finder</div>
+      <button id="ai-news-btn" onclick="runAiNews()" style="background:var(--purple);border:none;color:white;padding:6px 14px;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;">Find This Week's Content</button>
+    </div>
+    <div id="ai-news-status" style="color:var(--text-muted);font-size:12px;margin-bottom:12px;display:none"></div>
+    <div id="ai-news-results" style="display:none">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">TOP 5 — PICK ONE TO SCHEDULE FOR TUESDAY</div>
+      <div id="ai-news-cards" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div id="ai-news-empty" class="empty" style="padding:20px;text-align:center;color:var(--text-muted)">
+      Click "Find This Week's Content" to search for top-performing AI &amp; marketing reels from competitor accounts.
+    </div>
+  </section>
+
+  <!-- SECTION 3: WEEK CALENDAR -->
+  <section class="section" id="calendar">
+    <div class="section-header">
+      <div class="section-title">This Week's Content</div>
+    </div>
+    <div class="cal-accounts">
+      <div class="cal-acct">
+        <div class="cal-acct-header dm">
+          <span>@digimaids</span>
+          <a href="https://www.notion.so/305b8948348d80999df2d1b209800cec" target="_blank" style="font-size:10px;color:var(--text-muted);text-decoration:none">Notion →</a>
+        </div>
+        <div id="cal-dm"></div>
+      </div>
+      <div class="cal-acct">
+        <div class="cal-acct-header pm">
+          <span>@manasa_mdoju</span>
+          <a href="https://www.notion.so/bf128d29af114825b63666c6fea65c1c" target="_blank" style="font-size:10px;color:var(--text-muted);text-decoration:none">Notion →</a>
+        </div>
+        <div id="cal-pm"></div>
+      </div>
+      <div class="cal-acct">
+        <div class="cal-acct-header bwh">
+          <span>@buildwithher</span>
+          <a href="https://www.notion.so/e7d8155bee154b2fa685ccd46cc87f2f" target="_blank" style="font-size:10px;color:var(--text-muted);text-decoration:none">Notion →</a>
+        </div>
+        <div id="cal-bwh"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO MODAL -->
+  <div class="modal-overlay" id="video-modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="modal-type-badge" id="modal-type"></div>
+      <div class="modal-hook" id="modal-hook"></div>
+      <div class="modal-points" id="modal-points"></div>
+      <div class="modal-footer">
+        <button class="modal-btn primary" id="modal-notion-btn" onclick="openModalNotion()">Open in Notion →</button>
+        <button class="modal-btn secondary" onclick="closeModal()">Close</button>
+        <span class="modal-date-meta" id="modal-date-meta"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: INTERVIEW PIPELINE -->
+  <section class="section" id="pipeline">
+    <div class="section-header">
+      <div class="section-title">Interview Pipeline</div>
+    </div>
+    <div class="kanban" id="kanban">
+      <div class="kanban-col">
+        <div class="kanban-col-header" style="border-top:3px solid var(--red)">Needs Brief <span class="kanban-count" id="kc-brief">0</span></div>
+        <div class="kanban-cards" id="k-needs-brief"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-header" style="border-top:3px solid var(--yellow-light)">Brief Sent <span class="kanban-count" id="kc-sent">0</span></div>
+        <div class="kanban-cards" id="k-brief-sent"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-header" style="border-top:3px solid var(--blue-light)">In Editing <span class="kanban-count" id="kc-editing">0</span></div>
+        <div class="kanban-cards" id="k-editing"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-header" style="border-top:3px solid #34d399">Ready to Post <span class="kanban-count" id="kc-ready">0</span></div>
+        <div class="kanban-cards" id="k-ready"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-header" style="border-top:3px solid var(--green-light)">Posted <span class="kanban-count" id="kc-posted">0</span></div>
+        <div class="kanban-cards" id="k-posted"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: TASKS -->
+  <section class="section" id="tasks">
+    <div class="section-header">
+      <div class="section-title">Task Board</div>
+    </div>
+    <div class="task-board">
+      <div class="task-col" ondragover="onDragOver(event)" ondrop="onDrop(event,'todo')">
+        <div class="task-col-header todo">To Do <button class="task-add-btn" onclick="showInput('todo')">+</button></div>
+        <div class="task-input-row" id="input-todo">
+          <input type="text" placeholder="New task..." id="new-task-todo" onkeydown="if(event.key==='Enter')addTask('todo')">
+          <button onclick="addTask('todo')">Add</button>
+        </div>
+        <div class="task-list" id="tasks-todo"></div>
+      </div>
+      <div class="task-col" ondragover="onDragOver(event)" ondrop="onDrop(event,'editor')">
+        <div class="task-col-header editor">Send to Editor <button class="task-add-btn" onclick="showInput('editor')">+</button></div>
+        <div class="task-input-row" id="input-editor">
+          <input type="text" placeholder="New task..." id="new-task-editor" onkeydown="if(event.key==='Enter')addTask('editor')">
+          <button onclick="addTask('editor')">Add</button>
+        </div>
+        <div class="task-list" id="tasks-editor"></div>
+      </div>
+      <div class="task-col" ondragover="onDragOver(event)" ondrop="onDrop(event,'done')">
+        <div class="task-col-header done">Done <button class="task-add-btn" onclick="showInput('done')">+</button></div>
+        <div class="task-input-row" id="input-done">
+          <input type="text" placeholder="New task..." id="new-task-done" onkeydown="if(event.key==='Enter')addTask('done')">
+          <button onclick="addTask('done')">Add</button>
+        </div>
+        <div class="task-list" id="tasks-done"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── NOTION API ──────────────────────────────────────────────────────────────
+async function notionPost(token, path, payload = {}, method = 'POST') {
+  try {
+    const r = await fetch(CONFIG.PROXY_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({token, path, method, payload})
+    });
+    return await r.json();
+  } catch(e) { console.error('Proxy error:', e); return null; }
+}
+
+async function notionGet(token, path) {
+  return notionPost(token, path, {}, 'GET');
+}
+
+async function queryDB(token, dbId, filter = {}, sorts = []) {
+  const payload = {};
+  if (Object.keys(filter).length) payload.filter = filter;
+  if (sorts.length) payload.sorts = sorts;
+  const data = await notionPost(token, `databases/${dbId}/query`, payload);
+  return data?.results || [];
+}
+
+function getTitle(page) {
+  const props = page.properties || {};
+  for (const k of ['Content name','Title','Guest Name','Full Name','Name']) {
+    const arr = props[k]?.title || [];
+    if (arr.length) return arr[0]?.plain_text || '';
+  }
+  return 'Untitled';
+}
+function getRichText(page, key) {
+  return (page.properties?.[key]?.rich_text || [])[0]?.plain_text || '';
+}
+function getURL(page, key) { return page.properties?.[key]?.url || ''; }
+function getSelect(page, key) { return page.properties?.[key]?.select?.name || ''; }
+function getCheckbox(page, key) { return !!page.properties?.[key]?.checkbox; }
+function getDate(page, key) { return page.properties?.[key]?.date?.start || ''; }
+function hasFiles(page, key) { return (page.properties?.[key]?.files || []).length > 0; }
+
+// ── DATE HELPERS ───────────────────────────────────────────────────────────
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const ABBR = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function getWeekDates() {
+  const today = new Date();
+  const dow = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  return Array.from({length:7}, (_,i) => { const d=new Date(monday); d.setDate(monday.getDate()+i); return d; });
+}
+
+function isoDate(d) { return d.toISOString().split('T')[0]; }
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+}
+
+// ── SECTION 1: METRICS ─────────────────────────────────────────────────────
+async function loadMetrics() {
+  if (!CONFIG.NOTION_PERSONAL_KEY || !CONFIG.BWH_INTERVIEWS_DB_ID) return;
+
+  const backlog = await queryDB(CONFIG.NOTION_PERSONAL_KEY, CONFIG.BWH_INTERVIEWS_DB_ID, {
+    property:'Overall Status', select:{does_not_equal:'Posted'}
+  });
+  document.getElementById('m-backlog').textContent = backlog.length;
+
+  const ready = backlog.filter(p => getCheckbox(p,'Approved for Posting'));
+  document.getElementById('m-ready').textContent = ready.length;
+
+  const posted = await queryDB(CONFIG.NOTION_PERSONAL_KEY, CONFIG.BWH_INTERVIEWS_DB_ID, {
+    property:'Overall Status', select:{equals:'Posted'}
+  });
+  const weekDates = getWeekDates().map(isoDate);
+  document.getElementById('m-posted-week').textContent =
+    posted.filter(p => weekDates.includes(getDate(p,'Post Date'))).length;
+
+  if (CONFIG.NOTION_DIGIMAIDS_KEY && CONFIG.DIGIMAIDS_CALENDAR_DB_ID) {
+    let cnt = 0;
+    for (const d of weekDates) {
+      const rows = await queryDB(CONFIG.NOTION_DIGIMAIDS_KEY, CONFIG.DIGIMAIDS_CALENDAR_DB_ID, {
+        property:'Publish date', date:{equals:d}
+      });
+      cnt += rows.length;
+    }
+    document.getElementById('m-digi-scheduled').textContent = cnt;
+  }
+
+  if (CONFIG.NOTION_PERSONAL_KEY && CONFIG.PERSONAL_CALENDAR_DB_ID) {
+    const personalRows = await queryDB(CONFIG.NOTION_PERSONAL_KEY, CONFIG.PERSONAL_CALENDAR_DB_ID);
+    const readyPersonal = personalRows.filter(p => {
+      const s = getSelect(p,'Status') || '';
+      return hasFiles(p,'Raw Footage') || s === 'Script Ready';
+    });
+    document.getElementById('m-personal-ready').textContent = readyPersonal.length;
+  }
+}
+
+// ── SECTION 2: PERSONAL VIDEO CARDS ────────────────────────────────────────
+const TYPE_CLASSES = {
+  'Building in Public': 'type-bip',
+  'Interview Drop':     'type-iv',
+  'Framework / Process':'type-fw',
+  'Viral Format':       'type-vf',
+  'What Didnt Work':    'type-wdw',
+  'Day in the Life':    'type-ditl',
+  'Storytime':          'type-st',
+};
+
+function statusClass(s) {
+  if (!s || s === 'Not started') return 'status-notstarted';
+  if (s === 'In progress') return 'status-inprogress';
+  if (s === 'Done') return 'status-done';
+  return 'status-notstarted';
+}
+
+async function loadPersonalVideos() {
+  const grid = document.getElementById('video-grid');
+  grid.innerHTML = '<div class="loading">Loading videos</div>';
+
+  if (!CONFIG.NOTION_PERSONAL_KEY || !CONFIG.PERSONAL_CALENDAR_DB_ID) {
+    grid.innerHTML = '<div class="empty">Personal calendar DB not configured.</div>';
+    return;
+  }
+
+  const pages = await queryDB(
+    CONFIG.NOTION_PERSONAL_KEY,
+    CONFIG.PERSONAL_CALENDAR_DB_ID,
+    {},
+    [{property:'Post Date', direction:'ascending'}]
+  );
+
+  if (!pages.length) {
+    grid.innerHTML = '<div class="empty">No videos found.</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  for (const page of pages) {
+    const title    = getTitle(page);
+    const hook     = getRichText(page, 'Hook') || title;
+    const type     = getSelect(page, 'Content Type');
+    const status   = getSelect(page, 'Status') || 'Script Ready';
+    const postDate = getDate(page, 'Post Date');
+    const hasFoot  = hasFiles(page, 'Raw Footage');
+    const url      = page.url || '#';
+
+    const typeLabel = type || 'Video';
+    const typeClass = TYPE_CLASSES[type] || 'type-bip';
+
+    // Store page data for modal
+    const pageData = {
+      hook, type: typeLabel, status, postDate, url,
+      notionId: page.id
+    };
+
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.style.cursor = 'pointer';
+    card.innerHTML = `
+      ${hasFoot ? '<div class="video-has-footage" title="Raw footage uploaded"></div>' : ''}
+      <div class="video-card-top">
+        <div class="video-date">${fmtDate(postDate)}</div>
+        <div class="video-type ${typeClass}">${typeLabel}</div>
+      </div>
+      <div class="video-hook">${hook}</div>
+      <div class="video-card-footer">
+        <div class="video-status ${statusClass(status)}">${status}</div>
+        <div class="video-open">Tap to view →</div>
+      </div>
+    `;
+    card.addEventListener('click', () => openVideoModal(pageData));
+    grid.appendChild(card);
+  }
+}
+
+// ── SECTION 3: WEEK CALENDAR ────────────────────────────────────────────────
+const DIGI_SCHED = {
+  Monday:   {type:'Why Content',        cta:'Freebie + Discovery Call'},
+  Tuesday:  {type:'Trending AI News',   cta:'Follow'},
+  Wednesday:{type:'Workflow I Built',   cta:'Freebie + Discovery Call'},
+  Thursday: {type:'Show Don\'t Tell',   cta:'Discovery Call'},
+  Friday:   {type:'Weekly AI Recap',    cta:'Follow'},
+  Saturday: {type:'Trending Outlier',   cta:'Follow'},
+  Sunday:   {type:'REST',               cta:'—'},
+};
+const PERSONAL_SCHED = {
+  Monday:   {type:'Building in Public', cta:'Follow'},
+  Tuesday:  {type:'Interview Drop',     cta:'Follow'},
+  Wednesday:{type:'Framework/Process',  cta:'WhatsApp Community'},
+  Thursday: {type:'Viral Format',       cta:'Tag a Woman'},
+  Friday:   {type:'What Didn\'t Work',  cta:'Follow'},
+  Saturday: {type:'Day in the Life',    cta:'Skool Community'},
+  Sunday:   {type:'Interview Drop',     cta:'Follow'},
+};
+const BWH_SCHED = {
+  Monday:{type:'Street Interview',cta:'Follow + Tag'},
+  Tuesday:{type:'Street Interview',cta:'Follow'},
+  Wednesday:{type:'Street Interview',cta:'Tag a Woman'},
+  Thursday:{type:'Street Interview',cta:'Follow + Share'},
+  Friday:{type:'Street Interview',cta:'Follow'},
+  Saturday:{type:'Street Interview',cta:'Follow + Tag'},
+  Sunday:{type:'Street Interview',cta:'Follow'},
+};
+
+function pillHTML(status) {
+  const map = {
+    'Filming':'pill-filming','Drafting':'pill-filming',
+    'Published':'pill-posted','Posted':'pill-posted',
+    'Approved for publishing':'pill-ready','Ready to Upload':'pill-ready',
+    'Scheduled':'pill-ready','Scheduled to Post':'pill-ready',
+    'In progress':'pill-filming','Script Ready':'pill-filming',
+    'Done':'pill-posted','Ready to Post':'pill-ready',
+    'Not started':'pill-draft',
+  };
+  const cls = map[status] || 'pill-draft';
+  return `<span class="pill ${cls}">${status || 'Draft'}</span>`;
+}
+
+async function loadCalendar() {
+  const weekDates = getWeekDates();
+  const today = isoDate(new Date());
+
+  // Fetch all week's data in parallel
+  const digiRows = CONFIG.NOTION_DIGIMAIDS_KEY && CONFIG.DIGIMAIDS_CALENDAR_DB_ID
+    ? await queryDB(CONFIG.NOTION_DIGIMAIDS_KEY, CONFIG.DIGIMAIDS_CALENDAR_DB_ID, {
+        and: [
+          {property:'Publish date', date:{on_or_after: isoDate(weekDates[0])}},
+          {property:'Publish date', date:{on_or_before: isoDate(weekDates[6])}}
+        ]
+      }) : [];
+
+  const personalRows = CONFIG.NOTION_PERSONAL_KEY && CONFIG.PERSONAL_CALENDAR_DB_ID
+    ? await queryDB(CONFIG.NOTION_PERSONAL_KEY, CONFIG.PERSONAL_CALENDAR_DB_ID, {
+        and: [
+          {property:'Post Date', date:{on_or_after: isoDate(weekDates[0])}},
+          {property:'Post Date', date:{on_or_before: isoDate(weekDates[6])}}
+        ]
+      }) : [];
+
+  // Index by date
+  const digiMap = {}, personalMap = {};
+  for (const r of digiRows) {
+    const d = getDate(r,'Publish date'); if (d) (digiMap[d] = digiMap[d]||[]).push(r);
+  }
+  for (const r of personalRows) {
+    const d = getDate(r,'Post Date'); if (d) (personalMap[d] = personalMap[d]||[]).push(r);
+  }
+
+  const calDm  = document.getElementById('cal-dm');
+  const calPm  = document.getElementById('cal-pm');
+  const calBwh = document.getElementById('cal-bwh');
+  calDm.innerHTML = ''; calPm.innerHTML = ''; calBwh.innerHTML = '';
+
+  for (const d of weekDates) {
+    const ds = isoDate(d);
+    const dayName = DAY_NAMES[d.getDay()];
+    const isToday = ds === today;
+
+    calDm.appendChild( makeCalRow(ds, dayName, isToday, digiMap[ds]||null,     DIGI_SCHED[dayName],     'dm'));
+    calPm.appendChild( makeCalRow(ds, dayName, isToday, personalMap[ds]||null, PERSONAL_SCHED[dayName], 'pm'));
+    calBwh.appendChild(makeCalRow(ds, dayName, isToday, null,                  BWH_SCHED[dayName],      'bwh'));
+  }
+}
+
+function makeCalRow(ds, dayName, isToday, rows, tmpl, acct) {
+  const row = document.createElement('div');
+  row.className = `cal-row${isToday ? ' today-row' : ''}`;
+
+  const dateCol = document.createElement('div');
+  dateCol.className = 'cal-date';
+  const d = new Date(ds + 'T00:00:00');
+  dateCol.innerHTML = `<span class="dow">${ABBR[d.getDay()]}</span><span class="dom">${d.getDate()}</span>`;
+
+  const infoCol = document.createElement('div');
+  infoCol.className = 'cal-info';
+
+  if (acct === 'dm' && dayName === 'Sunday') {
+    infoCol.innerHTML = `<div class="cal-info-type" style="color:var(--text-dim)">Rest day</div>`;
+  } else if (rows && rows.length) {
+    for (const r of rows) {
+      const title = getTitle(r);
+      const status = getSelect(r,'Status') || getSelect(r,'Overall Status') || 'Draft';
+      const type = getSelect(r,'Content Type') || getSelect(r,'Content name') || '';
+      infoCol.innerHTML += `
+        <div class="cal-info-title">${title}</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:2px">
+          ${type ? `<span class="cal-info-type">${type}</span>` : ''}
+          ${pillHTML(status)}
+        </div>`;
+    }
+  } else if (tmpl) {
+    infoCol.innerHTML = `
+      <div class="cal-info-type">${tmpl.type}</div>
+      <span class="pill pill-missing">Missing</span>`;
+  } else {
+    infoCol.innerHTML = `<div class="cal-info-type" style="color:var(--text-dim)">—</div>`;
+  }
+
+  row.appendChild(dateCol);
+  row.appendChild(infoCol);
+  return row;
+}
+
+// ── SECTION 4: PIPELINE ────────────────────────────────────────────────────
+async function loadPipeline() {
+  if (!CONFIG.NOTION_PERSONAL_KEY || !CONFIG.BWH_INTERVIEWS_DB_ID) return;
+  const all = await queryDB(CONFIG.NOTION_PERSONAL_KEY, CONFIG.BWH_INTERVIEWS_DB_ID);
+
+  const cols = {'k-needs-brief':[],'k-brief-sent':[],'k-editing':[],'k-ready':[],'k-posted':[]};
+  const countMap = {'k-needs-brief':'kc-brief','k-brief-sent':'kc-sent','k-editing':'kc-editing','k-ready':'kc-ready','k-posted':'kc-posted'};
+
+  for (const p of all) {
+    const stage = getSelect(p,'Overall Status') || '';
+    if (stage === 'Posted' || stage === 'Archived') cols['k-posted'].push(p);
+    else if (getCheckbox(p,'Approved for Posting') || stage === 'Ready to Post') cols['k-ready'].push(p);
+    else if (stage === 'Editing' || stage === 'Start Editing' || (getSelect(p,'Editing Status')||'').includes('In Progress')) cols['k-editing'].push(p);
+    else if (getCheckbox(p,'AI Brief Sent')) cols['k-brief-sent'].push(p);
+    else cols['k-needs-brief'].push(p);
+  }
+
+  for (const [colId, pages] of Object.entries(cols)) {
+    const cont = document.getElementById(colId);
+    const cnt  = document.getElementById(countMap[colId]);
+    cont.innerHTML = '';
+    if (cnt) cnt.textContent = pages.length;
+    if (!pages.length) { cont.innerHTML = '<div class="empty" style="padding:8px">Empty</div>'; continue; }
+    for (const p of pages.slice(0,15)) {
+      const name    = getTitle(p);
+      const handle  = getURL(p,'Instagram Handle or URL') || '';
+      const business= getRichText(p,'Business / Brand Name') || '';
+      const editSt  = getSelect(p,'Editing Status') || '';
+      const due     = getDate(p,'Editor Due Date') || getDate(p,'Scheduled Post Date') || '';
+      const interviewDate = getDate(p,'Interview Date') || '';
+      const card  = document.createElement('div');
+      card.className = 'kanban-card';
+      const igUser = handle ? handle.replace(/https?:\/\/(www\.)?instagram\.com\//,'@').split('?')[0].replace(/\/$/,'') : '';
+      card.innerHTML = `
+        <div class="name">${name}</div>
+        ${business?`<div class="handle">${business}</div>`:''}
+        ${igUser?`<div class="handle" style="color:var(--red-light)">${igUser}</div>`:''}
+        ${editSt?`<div class="due" style="color:var(--blue-light)">${editSt}</div>`:''}
+        ${interviewDate?`<div class="due">Interviewed: ${fmtDate(interviewDate)}</div>`:''}
+        ${due?`<div class="due" style="color:var(--yellow-light)">Editor due: ${fmtDate(due)}</div>`:''}
+      `;
+      cont.appendChild(card);
+    }
+    if (pages.length > 15) cont.innerHTML += `<div class="empty" style="padding:4px 8px">+${pages.length-15} more</div>`;
+  }
+}
+
+// ── SECTION 5: TASK BOARD ──────────────────────────────────────────────────
+const INIT_TASKS = {
+  todo: [
+    'Upload Elevate interviews to Google Drive',
+    'Fill in OFFERS_AND_FUNNELS.md with live links',
+    'Test Hook Finder on first interview',
+    'Film 12 DigiMAIDS AI clone videos',
+    'Film 12 personal talking head videos (batch)',
+    'Schedule June 2-14 content in RecurPost/Buffer',
+    'Add Gmail App Password to .env',
+    'Import 3 n8n workflow JSONs',
+  ],
+  editor: [
+    'Send editor SOP document',
+    'Send Frame.io feedback rules',
+    'Send brief card template',
+  ],
+  done: [
+    'Install Claude Code',
+    'Build Hook Finder agent',
+    'Create DigiMAIDS June 2-14 scripts (12)',
+    'Create @manasa_mdoju June 2-14 scripts (12)',
+    'Push DigiMAIDS calendar to Notion',
+    'Create personal content calendar DB',
+    'Set up all MCP servers',
+    'Build all 8 agents',
+    'Build 3 n8n workflows',
+    'Build Command Center dashboard',
+    'Fix dashboard navigation + colors',
+  ],
+};
+
+let tasks = {}, dragSrc = null;
+
+function saveTasks() { localStorage.setItem('cc-tasks-v2', JSON.stringify(tasks)); }
+
+function loadTasksFromStorage() {
+  const saved = localStorage.getItem('cc-tasks-v2');
+  if (saved) { try { tasks = JSON.parse(saved); return; } catch(e) {} }
+  tasks = {
+    todo:   INIT_TASKS.todo.map((t,i)   => ({id:`t${i}`,  text:t, done:false})),
+    editor: INIT_TASKS.editor.map((t,i) => ({id:`e${i}`,  text:t, done:false})),
+    done:   INIT_TASKS.done.map((t,i)   => ({id:`d${i}`,  text:t, done:true})),
+  };
+  saveTasks();
+}
+
+function renderTasks() {
+  for (const col of ['todo','editor','done']) {
+    const cont = document.getElementById(`tasks-${col}`);
+    cont.innerHTML = '';
+    for (const task of (tasks[col]||[])) {
+      const item = document.createElement('div');
+      item.className = `task-item${task.done?' done-item':''}`;
+      item.draggable = true;
+      item.dataset.id = task.id;
+      item.dataset.col = col;
+      item.innerHTML = `
+        <span class="task-drag-handle">⠿</span>
+        <div class="task-check${task.done?' checked':''}" onclick="toggleTask('${col}','${task.id}')">${task.done?'✓':''}</div>
+        <span>${task.text}</span>
+      `;
+      item.addEventListener('dragstart', e => { dragSrc={id:task.id,col}; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+      item.addEventListener('dragend', () => item.classList.remove('dragging'));
+      cont.appendChild(item);
+    }
+  }
+}
+
+function toggleTask(col, id) {
+  const t = (tasks[col]||[]).find(t=>t.id===id);
+  if (t) { t.done=!t.done; saveTasks(); renderTasks(); }
+}
+function showInput(col) {
+  const el = document.getElementById(`input-${col}`);
+  el.classList.toggle('visible');
+  if (el.classList.contains('visible')) document.getElementById(`new-task-${col}`).focus();
+}
+function addTask(col) {
+  const inp = document.getElementById(`new-task-${col}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!tasks[col]) tasks[col]=[];
+  tasks[col].push({id:`task-${Date.now()}`,text,done:col==='done'});
+  saveTasks(); renderTasks(); inp.value='';
+  document.getElementById(`input-${col}`).classList.remove('visible');
+}
+function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+function onDrop(e, targetCol) {
+  e.preventDefault();
+  if (!dragSrc) return;
+  const {id, col:srcCol} = dragSrc;
+  if (srcCol===targetCol) return;
+  const srcList = tasks[srcCol]||[];
+  const idx = srcList.findIndex(t=>t.id===id);
+  if (idx===-1) return;
+  const [task] = srcList.splice(idx,1);
+  task.done = targetCol==='done';
+  if (!tasks[targetCol]) tasks[targetCol]=[];
+  tasks[targetCol].unshift(task);
+  saveTasks(); renderTasks(); dragSrc=null;
+}
+
+// ── ANALYTICS ─────────────────────────────────────────────────────────────
+const STAT_LABELS = {
+  ig_followers:'IG Followers', tiktok_followers:'TikTok Followers',
+  linkedin_followers:'LinkedIn Followers', youtube_subs:'YouTube Subs',
+  avg_views:'Avg Views/Reel', posts_month:'Posts This Month',
+  best_reel:'Best Reel (views)', total_interviews:'Total Interviews'
+};
+
+async function loadAnalytics() {
+  // Use bundled JS data (written by fetch_analytics.py) or fall back to server
+  const applyData = (data) => {
+    const accts = data.accounts || {};
+    const MAP = {
+      digi:   {ig_followers:'ig_followers', tiktok_followers:'tiktok_followers', avg_views:'ig_avg_views', youtube_subs:'youtube_subs'},
+      manasa: {ig_followers:'ig_followers', tiktok_followers:'tiktok_followers', avg_views:'ig_avg_views'},
+      bwh:    {ig_followers:'ig_followers', tiktok_followers:'tiktok_followers', avg_views:'ig_avg_views'},
+    };
+    for (const [acct, fields] of Object.entries(MAP)) {
+      const src = accts[acct] || {};
+      for (const [displayKey, srcKey] of Object.entries(fields)) {
+        const el = document.getElementById(`s-${acct}-${displayKey}`);
+        if (el && src[srcKey] !== undefined && src[srcKey] !== 0) {
+          el.textContent = Number(src[srcKey]).toLocaleString();
+          localStorage.setItem(`stat-${acct}-${displayKey}`, src[srcKey]);
+        }
+      }
+    }
+    const updated = data.updated ? new Date(data.updated).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+    if (updated) document.getElementById('analytics-updated').textContent = updated;
+  };
+
+  if (window.ANALYTICS_DATA) {
+    applyData(window.ANALYTICS_DATA);
+  } else {
+    try {
+      const analyticsUrl = window.location.protocol === 'file:'
+        ? 'http://localhost:8765/analytics'
+        : '/analytics';
+      const resp = await fetch(analyticsUrl, {signal: AbortSignal.timeout(3000)});
+      if (resp.ok) applyData(await resp.json());
+    } catch(e) {}
+  }
+
+  // Always overlay with any manual localStorage overrides
+  const accts = ['digi','manasa','bwh'];
+  const stats = ['ig_followers','tiktok_followers','linkedin_followers','youtube_subs','avg_views','posts_month','best_reel','total_interviews'];
+  for (const a of accts) {
+    for (const s of stats) {
+      const el = document.getElementById(`s-${a}-${s}`);
+      if (!el) continue;
+      const val = localStorage.getItem(`stat-${a}-${s}`);
+      if (val) el.textContent = isNaN(val) ? val : Number(val).toLocaleString();
+    }
+  }
+  const ts = localStorage.getItem('analytics-updated');
+  if (ts) document.getElementById('analytics-updated').textContent = new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function editStat(acct, key) {
+  const label = STAT_LABELS[key] || key;
+  const acctLabel = {digi:'@digimaids', manasa:'@manasa_mdoju', bwh:'@buildwithher'}[acct];
+  const current = localStorage.getItem(`stat-${acct}-${key}`) || '';
+  const val = prompt(`${acctLabel} — ${label}:`, current);
+  if (val === null) return;
+  const clean = val.replace(/[,k]/gi, v => v.toLowerCase()==='k' ? '000' : '');
+  if (clean && !isNaN(clean)) {
+    localStorage.setItem(`stat-${acct}-${key}`, clean);
+  } else if (val.trim()) {
+    localStorage.setItem(`stat-${acct}-${key}`, val.trim());
+  }
+  localStorage.setItem('analytics-updated', new Date().toISOString());
+  loadAnalytics();
+}
+
+function resetAnalytics() {
+  if (!confirm('Reset all analytics data?')) return;
+  const accts = ['digi','manasa','bwh'];
+  const stats = ['ig_followers','tiktok_followers','linkedin_followers','youtube_subs','avg_views','posts_month','best_reel','total_interviews'];
+  for (const a of accts) for (const s of stats) localStorage.removeItem(`stat-${a}-${s}`);
+  localStorage.removeItem('analytics-updated');
+  loadAnalytics();
+}
+
+// ── VIDEO MODAL ────────────────────────────────────────────────────────────
+let _modalNotionUrl = '#';
+
+function openVideoModal(data) {
+  _modalNotionUrl = data.url || '#';
+
+  document.getElementById('modal-type').textContent = data.type || '';
+  document.getElementById('modal-hook').textContent = data.hook || '';
+  document.getElementById('modal-date-meta').textContent = data.postDate ? fmtDate(data.postDate) : '';
+
+  // Fetch the full page to get talking points from page content
+  const pts = document.getElementById('modal-points');
+  pts.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:4px 0">Loading talking points...</div>';
+
+  document.getElementById('video-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Fetch the Notion page body to extract talking points
+  fetchPageContent(data.notionId).then(points => {
+    pts.innerHTML = '';
+    if (points.length) {
+      points.forEach((pt, i) => {
+        const row = document.createElement('div');
+        row.className = 'modal-point';
+        row.innerHTML = `<span class="modal-point-num">${i+1}</span><span class="modal-point-text">${pt}</span>`;
+        pts.appendChild(row);
+      });
+    } else {
+      pts.innerHTML = '<div style="color:var(--text-muted);font-size:13px">No talking points found — open in Notion to add them.</div>';
+    }
+  });
+}
+
+async function fetchPageContent(pageId) {
+  if (!pageId) return [];
+  try {
+    const data = await notionGet(CONFIG.NOTION_PERSONAL_KEY, `blocks/${pageId}/children`);
+    const blocks = data?.results || [];
+    const points = [];
+    for (const b of blocks) {
+      const type = b.type;
+      const texts = b[type]?.rich_text || [];
+      const text = texts.map(t => t.plain_text).join('').trim();
+      // Numbered list items or bulleted items are talking points
+      if ((type === 'numbered_list_item' || type === 'bulleted_list_item') && text) {
+        points.push(text);
+      }
+      // Also grab paragraph lines that look like "1. ..." or "2. ..."
+      if (type === 'paragraph' && /^\d+\./.test(text)) {
+        points.push(text.replace(/^\d+\.\s*/, ''));
+      }
+    }
+    return points;
+  } catch(e) { return []; }
+}
+
+function closeModal() {
+  document.getElementById('video-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function openModalNotion() {
+  window.open(_modalNotionUrl, '_blank');
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── MOVEMENT TRACKER ───────────────────────────────────────────────────────
+function loadMovementManual() {
+  const keys = ['followers','workshops','emaillist'];
+  const defaults = {followers:'0', workshops:'0', emaillist:'0'};
+  for (const k of keys) {
+    const val = localStorage.getItem(`mv-${k}`) || defaults[k];
+    const el = document.getElementById(`mv-${k}`);
+    if (el) el.textContent = Number(val).toLocaleString();
+  }
+}
+
+function editMovementStat(key) {
+  const label = {followers:'Followers', workshops:'Workshop Attendees', emaillist:'Email List'}[key];
+  const current = localStorage.getItem(`mv-${key}`) || '0';
+  const val = prompt(`Update ${label}:`, current);
+  if (val !== null && !isNaN(val.replace(/,/g,''))) {
+    localStorage.setItem(`mv-${key}`, val.replace(/,/g,''));
+    loadMovementManual();
+  }
+}
+
+async function loadMovementMetrics() {
+  if (!CONFIG.NOTION_PERSONAL_KEY || !CONFIG.BWH_INTERVIEWS_DB_ID) return;
+  const all = await queryDB(CONFIG.NOTION_PERSONAL_KEY, CONFIG.BWH_INTERVIEWS_DB_ID);
+  const interviewedStatuses = ['Interviewed','Start Editing','Editing','Ready for Review','Ready to Post','Posted','Archived'];
+  const interviewed = all.filter(p => interviewedStatuses.includes(getSelect(p,'Overall Status'))).length;
+  const posted = all.filter(p => getSelect(p,'Overall Status') === 'Posted').length;
+  const ready = all.filter(p => getSelect(p,'Overall Status') === 'Ready to Post').length;
+  document.getElementById('mv-interviewed').textContent = interviewed;
+  document.getElementById('mv-posted').textContent = posted;
+  document.getElementById('mv-ready').textContent = ready;
+}
+
+// ── WEEKLY DEBRIEF ─────────────────────────────────────────────────────────
+// ── AI NEWS FINDER ──────────────────────────────────────────────────────────
+async function runAiNews() {
+  const btn    = document.getElementById('ai-news-btn');
+  const status = document.getElementById('ai-news-status');
+  const results= document.getElementById('ai-news-results');
+  const empty  = document.getElementById('ai-news-empty');
+  const cards  = document.getElementById('ai-news-cards');
+
+  btn.disabled = true;
+  btn.textContent = 'Searching...';
+  status.style.display = 'block';
+  status.textContent = 'Asking Claude to find top AI & marketing content this week... (up to 60s)';
+  empty.style.display = 'none';
+  results.style.display = 'none';
+
+  try {
+    const resp = await fetch('http://localhost:8765/run-ai-news', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      status.textContent = 'Error: ' + (data.error || 'Unknown error');
+      empty.style.display = 'block';
+      return;
+    }
+
+    const items = data.results || [];
+    status.textContent = `Found ${items.length} top picks. Choose one to schedule for Tuesday.`;
+    cards.innerHTML = '';
+
+    items.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:border-color .15s';
+      card.onmouseenter = () => card.style.borderColor = 'var(--purple)';
+      card.onmouseleave = () => card.style.borderColor = 'var(--border)';
+      card.innerHTML = `
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="background:var(--purple);color:white;font-weight:800;font-size:14px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+          <div style="flex:1">
+            <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px">"${item.hook}"</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px"><span style="color:var(--purple-light)">${item.creator}</span> · ${item.platform}</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-bottom:6px">${item.topic}</div>
+            <div style="font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:6px;margin-top:4px"><strong style="color:var(--red-light)">Our angle:</strong> ${item.digimaids_angle}</div>
+          </div>
+          <button onclick="scheduleAiNews(${i})" style="background:var(--purple);border:none;color:white;padding:6px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Schedule →</button>
+        </div>`;
+      cards.appendChild(card);
+    });
+
+    results.style.display = 'block';
+    // Cache results for scheduling
+    window._aiNewsResults = items;
+
+  } catch(e) {
+    status.textContent = 'Could not reach server. Make sure python dashboard/server.py is running.';
+    empty.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Find This Week's Content";
+  }
+}
+
+async function scheduleAiNews(index) {
+  const item = (window._aiNewsResults || [])[index];
+  if (!item) return;
+  if (!confirm(`Schedule this for Tuesday?\n\n"${item.hook}"\n\nThis will create a Notion entry in the DigiMAIDS calendar.`)) return;
+
+  const status = document.getElementById('ai-news-status');
+  status.textContent = 'Creating Notion entry...';
+
+  try {
+    const resp = await fetch('http://localhost:8765/schedule-ai-news', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({item})
+    });
+    const data = await resp.json();
+    if (data.url) {
+      status.innerHTML = `✅ Scheduled for ${data.post_date}! <a href="${data.url}" target="_blank" style="color:var(--purple-light);text-decoration:underline">Open in Notion →</a>`;
+    } else {
+      status.textContent = 'Error: ' + (data.error || 'Failed to create entry');
+    }
+  } catch(e) {
+    status.textContent = 'Error reaching server.';
+  }
+}
+
+function runDebrief() {
+  const el = document.getElementById('debrief-content');
+  el.innerHTML = `<div style="padding:16px;color:var(--text-muted);font-size:13px">
+    To run the weekly debrief:<br><br>
+    <code style="background:var(--card);padding:8px 12px;border-radius:5px;display:block;color:var(--text);font-size:12px">
+      cd "${window.location.hostname === 'localhost' ? 'C:/Users/mamid/manasa-content-agency' : '.'}"<br>
+      python agents/09-weekly-debrief/weekly_debrief.py
+    </code><br>
+    Or for a preview without sending:<br>
+    <code style="background:var(--card);padding:8px 12px;border-radius:5px;display:block;color:var(--text);font-size:12px">
+      python agents/09-weekly-debrief/weekly_debrief.py --dry-run
+    </code><br>
+    <span style="color:var(--text-dim);font-size:11px">This generates 6 video ideas, a movement insight, and emails you a brief every Sunday.</span>
+  </div>`;
+
+  // Show any cached debrief ideas from localStorage
+  const cached = localStorage.getItem('last-debrief');
+  if (cached) {
+    try {
+      const data = JSON.parse(cached);
+      showDebriefIdeas(data);
+    } catch(e) {}
+  }
+}
+
+function showDebriefIdeas(debrief) {
+  const grid = document.getElementById('debrief-video-grid');
+  const ideas = debrief.video_ideas || [];
+  if (!ideas.length) return;
+  grid.innerHTML = '';
+  document.getElementById('debrief-ideas').style.display = '';
+  for (const v of ideas) {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    const pts = (v.talking_points||[]).map(p=>`<div style="font-size:11px;color:var(--text-muted);padding:2px 0">${p}</div>`).join('');
+    card.innerHTML = `
+      <div class="video-card-top">
+        <div class="video-type type-bip">${v.content_type||''}</div>
+      </div>
+      <div class="video-hook">${v.hook||''}</div>
+      <div style="margin:8px 0 4px">${pts}</div>
+      <div style="font-size:10px;color:var(--red);margin-top:6px">${v.cta||''}</div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+// ── NAV ────────────────────────────────────────────────────────────────────
+function navTo(el, id) {
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+let activeFilter = null;
+function filterCalendar(el, acct) {
+  if (activeFilter === acct) {
+    activeFilter = null;
+    document.querySelectorAll('.cal-acct').forEach(c => c.style.display='');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  } else {
+    activeFilter = acct;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.cal-acct').forEach(c => c.style.display='none');
+    const map = {dm:'cal-dm', pm:'cal-pm', bwh:'cal-bwh'};
+    const target = document.getElementById(map[acct])?.closest('.cal-acct');
+    if (target) target.style.display='';
+  }
+  document.getElementById('calendar')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+function setDateHeader() {
+  document.getElementById('page-date').textContent =
+    new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+}
+
+async function refreshAll() {
+  document.getElementById('last-refresh').textContent = 'Refreshing...';
+  await Promise.all([loadMetrics(), loadMovementMetrics(), loadPersonalVideos(), loadCalendar(), loadPipeline()]);
+  loadMovementManual();
+  document.getElementById('last-refresh').textContent =
+    'Updated ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+
+setDateHeader();
+loadTasksFromStorage();
+renderTasks();
+loadAnalytics();
+refreshAll();
+setInterval(refreshAll, CONFIG.REFRESH_INTERVAL);
+</script>
+
+</body>
+</html>

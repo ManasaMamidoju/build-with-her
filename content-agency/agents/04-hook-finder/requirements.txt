@@ -1,0 +1,6 @@
+anthropic
+openai
+gdown
+moviepy
+notion-client
+python-dotenv

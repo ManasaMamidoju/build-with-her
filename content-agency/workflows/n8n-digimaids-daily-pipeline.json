@@ -1,0 +1,149 @@
+{
+  "name": "DigiMAIDS Daily Content Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * 1-6"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Daily 6am (Mon-Sat)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /app/manasa-content-agency && python agents/08-pipeline-runner/run_pipeline.py --account digimaids --skip-reporter 2>&1"
+      },
+      "id": "run-pipeline",
+      "name": "Run Pipeline (Trend + Script + Caption)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.stdout }}",
+              "operation": "contains",
+              "value2": "Pipeline complete"
+            }
+          ]
+        }
+      },
+      "id": "check-success",
+      "name": "Pipeline succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /app/manasa-content-agency && python agents/06-daily-reporter/daily_reporter.py 2>&1"
+      },
+      "id": "run-reporter",
+      "name": "Send Morning Brief",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [660, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v19.0/={{ $env.WHATSAPP_PHONE_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "messaging_product",
+              "value": "whatsapp"
+            },
+            {
+              "name": "to",
+              "value": "={{ $env.WHATSAPP_TO_NUMBER }}"
+            },
+            {
+              "name": "type",
+              "value": "text"
+            },
+            {
+              "name": "text",
+              "value": "={ \"body\": \"PIPELINE FAILED\\n\\n{{ $json.stdout }}\" }"
+            }
+          ]
+        }
+      },
+      "id": "alert-failure",
+      "name": "Alert: Pipeline Failed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [660, 420]
+    }
+  ],
+  "connections": {
+    "Daily 6am (Mon-Sat)": {
+      "main": [
+        [
+          {
+            "node": "Run Pipeline (Trend + Script + Caption)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Pipeline (Trend + Script + Caption)": {
+      "main": [
+        [
+          {
+            "node": "Pipeline succeeded?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipeline succeeded?": {
+      "main": [
+        [
+          {
+            "node": "Send Morning Brief",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert: Pipeline Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": ["digimaids", "daily", "content"],
+  "notes": "Runs Mon-Sat at 6am. Triggers full pipeline: Trend Scout → Script Writer → Caption Writer → Morning Brief. Sends WhatsApp alert if any step fails."
+}

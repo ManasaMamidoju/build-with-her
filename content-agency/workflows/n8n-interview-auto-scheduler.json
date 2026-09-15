@@ -1,0 +1,152 @@
+{
+  "name": "Interview Auto-Scheduler (Sunday Night)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 20 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "sunday-cron",
+      "name": "Every Sunday 8pm",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 300],
+      "notes": "Runs every Sunday at 8pm to plan the coming week"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": "={{ $env.NOTION_INTERVIEW_PIPELINE_DB_ID }}",
+        "returnAll": false,
+        "limit": 7,
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Stage",
+              "condition": "select_equals",
+              "value": "Approved"
+            }
+          ]
+        },
+        "options": {
+          "sort": [
+            {
+              "key": "Priority",
+              "direction": "descending"
+            }
+          ]
+        }
+      },
+      "id": "get-approved-interviews",
+      "name": "Get Approved Interviews (up to 7)",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "notes": "Fetches interviews with Stage=Approved, sorted by priority. Gets up to 7 for the week."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Assign each approved interview to a posting slot in the next 7 days\n// Personal brand posts interviews every day\nconst items = $input.all();\nconst today = new Date();\nconst results = [];\n\nconst dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];\n\nfor (let i = 0; i < items.length; i++) {\n  const postDate = new Date(today);\n  postDate.setDate(today.getDate() + i + 1); // start tomorrow\n  \n  const isoDate = postDate.toISOString().split('T')[0];\n  const dayName = dayNames[postDate.getDay()];\n  \n  results.push({\n    json: {\n      pageId: items[i].json.id,\n      guestName: items[i].json.properties?.['Guest Name']?.title?.[0]?.plain_text || 'Unknown',\n      scheduledDate: isoDate,\n      dayName: dayName,\n      slot: 'Interview Drop'\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "assign-dates",
+      "name": "Assign Posting Dates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "notes": "Assigns each interview to a day in the next 7 days"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": "={{ $json.pageId }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Post Date",
+              "type": "date",
+              "date": "={{ $json.scheduledDate }}"
+            },
+            {
+              "key": "Stage",
+              "type": "select",
+              "selectValue": "Scheduled"
+            }
+          ]
+        }
+      },
+      "id": "update-notion",
+      "name": "Update Notion: Set Date + Scheduled",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [660, 300],
+      "notes": "Sets Post Date and changes Stage to Scheduled for each interview"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a summary of this week's schedule\nconst items = $input.all();\nlet lines = ['📅 WEEKLY INTERVIEW SCHEDULE SET\\n'];\n\nfor (const item of items) {\n  lines.push(`${item.json.dayName} ${item.json.scheduledDate}: ${item.json.guestName}`);\n}\n\nlines.push('\\nAll interviews scheduled for next 7 days. ✓');\n\nreturn [{ json: { message: lines.join('\\n') } }];"
+      },
+      "id": "build-summary",
+      "name": "Build Schedule Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v19.0/={{ $env.WHATSAPP_PHONE_ID }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $env.WHATSAPP_TO_NUMBER }}\",\n  \"type\": \"text\",\n  \"text\": { \"body\": \"{{ $json.message }}\" }\n}"
+      },
+      "id": "send-whatsapp",
+      "name": "Send Schedule Summary via WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "Every Sunday 8pm": {
+      "main": [[{ "node": "Get Approved Interviews (up to 7)", "type": "main", "index": 0 }]]
+    },
+    "Get Approved Interviews (up to 7)": {
+      "main": [[{ "node": "Assign Posting Dates", "type": "main", "index": 0 }]]
+    },
+    "Assign Posting Dates": {
+      "main": [[{ "node": "Update Notion: Set Date + Scheduled", "type": "main", "index": 0 }]]
+    },
+    "Update Notion: Set Date + Scheduled": {
+      "main": [[{ "node": "Build Schedule Summary", "type": "main", "index": 0 }]]
+    },
+    "Build Schedule Summary": {
+      "main": [[{ "node": "Send Schedule Summary via WhatsApp", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": ["interviews", "personal-brand", "scheduler"],
+  "notes": "Every Sunday at 8pm: grabs up to 7 Approved interviews, assigns them to Mon-Sun, sets Stage=Scheduled in Notion, sends you a WhatsApp summary."
+}

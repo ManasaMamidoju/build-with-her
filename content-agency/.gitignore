@@ -1,0 +1,5 @@
+.env
+.claude/settings.local.json
+skills/marketing/
+skills/n8n-skills/
+dashboard/config.local.js

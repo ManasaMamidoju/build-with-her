@@ -1,0 +1,181 @@
+{
+  "name": "Editor Brief Sender",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "send-editor-brief",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook: Trigger Brief",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [0, 300],
+      "webhookId": "editor-brief-sender",
+      "notes": "POST to /webhook/send-editor-brief to trigger manually, OR use the cron below for automatic daily check"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-cron",
+      "name": "Daily 9am Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 500],
+      "notes": "Auto-checks every morning at 9am for unsent briefs"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": "={{ $env.NOTION_INTERVIEW_PIPELINE_DB_ID }}",
+        "returnAll": false,
+        "limit": 10,
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "AI Brief Sent",
+              "condition": "checkbox_is_not_true"
+            },
+            {
+              "key": "Hook Quote",
+              "condition": "rich_text_is_not_empty"
+            }
+          ]
+        }
+      },
+      "id": "get-unbriefed",
+      "name": "Get Interviews: Brief Not Sent",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [220, 400],
+      "notes": "Finds interviews where AI Brief Sent=false AND Hook Quote is filled (meaning Hook Finder ran)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $input.all().length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "has-unbriefed",
+      "name": "Any unsent briefs?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build editor brief card for each interview\nconst items = $input.all();\nconst briefs = [];\n\nfor (const item of items) {\n  const props = item.json.properties || {};\n  \n  const guestName = props['Guest Name']?.title?.[0]?.plain_text || 'Unknown';\n  const guestHandle = props['Guest IG Handle']?.rich_text?.[0]?.plain_text || '';\n  const hookQuote = props['Hook Quote']?.rich_text?.[0]?.plain_text || '';\n  const hookTimestamp = props['Hook Timestamp']?.rich_text?.[0]?.plain_text || '';\n  const hookMomentNotes = props['Hook Moment Notes']?.rich_text?.[0]?.plain_text || '';\n  const driveLink = props['Drive Link']?.url || props['Raw Video Link']?.url || '';\n  const interviewType = props['Interview Type']?.select?.name || 'Street Interview';\n  const postDate = props['Post Date']?.date?.start || 'TBD';\n\n  const briefMessage = [\n    `🎬 EDITOR BRIEF — ${guestName}`,\n    `━━━━━━━━━━━━━━━━━━━━━`,\n    `Guest: ${guestName}${guestHandle ? ' (' + guestHandle + ')' : ''}`,\n    `Type: ${interviewType}`,\n    `Target Post Date: ${postDate}`,\n    ``,\n    `🎯 HOOK`,\n    `Quote: \"${hookQuote}\"`,\n    `Timestamp: ${hookTimestamp}`,\n    ``,\n    `📝 EDITOR NOTES`,\n    hookMomentNotes || 'See raw footage.',\n    ``,\n    `📁 RAW FOOTAGE`,\n    driveLink || 'Check Google Drive — link TBD',\n    ``,\n    `📐 SPECS`,\n    `Short-form: 30-90 sec, 9:16, hook in first 3 sec`,\n    `Long-form: Full interview, 16:9, chapters every 3-5 min`,\n    `Captions: White text, black outline, 1 word highlighted per phrase`,\n    `Color: Warm, vibrant, natural skin tones`,\n    `File name: BWH_${guestName.split(' ').pop()}_SF_v1.mp4`,\n    ``,\n    `Deliver to Google Drive. Reply when done. 💜`\n  ].join('\\n');\n\n  briefs.push({\n    json: {\n      pageId: item.json.id,\n      guestName,\n      briefMessage\n    }\n  });\n}\n\nreturn briefs;"
+      },
+      "id": "build-brief-cards",
+      "name": "Build Editor Brief Cards",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v19.0/={{ $env.WHATSAPP_PHONE_ID }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $env.WHATSAPP_TO_NUMBER }}\",\n  \"type\": \"text\",\n  \"text\": { \"body\": \"{{ $json.briefMessage }}\" }\n}"
+      },
+      "id": "send-brief-whatsapp",
+      "name": "Send Brief via WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [880, 300],
+      "notes": "Sends the brief card to Manasa's WhatsApp so she can forward to editor"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": "={{ $json.pageId }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "AI Brief Sent",
+              "type": "checkbox",
+              "checkboxValue": true
+            }
+          ]
+        }
+      },
+      "id": "mark-brief-sent",
+      "name": "Mark AI Brief Sent = true",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [1100, 300],
+      "notes": "Marks AI Brief Sent=true so this interview won't be triggered again"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "No unsent briefs found."
+      },
+      "id": "no-briefs-response",
+      "name": "Respond: Nothing to Send",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [660, 500]
+    }
+  ],
+  "connections": {
+    "Webhook: Trigger Brief": {
+      "main": [[{ "node": "Get Interviews: Brief Not Sent", "type": "main", "index": 0 }]]
+    },
+    "Daily 9am Check": {
+      "main": [[{ "node": "Get Interviews: Brief Not Sent", "type": "main", "index": 0 }]]
+    },
+    "Get Interviews: Brief Not Sent": {
+      "main": [[{ "node": "Any unsent briefs?", "type": "main", "index": 0 }]]
+    },
+    "Any unsent briefs?": {
+      "main": [
+        [{ "node": "Build Editor Brief Cards", "type": "main", "index": 0 }],
+        [{ "node": "Respond: Nothing to Send", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Editor Brief Cards": {
+      "main": [[{ "node": "Send Brief via WhatsApp", "type": "main", "index": 0 }]]
+    },
+    "Send Brief via WhatsApp": {
+      "main": [[{ "node": "Mark AI Brief Sent = true", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": ["interviews", "editor", "briefs"],
+  "notes": "Triggers daily at 9am OR via webhook. Finds interviews where Hook Quote is filled but AI Brief Sent=false. Builds editor brief card, sends via WhatsApp, marks as sent in Notion."
+}
