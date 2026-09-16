@@ -110,6 +110,24 @@ export type Database = {
           },
         ];
       };
+      blog_post_views: {
+        Row: {
+          slug: string;
+          updated_at: string;
+          views: number;
+        };
+        Insert: {
+          slug: string;
+          updated_at?: string;
+          views?: number;
+        };
+        Update: {
+          slug?: string;
+          updated_at?: string;
+          views?: number;
+        };
+        Relationships: [];
+      };
       bookings: {
         Row: {
           cancelled_at: string | null;
@@ -1640,6 +1658,12 @@ export type Database = {
           _user_id: string;
         };
         Returns: boolean;
+      };
+      increment_blog_post_view: {
+        Args: {
+          _slug: string;
+        };
+        Returns: undefined;
       };
       people_find_or_create: {
         Args: {

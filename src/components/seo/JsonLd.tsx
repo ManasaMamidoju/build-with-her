@@ -52,3 +52,32 @@ export function FaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
     />
   );
 }
+
+export function BlogPostingJsonLd({
+  slug,
+  title,
+  description,
+  datePublished,
+}: {
+  slug: string;
+  title: string;
+  description: string;
+  datePublished: string;
+}) {
+  const url = `${SITE.url}/blog/${slug}`;
+  return (
+    <Script
+      data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description,
+        datePublished,
+        author: { "@type": "Person", name: "Manasa" },
+        publisher: { "@type": "Organization", name: SITE.name },
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        url,
+      }}
+    />
+  );
+}

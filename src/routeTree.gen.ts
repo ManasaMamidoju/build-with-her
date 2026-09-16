@@ -23,6 +23,8 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin.route'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
@@ -123,6 +125,16 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
@@ -311,12 +323,14 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
@@ -356,12 +370,14 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/blog': typeof BlogIndexRoute
   '/learn': typeof LearnIndexRoute
   '/services': typeof ServicesIndexRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
@@ -404,12 +420,14 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
@@ -452,12 +470,14 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
+    | '/blog/$slug'
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/blog/'
     | '/learn/'
     | '/services/'
     | '/admin/calendar'
@@ -497,12 +517,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/blog/$slug'
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/blog'
     | '/learn'
     | '/services'
     | '/admin/calendar'
@@ -544,12 +566,14 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
+    | '/blog/$slug'
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/blog/'
     | '/learn/'
     | '/services/'
     | '/_authenticated/admin/calendar'
@@ -591,10 +615,12 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   ESlugRoute: typeof ESlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
   ScoreQuizRoute: typeof ScoreQuizRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   ScoreRTokenRoute: typeof ScoreRTokenRoute
@@ -699,6 +725,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/e/$slug': {
       id: '/e/$slug'
@@ -1014,10 +1054,12 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  BlogSlugRoute: BlogSlugRoute,
   ESlugRoute: ESlugRoute,
   LearnSlugRoute: LearnSlugRoute,
   ScoreQuizRoute: ScoreQuizRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   ScoreRTokenRoute: ScoreRTokenRoute,
