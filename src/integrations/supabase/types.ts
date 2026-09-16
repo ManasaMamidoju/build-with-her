@@ -439,6 +439,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "episodes_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "episodes_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
@@ -621,6 +628,13 @@ export type Database = {
             columns: ["interview_id"]
             isOneToOne: false
             referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_pages_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews_public"
             referencedColumns: ["id"]
           },
           {
@@ -1280,6 +1294,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "projects_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "projects_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
@@ -1623,6 +1644,42 @@ export type Database = {
       }
     }
     Views: {
+      interviews_public: {
+        Row: {
+          business_name: string | null
+          event_name: string | null
+          final_video_link: string | null
+          full_name: string | null
+          id: string | null
+          instagram: string | null
+          interview_date: string | null
+          posted_links: string | null
+          slug: string | null
+        }
+        Insert: {
+          business_name?: string | null
+          event_name?: string | null
+          final_video_link?: string | null
+          full_name?: string | null
+          id?: string | null
+          instagram?: string | null
+          interview_date?: string | null
+          posted_links?: string | null
+          slug?: string | null
+        }
+        Update: {
+          business_name?: string | null
+          event_name?: string | null
+          final_video_link?: string | null
+          full_name?: string | null
+          id?: string | null
+          instagram?: string | null
+          interview_date?: string | null
+          posted_links?: string | null
+          slug?: string | null
+        }
+        Relationships: []
+      }
       people_merge_candidates: {
         Row: {
           name_similarity: number | null
