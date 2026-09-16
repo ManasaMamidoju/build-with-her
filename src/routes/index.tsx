@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
+import { TestimonialsComingSoon } from "@/components/site/TestimonialsComingSoon";
 import { FaqJsonLd, OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 import { canonical, SITE } from "@/lib/site";
 
@@ -185,6 +186,10 @@ function Home() {
           No episodes published yet. The first ones appear here as soon as they go live, each with
           the guest, her business and her links.
         </p>
+      </section>
+
+      <section className="container-editorial pb-16 md:pb-24">
+        <TestimonialsComingSoon />
       </section>
 
       <section className="bg-secondary">

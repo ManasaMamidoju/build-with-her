@@ -97,6 +97,10 @@ function ServicesPage() {
       </section>
 
       <section className="mt-16">
+        <TestimonialsComingSoon />
+      </section>
+
+      <section className="mt-16">
         <h2 className="text-2xl">Questions women ask before they book</h2>
         <dl className="mt-7 space-y-6">
           {FAQS.map((faq) => (
