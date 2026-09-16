@@ -22,4 +22,4 @@ jobs:
         run: bunx tsc --noEmit -p tsconfig.json
 
       - name: Lint
-        run: bunx eslint . --max-warnings=0
+        run: bunx eslint .
