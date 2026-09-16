@@ -2,8 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { AuthedContext } from "@/lib/server-context";
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
+async function assertAdmin(context: AuthedContext) {
   const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
@@ -31,7 +32,9 @@ export const getPipeline = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("people")
-      .select("id, full_name, email, business_name, lead_stage, primary_source, identity_status, created_at")
+      .select(
+        "id, full_name, email, business_name, lead_stage, primary_source, identity_status, created_at",
+      )
       .order("created_at", { ascending: false })
       .limit(500);
     return data ?? [];
@@ -50,12 +53,14 @@ export const getStudioCalendar = createServerFn({ method: "GET" })
 
     const { data: bookings } = await supabaseAdmin
       .from("bookings")
-      .select("id, user_id, service_slug, starts_at, ends_at, status")
+      .select("id, user_id, person_id, service_slug, starts_at, ends_at, status")
       .gte("starts_at", data.fromIso)
       .lt("starts_at", data.toIso)
       .order("starts_at", { ascending: true });
 
-    const ids = Array.from(new Set((bookings ?? []).map((b) => b.user_id)));
+    const ids = Array.from(
+      new Set((bookings ?? []).map((b) => b.user_id).filter((id): id is string => id !== null)),
+    );
     const { data: people } = ids.length
       ? await supabaseAdmin.from("profiles").select("id, full_name, email").in("id", ids)
       : { data: [] as { id: string; full_name: string | null; email: string | null }[] };
@@ -64,7 +69,9 @@ export const getStudioCalendar = createServerFn({ method: "GET" })
 
     return (bookings ?? []).map((b) => ({
       ...b,
-      personName: byId.get(b.user_id)?.full_name ?? byId.get(b.user_id)?.email ?? "Someone",
+      personName: b.user_id
+        ? (byId.get(b.user_id)?.full_name ?? byId.get(b.user_id)?.email ?? "Someone")
+        : "Guest",
     }));
   });
 
@@ -326,7 +333,9 @@ export const listEventAttendees = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows } = await supabaseAdmin
       .from("event_attendees")
-      .select("id, full_name, email, business_name, answers, consent_email, consent_sms, created_at")
+      .select(
+        "id, full_name, email, business_name, answers, consent_email, consent_sms, created_at",
+      )
       .eq("event_id", data.eventId)
       .order("created_at", { ascending: false });
     return rows ?? [];
@@ -411,9 +420,9 @@ export const importPeople = createServerFn({ method: "POST" })
             business_name?: string;
             phone?: string;
           } = {};
-          if (item.row.fullName) patch['full_name'] = item.row.fullName;
-          if (item.row.businessName) patch['business_name'] = item.row.businessName;
-          if (item.row.phone) patch['phone'] = item.row.phone;
+          if (item.row.fullName) patch["full_name"] = item.row.fullName;
+          if (item.row.businessName) patch["business_name"] = item.row.businessName;
+          if (item.row.phone) patch["phone"] = item.row.phone;
           if (Object.keys(patch).length === 0) continue;
           await supabaseAdmin.from("profiles").update(patch).eq("id", id);
           applied += 1;

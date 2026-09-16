@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Done
+
 - Foundation, theme, sign-in, legal pages, SEO scaffolding
 - Findability Score quiz, private result page, source capture, touchpoints
 - Member area: dashboard, score, settings, billing empty state, booking flow
@@ -18,17 +19,29 @@
 - Projects: steps, deliverables, editor queue, her approval view
 - Sprint A: bootcamp waitlist, canonical person linking, band-aware first offer, and service Q&A markup
 - Owner Google sign-in verified; account, profile, admin role, and canonical person link confirmed in the external database
+- Lint, prettier and type cleanup across the whole app; CI runs typecheck + lint on every push
+- Pricing gated to clients only: the 'client' app_role is granted automatically when a person's
+  pipeline stage reaches 'client'; everyone else sees where pricing comes from, not a number
+- Clarity Call / strategy consult booking now requires a completed Findability Score
+- Public, no-sign-in podcast guest booking at /podcast/book, sharing the same calendar engine
+- /blog: search, sort (recent / most viewed / A-Z), 5 opinion posts, view tracking, per-post SEO + JSON-LD
+- Testimonials-coming-soon placeholder on the homepage and services page
+- llms.txt fleshed out with the full page list and the pricing-gating note
 
 ## Next
+
 - Sprint A email automations through n8n: app triggers complete; reconnect n8n to create and verify workflows
 - Later email automations through n8n: booking confirmations and reminders
 - Payments with Stripe
-- Full site audit: link check, SEO pass
+- Real client testimonials once the first ones come in
+- Full site audit: link check, deeper SEO pass
 
 ## Answered
+
 - Backend is enabled and the app is connected to the owner's external database; the public data API is responding successfully.
 
 ## Database cleanup (done)
+
 - people table is the one canonical person record; all sources backfilled and linked by person_id
 - placeholder profiles from the interview import removed; profiles now only for people who signed in
 - duplicate review queue at /admin/duplicates, manual merge only

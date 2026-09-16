@@ -9,6 +9,21 @@ The SCALE rubric, five areas out of 100 points: Source (25), Clarity (20), Attra
 
 ## Pages
 - /: home, what the score is and the three ways in
+- /score/quiz: the free Findability Score quiz
+- /services: ways to work with us — clarity call, strategy consult, automation build, bootcamp, podcast, custom work
+- /podcast: the podcast, its formats, and how to be a guest
+- /podcast/book: book a podcast guest slot directly, no sign-in or score required
+- /learn: five free explainers on being found, booked and paid
+- /blog: opinions on findability, SEO, AEO and marketing advice, from Manasa
+- /about: who runs Build With Her Media
+- /mission: why the business exists
+- /community: the community
+- /events: upcoming events
+- /interviews: published guest interviews
+- /contact: how to reach us
 - /login: sign in with Google
 - /terms: terms of service
 - /privacy: privacy notice
+
+## Pricing
+Prices are shown on the site only to signed-in clients. Everyone else — including a signed-in lead who has taken the score but not yet paid for anything — sees "shared on your free Clarity Call" instead of a number. The Clarity Call itself is always free.

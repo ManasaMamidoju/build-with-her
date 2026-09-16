@@ -2,11 +2,7 @@ import { SITE } from "@/lib/site";
 
 export function Script({ data }: { data: Record<string, unknown> }) {
   return (
-    <script
-      type="application/ld+json"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
   );
 }
 
@@ -52,6 +48,35 @@ export function FaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
           name: item.q,
           acceptedAnswer: { "@type": "Answer", text: item.a },
         })),
+      }}
+    />
+  );
+}
+
+export function BlogPostingJsonLd({
+  slug,
+  title,
+  description,
+  datePublished,
+}: {
+  slug: string;
+  title: string;
+  description: string;
+  datePublished: string;
+}) {
+  const url = `${SITE.url}/blog/${slug}`;
+  return (
+    <Script
+      data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description,
+        datePublished,
+        author: { "@type": "Person", name: "Manasa" },
+        publisher: { "@type": "Organization", name: SITE.name },
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        url,
       }}
     />
   );

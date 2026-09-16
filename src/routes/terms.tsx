@@ -76,9 +76,9 @@ function TermsPage() {
         <section>
           <h2 className="text-2xl">Content and ownership</h2>
           <p className="mt-3">
-            You keep ownership of your brand, your words and the footage of you. We keep ownership of
-            our rubric, templates, systems and site content. When you appear on the podcast you allow
-            us to publish and promote the episode and the clips from it.
+            You keep ownership of your brand, your words and the footage of you. We keep ownership
+            of our rubric, templates, systems and site content. When you appear on the podcast you
+            allow us to publish and promote the episode and the clips from it.
           </p>
         </section>
 
@@ -93,8 +93,8 @@ function TermsPage() {
         <section>
           <h2 className="text-2xl">Changes</h2>
           <p className="mt-3">
-            If we change these terms we will post the new date at the top of this page. Continuing to
-            use the site means the new terms apply.
+            If we change these terms we will post the new date at the top of this page. Continuing
+            to use the site means the new terms apply.
           </p>
         </section>
       </div>

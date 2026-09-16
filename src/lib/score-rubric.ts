@@ -33,8 +33,7 @@ export const AREAS: Record<
     key: "clarity",
     title: "How clear your offer is",
     short: "Clarity",
-    blurb:
-      "Whether she understands in seconds what you do, for whom, what it costs, and why you.",
+    blurb: "Whether she understands in seconds what you do, for whom, what it costs, and why you.",
     points: 20,
   },
   attract: {

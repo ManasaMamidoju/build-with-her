@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createProject, listProjects } from "@/lib/projects.functions";
-import { PROJECT_TYPES, projectTypeLabel } from "@/lib/project-templates";
+import { PROJECT_TYPES, projectTypeLabel, type ProjectType } from "@/lib/project-templates";
 
 export const Route = createFileRoute("/_authenticated/admin/projects/")({
   head: () => ({
@@ -29,7 +29,7 @@ function Projects() {
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
   const [name, setName] = useState("");
-  const [newType, setNewType] = useState<string>("consult");
+  const [newType, setNewType] = useState<ProjectType>("consult");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "projects", type, status],
@@ -37,7 +37,7 @@ function Projects() {
   });
 
   const add = useMutation({
-    mutationFn: () => create({ data: { name, type: newType as any } }),
+    mutationFn: () => create({ data: { name, type: newType } }),
     onSuccess: () => {
       toast.success("Project created with its steps");
       setName("");
@@ -78,7 +78,7 @@ function Projects() {
           <select
             id="project-type"
             value={newType}
-            onChange={(event) => setNewType(event.target.value)}
+            onChange={(event) => setNewType(event.target.value as ProjectType)}
             className="mt-2 block h-10 rounded-md border border-input bg-background px-3 text-sm"
           >
             {PROJECT_TYPES.map((item) => (
@@ -131,7 +131,7 @@ function Projects() {
       ) : null}
 
       <div className="mt-6 space-y-3">
-        {rows.map((row: any) => (
+        {rows.map((row) => (
           <Link
             key={row.id}
             to="/admin/projects/$id"

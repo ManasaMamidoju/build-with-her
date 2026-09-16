@@ -15,8 +15,8 @@ type EmailAutomation =
     };
 
 export async function triggerN8nEmail(payload: EmailAutomation) {
-  const webhookUrl = process.env['N8N_EMAIL_WEBHOOK_URL'];
-  const webhookSecret = process.env['N8N_EMAIL_WEBHOOK_SECRET'];
+  const webhookUrl = process.env["N8N_EMAIL_WEBHOOK_URL"];
+  const webhookSecret = process.env["N8N_EMAIL_WEBHOOK_SECRET"];
 
   if (!webhookUrl || !webhookSecret) {
     console.warn(`n8n email skipped: ${payload.event} is not connected`);

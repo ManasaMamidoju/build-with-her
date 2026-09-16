@@ -39,10 +39,17 @@ function LearnIndex() {
 
       <div className="mt-10 grid gap-4">
         {ARTICLES.map((article) => (
-          <article key={article.slug} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+          <article
+            key={article.slug}
+            className="rounded-2xl border border-border bg-card p-6 shadow-card"
+          >
             <p className="eyebrow text-muted-foreground">{AREAS[article.area]?.short}</p>
             <h2 className="mt-2 text-2xl">
-              <Link to="/learn/$slug" params={{ slug: article.slug }} className="hover:text-primary">
+              <Link
+                to="/learn/$slug"
+                params={{ slug: article.slug }}
+                className="hover:text-primary"
+              >
                 {article.title}
               </Link>
             </h2>

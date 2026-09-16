@@ -36,10 +36,15 @@ export const BOOKABLE: BookableService[] = [
     name: "2-Hour Strategy Consult",
     durationMinutes: 120,
     blurb: "Two hours on your offer, pricing, pages and follow up, ending with a build plan.",
-    paymentNote: "Card payment turns on once our payment account is live. For now we hold your time and invoice you.",
+    paymentNote:
+      "Card payment turns on once our payment account is live. For now we hold your time and invoice you.",
     intake: [
       { id: "goal", label: "What do you want decided by the end?", long: true, required: true },
-      { id: "revenue", label: "Roughly what do you bring in each month?", helper: "A range is fine." },
+      {
+        id: "revenue",
+        label: "Roughly what do you bring in each month?",
+        helper: "A range is fine.",
+      },
       { id: "links", label: "Where can we see you online?" },
       { id: "blockers", label: "What have you already tried that did not work?", long: true },
     ],
@@ -48,6 +53,28 @@ export const BOOKABLE: BookableService[] = [
 
 export function bookableBySlug(slug: string): BookableService | undefined {
   return BOOKABLE.find((s) => s.slug === slug);
+}
+
+/** Podcast guest slots: booked publicly, with no sign-in and no score required. */
+export const PODCAST_BOOKABLE: BookableService[] = [
+  {
+    slug: "podcast-street",
+    name: "Street-style interview",
+    durationMinutes: 45,
+    blurb: "A short, on-the-street conversation, guided so you never freeze.",
+    intake: [],
+  },
+  {
+    slug: "podcast-longform",
+    name: "Long-form episode",
+    durationMinutes: 180,
+    blurb: "A full sit-down episode, half a day of filming with proper sound and lighting.",
+    intake: [],
+  },
+];
+
+export function podcastBookableBySlug(slug: string): BookableService | undefined {
+  return PODCAST_BOOKABLE.find((s) => s.slug === slug);
 }
 
 const dateFormat = new Intl.DateTimeFormat("en-US", {

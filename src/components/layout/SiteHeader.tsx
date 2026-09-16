@@ -15,6 +15,7 @@ const links = [
   { to: "/podcast", label: "Podcast" },
   { to: "/interviews", label: "Interviews" },
   { to: "/learn", label: "Learn" },
+  { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
 ] as const;
 
@@ -105,7 +106,11 @@ export function SiteHeader() {
               </Link>
             ))}
             {isAdmin ? (
-              <Link to="/admin" onClick={() => setOpen(false)} className="py-3 text-base text-primary">
+              <Link
+                to="/admin"
+                onClick={() => setOpen(false)}
+                className="py-3 text-base text-primary"
+              >
                 Studio
               </Link>
             ) : (

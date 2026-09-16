@@ -2,8 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { AuthedContext } from "@/lib/server-context";
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
+async function assertAdmin(context: AuthedContext) {
   const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
@@ -84,9 +85,7 @@ export const listPeople = createServerFn({ method: "GET" })
 
     if (data.search) {
       const term = `%${data.search}%`;
-      query = query.or(
-        `full_name.ilike.${term},email.ilike.${term},business_name.ilike.${term}`,
-      );
+      query = query.or(`full_name.ilike.${term},email.ilike.${term},business_name.ilike.${term}`);
     }
     if (data.stage) query = query.eq("lead_stage", data.stage);
 
@@ -153,7 +152,9 @@ export const getPerson = createServerFn({ method: "GET" })
 export const addPersonNote = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
-    z.object({ profileId: z.string().uuid(), body: z.string().trim().min(1).max(4000) }).parse(data),
+    z
+      .object({ profileId: z.string().uuid(), body: z.string().trim().min(1).max(4000) })
+      .parse(data),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);

@@ -3,8 +3,10 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { STAGE_TEMPLATES } from "@/lib/project-templates";
+import type { AuthedContext } from "@/lib/server-context";
+import type { Database } from "@/integrations/supabase/types";
 
-async function assertPodcastTeam(context: { supabase: any; userId: string }) {
+async function assertPodcastTeam(context: AuthedContext) {
   for (const role of ["admin", "content_manager"] as const) {
     const { data } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -96,11 +98,15 @@ export const updateApplication = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertPodcastTeam(context);
     const { id, ...rest } = data;
-    const patch = JSON.parse(JSON.stringify(rest)) as Record<string, unknown>;
-    patch['reviewed_by'] = context.userId;
-    patch['reviewed_at'] = new Date().toISOString();
-    const table = context.supabase.from("podcast_applications") as any;
-    const { error } = await table.update(patch).eq("id", id);
+    const patch = JSON.parse(
+      JSON.stringify(rest),
+    ) as Database["public"]["Tables"]["podcast_applications"]["Update"];
+    patch.reviewed_by = context.userId;
+    patch.reviewed_at = new Date().toISOString();
+    const { error } = await context.supabase
+      .from("podcast_applications")
+      .update(patch)
+      .eq("id", id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
@@ -161,8 +167,10 @@ export const startPodcastProject = createServerFn({ method: "POST" })
       revisions_allowed: application.format === "long" ? 0 : 2,
     });
 
-    const table2 = supabaseAdmin.from("podcast_applications") as any;
-    await table2.update({ status: "approved" }).eq("id", data.id);
+    await supabaseAdmin
+      .from("podcast_applications")
+      .update({ status: "approved" })
+      .eq("id", data.id);
 
     return { projectId: project.id as string };
   });

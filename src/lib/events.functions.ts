@@ -6,11 +6,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
 function publicClient() {
-  const key = process.env['SUPABASE_PUBLISHABLE_KEY']!;
-  return createClient<Database>(process.env['SUPABASE_URL']!, key, {
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+  return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
-      fetch: (input, init) => {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) => {
         const headers = new Headers(init?.headers);
         if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
           headers.delete("Authorization");
@@ -37,7 +37,9 @@ export const listPublicEvents = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const getPublicEvent = createServerFn({ method: "GET" })
-  .inputValidator((data: unknown) => z.object({ slug: z.string().trim().min(1).max(80) }).parse(data))
+  .inputValidator((data: unknown) =>
+    z.object({ slug: z.string().trim().min(1).max(80) }).parse(data),
+  )
   .handler(async ({ data }) => {
     const { data: row } = await publicClient()
       .from("events")
@@ -61,7 +63,7 @@ export const recordAttendance = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => attendSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const email = String(context.claims['email'] ?? "").toLowerCase();
+    const email = String(context.claims["email"] ?? "").toLowerCase();
     const { data: event } = await context.supabase
       .from("events")
       .select("id, slug, title")

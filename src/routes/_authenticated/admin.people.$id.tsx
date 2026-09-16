@@ -103,7 +103,7 @@ function PersonPage() {
             <p className="mt-3 text-base text-muted-foreground">Nothing on file.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-base text-muted-foreground">
-              {handles.map((handle: any) => (
+              {handles.map((handle) => (
                 <li key={handle.id}>
                   {handle.platform}: {handle.handle}
                 </li>
@@ -118,7 +118,7 @@ function PersonPage() {
             <p className="mt-3 text-base text-muted-foreground">She has not filmed with us.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-base text-muted-foreground">
-              {interviews.map((interview: any) => (
+              {interviews.map((interview) => (
                 <li key={interview.id}>
                   {[interview.event_name, interview.interview_date].filter(Boolean).join(", ")}
                   {" \u00b7 "}
@@ -128,7 +128,10 @@ function PersonPage() {
               ))}
             </ul>
           )}
-          <Link to="/admin/interviews" className="mt-3 inline-block text-sm text-primary hover:underline">
+          <Link
+            to="/admin/interviews"
+            className="mt-3 inline-block text-sm text-primary hover:underline"
+          >
             Update interview details
           </Link>
         </div>
@@ -139,7 +142,7 @@ function PersonPage() {
             <p className="mt-3 text-base text-muted-foreground">She has not taken it yet.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-base text-muted-foreground">
-              {scores.map((score: any) => (
+              {scores.map((score) => (
                 <li key={score.id} className="numeric">
                   {score.total_score} out of 100, {score.band}
                 </li>
@@ -154,7 +157,7 @@ function PersonPage() {
             <p className="mt-3 text-base text-muted-foreground">No sessions booked.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-base text-muted-foreground">
-              {bookings.map((booking: any) => (
+              {bookings.map((booking) => (
                 <li key={booking.id}>
                   {formatWhen(booking.starts_at)}, {booking.service_slug}, {booking.status}
                 </li>
@@ -169,7 +172,7 @@ function PersonPage() {
             <p className="mt-3 text-base text-muted-foreground">Not on any list.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-base text-muted-foreground">
-              {waitlists.map((row: any) => (
+              {waitlists.map((row) => (
                 <li key={row.id}>{row.service_slug}</li>
               ))}
             </ul>
@@ -182,7 +185,7 @@ function PersonPage() {
             <p className="mt-3 text-base text-muted-foreground">No application yet.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-base text-muted-foreground">
-              {applications.map((row: any) => (
+              {applications.map((row) => (
                 <li key={row.id}>
                   {row.format}, {row.status}
                 </li>
@@ -213,7 +216,7 @@ function PersonPage() {
           </p>
         ) : (
           <ul className="mt-5 space-y-3">
-            {notes.map((entry: any) => (
+            {notes.map((entry) => (
               <li key={entry.id} className="rounded-2xl border border-border p-4">
                 <p className="text-base">{entry.body}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{formatWhen(entry.created_at)}</p>
@@ -229,7 +232,7 @@ function PersonPage() {
           <p className="mt-3 text-base text-muted-foreground">Nothing recorded yet.</p>
         ) : (
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            {touchpoints.map((point: any) => (
+            {touchpoints.map((point) => (
               <li key={point.id}>
                 {formatWhen(point.created_at)}: {point.kind}
                 {point.source ? `, from ${point.source}` : ""}

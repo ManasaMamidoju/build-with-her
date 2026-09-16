@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { toast } from "sonner";
 
 import { RoseMark } from "@/components/brand/RoseMark";
+import { PriceTag } from "@/components/services/PriceTag";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -76,12 +77,7 @@ function ServiceDetail() {
 
       <h1 className="mt-6 max-w-3xl">{service.name}</h1>
       <p className="numeric mt-4 text-2xl text-primary">
-        {service.price}
-        {service.priceNote ? (
-          <span className="ml-3 align-middle text-base text-muted-foreground">
-            {service.priceNote}
-          </span>
-        ) : null}
+        <PriceTag service={service} />
       </p>
       <p className="prose-editorial mt-5 text-lg text-muted-foreground">{service.summary}</p>
       <p className="mt-3 text-base text-muted-foreground">{service.duration}</p>
@@ -150,7 +146,9 @@ function ServiceDetail() {
             >
               <p className="eyebrow text-muted-foreground">{other.step}</p>
               <p className="mt-2 text-lg">{other.name}</p>
-              <p className="numeric mt-1 text-base text-primary">{other.price}</p>
+              <p className="numeric mt-1 text-base text-primary">
+                <PriceTag service={other} />
+              </p>
             </Link>
           ))}
         </div>
@@ -192,7 +190,9 @@ function WaitlistForm({ service }: { service: Service }) {
       setDone(true);
     } catch (error) {
       console.error(error);
-      toast.error("We could not add you to the list. Please check your email address and try again.");
+      toast.error(
+        "We could not add you to the list. Please check your email address and try again.",
+      );
     } finally {
       setSaving(false);
     }

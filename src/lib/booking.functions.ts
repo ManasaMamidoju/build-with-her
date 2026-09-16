@@ -2,16 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { computeSlots, type Slot } from "@/lib/slot-engine.server";
 
-/**
- * Availability rules are stored as minutes past midnight in New York time.
- * Until Manasa's calendar is connected we use a fixed eastern offset, which is
- * correct for the months this launch covers.
- */
-const NEW_YORK_OFFSET_HOURS = 4;
-const DAYS_AHEAD = 21;
-
-export type Slot = { startsAt: string; endsAt: string };
+export type { Slot };
 
 export const getAvailability = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -31,38 +24,7 @@ export const getAvailability = createServerFn({ method: "GET" })
         .gte("starts_at", new Date().toISOString()),
     ]);
 
-    const rules = rulesRes.data ?? [];
-    const taken = (bookingsRes.data ?? []).map((row) => ({
-      start: new Date(row.starts_at).getTime(),
-      end: new Date(row.ends_at).getTime(),
-    }));
-
-    const now = Date.now();
-    const slots: Slot[] = [];
-
-    for (let dayOffset = 0; dayOffset < DAYS_AHEAD; dayOffset += 1) {
-      const day = new Date(now + dayOffset * 86400000);
-      const y = day.getUTCFullYear();
-      const m = day.getUTCMonth();
-      const d = day.getUTCDate();
-      const weekday = new Date(Date.UTC(y, m, d)).getUTCDay();
-
-      for (const rule of rules.filter((r) => r.weekday === weekday)) {
-        const step = Math.max(rule.slot_minutes, data.durationMinutes) + rule.buffer_minutes;
-        const noticeMs = rule.min_notice_hours * 3600000;
-
-        for (let minute = rule.start_minute; minute + data.durationMinutes <= rule.end_minute; minute += step) {
-          const start = Date.UTC(y, m, d, NEW_YORK_OFFSET_HOURS, minute);
-          const end = start + data.durationMinutes * 60000;
-          if (start < now + noticeMs) continue;
-          const clash = taken.some((b) => start < b.end && end > b.start);
-          if (clash) continue;
-          slots.push({ startsAt: new Date(start).toISOString(), endsAt: new Date(end).toISOString() });
-        }
-      }
-    }
-
-    return slots.sort((a, b) => a.startsAt.localeCompare(b.startsAt)).slice(0, 60);
+    return computeSlots(rulesRes.data ?? [], bookingsRes.data ?? [], data.durationMinutes);
   });
 
 const createSchema = z.object({
@@ -81,6 +43,25 @@ export const createBooking = createServerFn({ method: "POST" })
 
     if (start.getTime() < Date.now()) {
       throw new Error("That time has passed. Pick another one.");
+    }
+
+    const email = String(context.claims["email"] ?? "").toLowerCase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (email) {
+      await supabaseAdmin
+        .from("score_submissions")
+        .update({ claimed_by: context.userId })
+        .is("claimed_by", null)
+        .eq("email", email);
+    }
+    const { count: scoreCount } = await context.supabase
+      .from("score_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("claimed_by", context.userId);
+    if (!scoreCount) {
+      throw new Error(
+        "Take the Findability Score first, so we know what to focus this session on.",
+      );
     }
 
     const { data: clash } = await context.supabase
@@ -112,10 +93,9 @@ export const createBooking = createServerFn({ method: "POST" })
       throw new Error("We could not save that booking. Please try again.");
     }
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("touchpoints").insert({
       profile_id: context.userId,
-      email: String(context.claims['email'] ?? "") || null,
+      email: email || null,
       kind: "booking_created",
       detail: { service: data.serviceSlug, startsAt: start.toISOString() },
     });

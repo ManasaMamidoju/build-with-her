@@ -53,15 +53,15 @@ function ProjectDetail() {
   };
 
   const stageMutation = useMutation({
-    mutationFn: (input: { stageId: string; status: string }) =>
-      stageStatus({ data: { stageId: input.stageId, status: input.status as any } }),
+    mutationFn: (input: NonNullable<Parameters<typeof stageStatus>[0]>["data"]) =>
+      stageStatus({ data: input }),
     onSuccess: invalidate,
     onError: () => toast.error("That did not save."),
   });
 
   const projectMutation = useMutation({
-    mutationFn: (input: Record<string, unknown>) =>
-      persistProject({ data: { id, ...input } as any }),
+    mutationFn: (input: Omit<NonNullable<Parameters<typeof persistProject>[0]>["data"], "id">) =>
+      persistProject({ data: { id, ...input } }),
     onSuccess: () => {
       toast.success("Saved");
       invalidate();
@@ -70,7 +70,8 @@ function ProjectDetail() {
   });
 
   const deliverableMutation = useMutation({
-    mutationFn: (input: Record<string, unknown>) => persistDeliverable({ data: input as any }),
+    mutationFn: (input: NonNullable<Parameters<typeof persistDeliverable>[0]>["data"]) =>
+      persistDeliverable({ data: input }),
     onSuccess: () => {
       toast.success("Saved");
       setNewTitle("");
@@ -91,8 +92,7 @@ function ProjectDetail() {
     );
   }
 
-  const project = data.project as any;
-  const editors = (data.editors ?? []) as { id: string; full_name: string | null; email: string | null }[];
+  const { project, editors } = data;
 
   return (
     <div>
@@ -153,7 +153,7 @@ function ProjectDetail() {
       <section className="mt-10">
         <h2 className="text-2xl">Steps</h2>
         <ol className="mt-4 space-y-2">
-          {(data.stages ?? []).map((stage: any, index: number) => (
+          {(data.stages ?? []).map((stage, index: number) => (
             <li
               key={stage.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4"
@@ -164,7 +164,10 @@ function ProjectDetail() {
               <select
                 value={stage.status}
                 onChange={(event) =>
-                  stageMutation.mutate({ stageId: stage.id, status: event.target.value })
+                  stageMutation.mutate({
+                    stageId: stage.id,
+                    status: event.target.value as "todo" | "doing" | "done",
+                  })
                 }
                 className="h-9 rounded-md border border-input bg-background px-3 text-sm"
               >
@@ -209,7 +212,7 @@ function ProjectDetail() {
         </form>
 
         <div className="mt-4 space-y-3">
-          {(data.deliverables ?? []).map((item: any) => (
+          {(data.deliverables ?? []).map((item) => (
             <div key={item.id} className="rounded-2xl border border-border bg-card p-5 shadow-card">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-lg font-medium">{item.title}</p>

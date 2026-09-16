@@ -25,7 +25,10 @@ export const Route = createFileRoute("/_authenticated/admin/people/")({
       { title: "People | Build With Her Media studio" },
       { name: "description", content: "Everyone who has come through the door, in one place." },
       { property: "og:title", content: "People | Build With Her Media studio" },
-      { property: "og:description", content: "Everyone who has come through the door, in one place." },
+      {
+        property: "og:description",
+        content: "Everyone who has come through the door, in one place.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
@@ -34,15 +37,16 @@ export const Route = createFileRoute("/_authenticated/admin/people/")({
   component: PeopleList,
 });
 
+type Identity = (typeof IDENTITIES)[number]["value"];
+
 function PeopleList() {
   const fetchPeople = useServerFn(listPeopleRecords);
   const [search, setSearch] = useState("");
-  const [identity, setIdentity] = useState<string>("");
+  const [identity, setIdentity] = useState<Identity>("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "people", search, identity],
-    queryFn: () =>
-      fetchPeople({ data: { search, identity: (identity || undefined) as any } }),
+    queryFn: () => fetchPeople({ data: { search, identity: identity || undefined } }),
   });
 
   return (
@@ -95,7 +99,7 @@ function PeopleList() {
         <>
           <p className="mt-6 text-sm text-muted-foreground numeric">{data!.length} people</p>
           <ul className="mt-3 divide-y divide-border rounded-2xl border border-border bg-card">
-            {data!.map((person: any) => {
+            {data!.map((person) => {
               const interview = person.interviews?.[0];
               const handle = person.person_handles?.[0];
               return (
@@ -121,7 +125,9 @@ function PeopleList() {
                         {handle.platform}: {handle.handle}
                       </Tag>
                     ) : null}
-                    {interview ? <Tag>Interview: {interview.overall_status || "No status"}</Tag> : null}
+                    {interview ? (
+                      <Tag>Interview: {interview.overall_status || "No status"}</Tag>
+                    ) : null}
                   </div>
                 </li>
               );

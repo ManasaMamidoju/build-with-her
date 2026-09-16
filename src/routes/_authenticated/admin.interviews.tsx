@@ -52,7 +52,7 @@ function InterviewsTracker() {
   });
 
   const mutation = useMutation({
-    mutationFn: (input: Record<string, unknown>) => save({ data: input as any }),
+    mutationFn: (input: NonNullable<Parameters<typeof save>[0]>["data"]) => save({ data: input }),
     onSuccess: () => {
       toast.success("Saved");
       queryClient.invalidateQueries({ queryKey: ["admin", "interviews"] });
@@ -109,7 +109,7 @@ function InterviewsTracker() {
         </p>
       ) : (
         <ul className="mt-8 divide-y divide-border rounded-2xl border border-border bg-card">
-          {data!.map((row: any) => (
+          {data!.map((row) => (
             <li key={row.id} className="p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -174,14 +174,30 @@ function InterviewsTracker() {
                   </div>
 
                   <div className="flex flex-wrap gap-6 text-sm">
-                    <Check name="consent_confirmed" label="She confirmed consent" defaultChecked={row.consent_confirmed} />
-                    <Check name="approved_for_posting" label="Approved to post" defaultChecked={row.approved_for_posting} />
-                    <Check name="video_approved" label="She approved the edit" defaultChecked={row.video_approved} />
+                    <Check
+                      name="consent_confirmed"
+                      label="She confirmed consent"
+                      defaultChecked={row.consent_confirmed}
+                    />
+                    <Check
+                      name="approved_for_posting"
+                      label="Approved to post"
+                      defaultChecked={row.approved_for_posting}
+                    />
+                    <Check
+                      name="video_approved"
+                      label="She approved the edit"
+                      defaultChecked={row.video_approved}
+                    />
                   </div>
 
                   <label className="grid gap-2 text-sm">
                     Final video link
-                    <Input name="final_video_link" defaultValue={row.final_video_link ?? ""} className="h-11" />
+                    <Input
+                      name="final_video_link"
+                      defaultValue={row.final_video_link ?? ""}
+                      className="h-11"
+                    />
                   </label>
 
                   <label className="grid gap-2 text-sm">
@@ -233,7 +249,9 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 function Tag({ children }: { children: React.ReactNode }) {
-  return <span className="rounded-full bg-secondary px-2.5 py-1 text-muted-foreground">{children}</span>;
+  return (
+    <span className="rounded-full bg-secondary px-2.5 py-1 text-muted-foreground">{children}</span>
+  );
 }
 
 function Select({

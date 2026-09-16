@@ -3,10 +3,12 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { STAGE_TEMPLATES, type ProjectType } from "@/lib/project-templates";
+import type { AuthedContext } from "@/lib/server-context";
+import type { Database } from "@/integrations/supabase/types";
 
 async function hasAnyRole(
-  context: { supabase: any; userId: string },
-  roles: readonly string[],
+  context: AuthedContext,
+  roles: readonly Database["public"]["Enums"]["app_role"][],
 ) {
   for (const role of roles) {
     const { data } = await context.supabase.rpc("has_role", {
@@ -18,7 +20,7 @@ async function hasAnyRole(
   return false;
 }
 
-async function assertTeam(context: { supabase: any; userId: string }) {
+async function assertTeam(context: AuthedContext) {
   if (!(await hasAnyRole(context, ["admin", "content_manager"]))) throw new Error("Forbidden");
 }
 
@@ -67,7 +69,7 @@ export const listProjects = createServerFn({ method: "GET" })
 
     return projects.map((project) => ({
       ...project,
-      person: project.profile_id ? people.get(project.profile_id) ?? null : null,
+      person: project.profile_id ? (people.get(project.profile_id) ?? null) : null,
     }));
   });
 
@@ -198,10 +200,7 @@ export const setStageStatus = createServerFn({ method: "POST" })
     if (error) throw new Error("We could not update that step.");
 
     if (stage && data.status === "doing") {
-      await supabaseAdmin
-        .from("projects")
-        .update({ stage: stage.name })
-        .eq("id", stage.project_id);
+      await supabaseAdmin.from("projects").update({ stage: stage.name }).eq("id", stage.project_id);
     }
     return { ok: true as const };
   });
@@ -221,14 +220,13 @@ export const saveProject = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertTeam(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = {};
-    if (data.status !== undefined) patch['status'] = data.status;
-    if (data.notes !== undefined) patch['notes'] = data.notes;
+    const patch: Database["public"]["Tables"]["projects"]["Update"] = {};
+    if (data.status !== undefined) patch.status = data.status;
+    if (data.notes !== undefined) patch.notes = data.notes;
     if (data.dueAt !== undefined) {
-      patch['due_at'] = data.dueAt ? new Date(data.dueAt).toISOString() : null;
+      patch.due_at = data.dueAt ? new Date(data.dueAt).toISOString() : null;
     }
-    const projectsTable = supabaseAdmin.from("projects") as any;
-    const { error } = await projectsTable.update(patch).eq("id", data.id);
+    const { error } = await supabaseAdmin.from("projects").update(patch).eq("id", data.id);
     if (error) throw new Error("We could not save that.");
     return { ok: true as const };
   });
@@ -259,41 +257,40 @@ export const saveDeliverable = createServerFn({ method: "POST" })
     await assertTeam(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const patch: Record<string, unknown> = {};
-    if (data.title !== undefined) patch['title'] = data.title;
-    if (data.kind !== undefined) patch['kind'] = data.kind;
-    if (data.stage !== undefined) patch['stage'] = data.stage;
-    if (data.rawUrl !== undefined) patch['raw_url'] = data.rawUrl || null;
-    if (data.editedUrl !== undefined) patch['edited_url'] = data.editedUrl || null;
-    if (data.finalUrl !== undefined) patch['final_url'] = data.finalUrl || null;
-    if (data.publishedUrl !== undefined) patch['published_url'] = data.publishedUrl || null;
-    if (data.assignedTo !== undefined) patch['assigned_to'] = data.assignedTo || null;
+    const patch: Database["public"]["Tables"]["deliverables"]["Update"] = {};
+    if (data.title !== undefined) patch.title = data.title;
+    if (data.kind !== undefined) patch.kind = data.kind;
+    if (data.stage !== undefined) patch.stage = data.stage;
+    if (data.rawUrl !== undefined) patch.raw_url = data.rawUrl || null;
+    if (data.editedUrl !== undefined) patch.edited_url = data.editedUrl || null;
+    if (data.finalUrl !== undefined) patch.final_url = data.finalUrl || null;
+    if (data.publishedUrl !== undefined) patch.published_url = data.publishedUrl || null;
+    if (data.assignedTo !== undefined) patch.assigned_to = data.assignedTo || null;
     if (data.editorDueAt !== undefined) {
-      patch['editor_due_at'] = data.editorDueAt ? new Date(data.editorDueAt).toISOString() : null;
+      patch.editor_due_at = data.editorDueAt ? new Date(data.editorDueAt).toISOString() : null;
     }
-    if (data.cmApproved !== undefined) patch['cm_approved'] = data.cmApproved;
-    if (data.adminApproved !== undefined) patch['admin_approved'] = data.adminApproved;
+    if (data.cmApproved !== undefined) patch.cm_approved = data.cmApproved;
+    if (data.adminApproved !== undefined) patch.admin_approved = data.adminApproved;
     if (data.approvedForPosting !== undefined) {
-      patch['approved_for_posting'] = data.approvedForPosting;
+      patch.approved_for_posting = data.approvedForPosting;
     }
-    if (data.teamNotes !== undefined) patch['team_notes'] = data.teamNotes;
-    if (data.internalNotes !== undefined) patch['internal_notes'] = data.internalNotes;
+    if (data.teamNotes !== undefined) patch.team_notes = data.teamNotes;
+    if (data.internalNotes !== undefined) patch.internal_notes = data.internalNotes;
 
     // Sending a deliverable to her opens a five working day review window.
     if (data.stage === "client_review") {
-      patch['review_due_at'] = new Date(Date.now() + 7 * 86400000).toISOString();
+      patch.review_due_at = new Date(Date.now() + 7 * 86400000).toISOString();
     }
 
     if (data.id) {
-      const table = supabaseAdmin.from("deliverables") as any;
-      const { error } = await table.update(patch).eq("id", data.id);
+      const { error } = await supabaseAdmin.from("deliverables").update(patch).eq("id", data.id);
       if (error) throw new Error("We could not save that.");
       return { id: data.id };
     }
 
     if (!data.projectId) throw new Error("Pick a project first.");
-    const insertTable = supabaseAdmin.from("deliverables") as any;
-    const { data: row, error } = await insertTable
+    const { data: row, error } = await supabaseAdmin
+      .from("deliverables")
       .insert({ project_id: data.projectId, title: data.title ?? "New deliverable", ...patch })
       .select("id")
       .single();
@@ -320,7 +317,7 @@ export const listMyAssignments = createServerFn({ method: "GET" })
     const { data: projects } = await supabaseAdmin
       .from("projects")
       .select("id, name, profile_id")
-      .in("id", [...new Set(rows.map((row: { project_id: string }) => row.project_id))]);
+      .in("id", [...new Set(rows.map((row) => row.project_id))]);
 
     const ids = (projects ?? []).map((p) => p.profile_id).filter(Boolean) as string[];
     const people = new Map<string, { full_name: string | null; business_name: string | null }>();
@@ -337,12 +334,12 @@ export const listMyAssignments = createServerFn({ method: "GET" })
       }
     }
 
-    return rows.map((row: { project_id: string }) => {
+    return rows.map((row) => {
       const project = (projects ?? []).find((p) => p.id === row.project_id);
       return {
         ...row,
         projectName: project?.name ?? "Project",
-        person: project?.profile_id ? people.get(project.profile_id) ?? null : null,
+        person: project?.profile_id ? (people.get(project.profile_id) ?? null) : null,
       };
     });
   });
@@ -359,11 +356,14 @@ export const updateMyAssignment = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
-    if (data.editedUrl !== undefined) patch['edited_url'] = data.editedUrl || null;
-    if (data.stage !== undefined) patch['stage'] = data.stage;
-    const table = context.supabase.from("deliverables") as any;
-    const { error } = await table.update(patch).eq("id", data.id).eq("assigned_to", context.userId);
+    const patch: Database["public"]["Tables"]["deliverables"]["Update"] = {};
+    if (data.editedUrl !== undefined) patch.edited_url = data.editedUrl || null;
+    if (data.stage !== undefined) patch.stage = data.stage;
+    const { error } = await context.supabase
+      .from("deliverables")
+      .update(patch)
+      .eq("id", data.id)
+      .eq("assigned_to", context.userId);
     if (error) throw new Error("We could not save that.");
     return { ok: true as const };
   });
@@ -439,7 +439,9 @@ export const reviewDeliverable = createServerFn({ method: "POST" })
       data.action === "request_revision" &&
       deliverable.revisions_used >= deliverable.revisions_allowed
     ) {
-      throw new Error("You have used the changes included with this piece. Email us and we will talk it through.");
+      throw new Error(
+        "You have used the changes included with this piece. Email us and we will talk it through.",
+      );
     }
 
     const { error: reviewError } = await context.supabase.from("deliverable_reviews").insert({

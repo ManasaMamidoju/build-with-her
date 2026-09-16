@@ -104,7 +104,6 @@ export function SiteFooter() {
             </li>
           </ul>
         </div>
-
       </div>
 
       <div className="border-t border-border">

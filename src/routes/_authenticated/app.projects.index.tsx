@@ -50,7 +50,7 @@ function MyProjects() {
       ) : null}
 
       <div className="mt-8 space-y-3">
-        {rows.map((row: any) => (
+        {rows.map((row) => (
           <Link
             key={row.id}
             to="/app/projects/$id"

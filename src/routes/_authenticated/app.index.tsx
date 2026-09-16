@@ -12,7 +12,10 @@ export const Route = createFileRoute("/_authenticated/app/")({
   head: () => ({
     meta: [
       { title: "Your dashboard | Build With Her Media" },
-      { name: "description", content: "Your Findability Score, your next step, and your sessions." },
+      {
+        name: "description",
+        content: "Your Findability Score, your next step, and your sessions.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -77,8 +80,8 @@ function AppHome() {
         <h2 className="text-2xl">Your next step</h2>
         <p className="mt-3 text-base text-muted-foreground">
           {latest
-            ? latest.topFixes[0]?.fix ??
-              "Nothing is badly broken. Book a call and we will plan what to build next."
+            ? (latest.topFixes[0]?.fix ??
+              "Nothing is badly broken. Book a call and we will plan what to build next.")
             : "Take the questions, then book a free clarity call so we read the result together."}
         </p>
         <Button asChild className="mt-6">
@@ -96,8 +99,6 @@ function AppHome() {
           <Link to="/app/projects">See your work</Link>
         </Button>
       </section>
-
-
 
       <section className="mt-8">
         <h2 className="text-2xl">Your sessions</h2>

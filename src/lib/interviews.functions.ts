@@ -4,13 +4,14 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import type { AuthedContext } from "@/lib/server-context";
 
 function publicClient() {
-  const key = process.env['SUPABASE_PUBLISHABLE_KEY']!;
-  return createClient<Database>(process.env['SUPABASE_URL']!, key, {
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+  return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
-      fetch: (input, init) => {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) => {
         const headers = new Headers(init?.headers);
         if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
           headers.delete("Authorization");
@@ -26,7 +27,9 @@ function publicClient() {
 export const listPublicInterviews = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await publicClient()
     .from("interviews")
-    .select("slug, full_name, business_name, instagram, event_name, interview_date, final_video_link, posted_links")
+    .select(
+      "slug, full_name, business_name, instagram, event_name, interview_date, final_video_link, posted_links",
+    )
     .order("full_name", { ascending: true });
 
   if (error) {
@@ -36,7 +39,7 @@ export const listPublicInterviews = createServerFn({ method: "GET" }).handler(as
   return data ?? [];
 });
 
-async function assertTeam(context: { supabase: any; userId: string }) {
+async function assertTeam(context: AuthedContext) {
   const roles = ["admin", "content_manager", "editor"] as const;
   for (const role of roles) {
     const { data } = await context.supabase.rpc("has_role", {
@@ -95,9 +98,10 @@ export const saveInterview = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertTeam(context);
     const { id, ...rest } = data;
-    const patch = JSON.parse(JSON.stringify(rest));
-    const table = context.supabase.from("interviews") as any;
-    const { error } = await table.update(patch).eq("id", id);
+    const patch = JSON.parse(
+      JSON.stringify(rest),
+    ) as Database["public"]["Tables"]["interviews"]["Update"];
+    const { error } = await context.supabase.from("interviews").update(patch).eq("id", id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

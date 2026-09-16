@@ -18,7 +18,10 @@ export const Route = createFileRoute("/score/r/$token")({
   head: () => ({
     meta: [
       { title: "Your Findability Score | Build With Her Media" },
-      { name: "description", content: "Your score, your five areas, and the three fixes to do first." },
+      {
+        name: "description",
+        content: "Your score, your five areas, and the three fixes to do first.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

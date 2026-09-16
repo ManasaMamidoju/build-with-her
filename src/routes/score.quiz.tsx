@@ -40,13 +40,7 @@ export const Route = createFileRoute("/score/quiz")({
 });
 
 type HandleKey =
-  | "instagram"
-  | "facebook"
-  | "tiktok"
-  | "youtube"
-  | "linkedin"
-  | "pinterest"
-  | "other";
+  "instagram" | "facebook" | "tiktok" | "youtube" | "linkedin" | "pinterest" | "other";
 
 const HANDLE_FIELDS: { key: HandleKey; label: string; placeholder: string }[] = [
   { key: "instagram", label: "Instagram", placeholder: "@yourbusiness" },
@@ -170,8 +164,8 @@ function QuizPage() {
         <form onSubmit={handleSubmit} className="mt-10">
           <h1 className="text-3xl">Where should your score go?</h1>
           <p className="mt-3 text-base text-muted-foreground">
-            Your result appears on the next screen straight away. We keep it at a private link so you
-            can come back to it any time.
+            Your result appears on the next screen straight away. We keep it at a private link so
+            you can come back to it any time.
           </p>
 
           <div className="mt-8 grid gap-5">
@@ -287,8 +281,8 @@ function QuizPage() {
                   className="mt-1"
                 />
                 <span>
-                  Text me about my clarity call time. Only if you left a phone number, and only about
-                  your call.
+                  Text me about my clarity call time. Only if you left a phone number, and only
+                  about your call.
                 </span>
               </label>
               <label className="flex items-start gap-3 text-base">

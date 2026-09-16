@@ -59,38 +59,37 @@ function DuplicatesPage() {
         </p>
       ) : (
         <ul className="mt-8 space-y-4">
-          {data!.map((row: any) => (
-            <li
-              key={`${row.person_a_id}-${row.person_b_id}`}
-              className="rounded-2xl border border-border bg-card p-5"
-            >
-              <p className="text-sm text-muted-foreground">
-                {REASON[row.reason] ?? row.reason}
-              </p>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <Side
-                  name={row.person_a_name}
-                  email={row.person_a_email}
-                  identity={row.person_a_identity}
-                  id={row.person_a_id}
-                  onKeep={() =>
-                    mergeMutation.mutate({ keepId: row.person_a_id, mergeId: row.person_b_id })
-                  }
-                  pending={mergeMutation.isPending}
-                />
-                <Side
-                  name={row.person_b_name}
-                  email={row.person_b_email}
-                  identity={row.person_b_identity}
-                  id={row.person_b_id}
-                  onKeep={() =>
-                    mergeMutation.mutate({ keepId: row.person_b_id, mergeId: row.person_a_id })
-                  }
-                  pending={mergeMutation.isPending}
-                />
-              </div>
-            </li>
-          ))}
+          {data!
+            .filter((row) => row.person_a_id && row.person_b_id)
+            .map((row) => {
+              const aId = row.person_a_id!;
+              const bId = row.person_b_id!;
+              return (
+                <li key={`${aId}-${bId}`} className="rounded-2xl border border-border bg-card p-5">
+                  <p className="text-sm text-muted-foreground">
+                    {(row.reason ? REASON[row.reason] : null) ?? row.reason ?? "Possible duplicate"}
+                  </p>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <Side
+                      name={row.person_a_name ?? "Unnamed"}
+                      email={row.person_a_email}
+                      identity={row.person_a_identity ?? "name_only"}
+                      id={aId}
+                      onKeep={() => mergeMutation.mutate({ keepId: aId, mergeId: bId })}
+                      pending={mergeMutation.isPending}
+                    />
+                    <Side
+                      name={row.person_b_name ?? "Unnamed"}
+                      email={row.person_b_email}
+                      identity={row.person_b_identity ?? "name_only"}
+                      id={bId}
+                      onKeep={() => mergeMutation.mutate({ keepId: bId, mergeId: aId })}
+                      pending={mergeMutation.isPending}
+                    />
+                  </div>
+                </li>
+              );
+            })}
         </ul>
       )}
     </div>

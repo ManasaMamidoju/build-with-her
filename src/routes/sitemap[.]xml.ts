@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ARTICLES } from "@/lib/learn";
+import { BLOG_POSTS } from "@/lib/blog";
 import { SERVICES } from "@/lib/services";
 import { canonical } from "@/lib/site";
 
@@ -11,6 +12,7 @@ const STATIC_PATHS = [
   "/services",
   "/podcast",
   "/learn",
+  "/blog",
   "/community",
   "/events",
   "/interviews",
@@ -27,6 +29,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           ...STATIC_PATHS,
           ...SERVICES.map((service) => `/services/${service.slug}`),
           ...ARTICLES.map((article) => `/learn/${article.slug}`),
+          ...BLOG_POSTS.map((post) => `/blog/${post.slug}`),
         ];
 
         const body = `<?xml version="1.0" encoding="UTF-8"?>

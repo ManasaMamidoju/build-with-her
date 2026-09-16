@@ -69,7 +69,11 @@ export function BandFirstStep() {
         ) : null}
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        <Link to="/score/r/$token" params={{ token: token as string }} className="hover:text-primary">
+        <Link
+          to="/score/r/$token"
+          params={{ token: token as string }}
+          className="hover:text-primary"
+        >
           Open your full result again
         </Link>
       </p>

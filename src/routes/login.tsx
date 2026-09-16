@@ -94,8 +94,15 @@ function LoginPage() {
         )}
 
         <p className="mt-6 text-sm text-muted-foreground">
-          By continuing you agree to our <Link to="/terms" className="text-primary underline">terms</Link>{" "}
-          and <Link to="/privacy" className="text-primary underline">privacy notice</Link>.
+          By continuing you agree to our{" "}
+          <Link to="/terms" className="text-primary underline">
+            terms
+          </Link>{" "}
+          and{" "}
+          <Link to="/privacy" className="text-primary underline">
+            privacy notice
+          </Link>
+          .
         </p>
       </div>
     </main>

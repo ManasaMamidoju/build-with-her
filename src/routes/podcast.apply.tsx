@@ -56,13 +56,13 @@ function Apply() {
     mutationFn: () =>
       submit({
         data: {
-          fullName: fields['fullName'] ?? "",
-          email: fields['email'] ?? "",
-          phone: fields['phone'] ?? "",
-          businessName: fields['businessName'] ?? "",
-          instagram: fields['instagram'] ?? "",
-          website: fields['website'] ?? "",
-          city: fields['city'] ?? "",
+          fullName: fields["fullName"] ?? "",
+          email: fields["email"] ?? "",
+          phone: fields["phone"] ?? "",
+          businessName: fields["businessName"] ?? "",
+          instagram: fields["instagram"] ?? "",
+          website: fields["website"] ?? "",
+          city: fields["city"] ?? "",
           format,
           source: getCapturedSource()?.src ?? "",
           answers,
@@ -78,9 +78,9 @@ function Apply() {
         <p className="eyebrow text-primary">Application sent</p>
         <h1 className="mt-3 text-4xl">Thank you. We read every one.</h1>
         <p className="prose-editorial mt-4 text-lg text-muted-foreground">
-          We reply within five working days, either with a booking link or with a kind no and the one
-          thing we would fix first. While you wait, take the Findability Score so we can talk about
-          real numbers on the call.
+          We reply within five working days, either with a booking link or with a kind no and the
+          one thing we would fix first. While you wait, take the Findability Score so we can talk
+          about real numbers on the call.
         </p>
         <Button asChild size="lg" className="mt-8 h-12 px-7 text-base">
           <Link to="/score/quiz">Take the quiz</Link>
@@ -109,8 +109,16 @@ function Apply() {
           <div className="mt-2 grid gap-3 sm:grid-cols-2">
             {(
               [
-                { value: "street", title: "Street-style, $150", blurb: "One short conversation, one clip set." },
-                { value: "long", title: "Long-form, $2,000", blurb: "Full episode, five to six clips, plus a street-style." },
+                {
+                  value: "street",
+                  title: "Street-style, $150",
+                  blurb: "One short conversation, one clip set.",
+                },
+                {
+                  value: "long",
+                  title: "Long-form, $2,000",
+                  blurb: "Full episode, five to six clips, plus a street-style.",
+                },
               ] as const
             ).map((option) => (
               <button
@@ -132,7 +140,14 @@ function Apply() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field id="fullName" label="Your name" required fields={fields} setFields={setFields} />
-          <Field id="email" label="Email" type="email" required fields={fields} setFields={setFields} />
+          <Field
+            id="email"
+            label="Email"
+            type="email"
+            required
+            fields={fields}
+            setFields={setFields}
+          />
           <Field id="businessName" label="Business name" fields={fields} setFields={setFields} />
           <Field id="phone" label="Phone (optional)" fields={fields} setFields={setFields} />
           <Field id="instagram" label="Instagram" fields={fields} setFields={setFields} />
@@ -158,7 +173,12 @@ function Apply() {
           </div>
         ))}
 
-        <Button type="submit" size="lg" className="h-12 px-7 text-base" disabled={mutation.isPending}>
+        <Button
+          type="submit"
+          size="lg"
+          className="h-12 px-7 text-base"
+          disabled={mutation.isPending}
+        >
           {mutation.isPending ? "Sending" : "Send my application"}
         </Button>
         <p className="text-sm text-muted-foreground">
