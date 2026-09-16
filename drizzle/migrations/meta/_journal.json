@@ -15,6 +15,13 @@
       "when": 1789596626360,
       "tag": "0001_blog_view_counts_and_booking_user",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789596831280,
+      "tag": "0002_tighten_interviews_profiles_application_rules",
+      "breakpoints": true
     }
   ]
 }
