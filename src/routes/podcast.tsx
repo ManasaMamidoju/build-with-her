@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
+import { PriceTag } from "@/components/services/PriceTag";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { SERVICES } from "@/lib/services";
 import { canonical } from "@/lib/site";
@@ -60,11 +61,11 @@ function Podcast() {
           <h3 className="text-xl">Filming starts this autumn</h3>
           <p className="mt-3 text-base text-muted-foreground">
             No episodes published yet. The first run is being filmed now, and every episode gets its
-            own page here with the guest's links. If you want to be in that first run, take the
-            Findability Score and tell us on your call.
+            own page here with the guest's links. Pick a format and a time below, no sign-in and no
+            score needed.
           </p>
           <Button asChild size="lg" className="mt-6 h-12 px-7 text-base">
-            <Link to="/score/quiz">Take the quiz</Link>
+            <Link to="/podcast/book">Book your slot</Link>
           </Button>
         </div>
       </section>
@@ -79,7 +80,9 @@ function Podcast() {
             >
               <p className="eyebrow text-primary">{format.step}</p>
               <h3 className="mt-2 text-xl">{format.name}</h3>
-              <p className="numeric mt-2 text-lg text-primary">{format.price}</p>
+              <p className="numeric mt-2 text-lg text-primary">
+                <PriceTag service={format} />
+              </p>
               <p className="mt-2 text-base text-muted-foreground">{format.summary}</p>
               <Button asChild variant="outline" className="mt-5">
                 <Link to="/services/$slug" params={{ slug: format.slug }}>
@@ -107,15 +110,15 @@ function Podcast() {
       <section className="mt-12 rounded-2xl bg-secondary p-8">
         <h2 className="text-2xl">Want to be a guest?</h2>
         <p className="mt-3 text-base text-muted-foreground">
-          Six short questions about what you built and who you serve. We reply within five working
-          days, and we film in Miami.
+          Book a slot straight off the calendar, no sign-in and no score needed. Prefer to tell us
+          more first? Six short questions and we reply within five working days.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="h-12 px-7 text-base">
-            <Link to="/podcast/apply">Apply to be a guest</Link>
+            <Link to="/podcast/book">Book your slot</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="h-12 px-7 text-base">
-            <Link to="/contact">Ask about a guest spot</Link>
+            <Link to="/podcast/apply">Apply to be a guest</Link>
           </Button>
         </div>
       </section>

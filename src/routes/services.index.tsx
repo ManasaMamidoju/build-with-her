@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { Button } from "@/components/ui/button";
 import { BandFirstStep } from "@/components/services/BandFirstStep";
+import { PriceTag } from "@/components/services/PriceTag";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { SERVICES } from "@/lib/services";
 import { canonical } from "@/lib/site";
@@ -79,7 +80,9 @@ function ServicesPage() {
             >
               <p className="eyebrow text-muted-foreground">{service.step}</p>
               <h3 className="mt-3 text-xl">{service.name}</h3>
-              <p className="numeric mt-2 text-lg text-primary">{service.price}</p>
+              <p className="numeric mt-2 text-lg text-primary">
+                <PriceTag service={service} />
+              </p>
               <p className="mt-3 flex-1 text-base text-muted-foreground">{service.summary}</p>
               <p className="mt-4 text-sm text-muted-foreground">{service.duration}</p>
               <Button asChild variant="outline" className="mt-6 h-11 justify-between">

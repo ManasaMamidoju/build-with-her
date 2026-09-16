@@ -55,6 +55,28 @@ export function bookableBySlug(slug: string): BookableService | undefined {
   return BOOKABLE.find((s) => s.slug === slug);
 }
 
+/** Podcast guest slots: booked publicly, with no sign-in and no score required. */
+export const PODCAST_BOOKABLE: BookableService[] = [
+  {
+    slug: "podcast-street",
+    name: "Street-style interview",
+    durationMinutes: 45,
+    blurb: "A short, on-the-street conversation, guided so you never freeze.",
+    intake: [],
+  },
+  {
+    slug: "podcast-longform",
+    name: "Long-form episode",
+    durationMinutes: 180,
+    blurb: "A full sit-down episode, half a day of filming with proper sound and lighting.",
+    intake: [],
+  },
+];
+
+export function podcastBookableBySlug(slug: string): BookableService | undefined {
+  return PODCAST_BOOKABLE.find((s) => s.slug === slug);
+}
+
 const dateFormat = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
   month: "long",

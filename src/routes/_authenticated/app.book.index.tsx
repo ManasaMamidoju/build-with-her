@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { BOOKABLE, bookableBySlug, formatWhen } from "@/lib/booking-options";
 import { cancelBooking, getMyBookings } from "@/lib/booking.functions";
+import { getMyScores } from "@/lib/member.functions";
 
 export const Route = createFileRoute("/_authenticated/app/book/")({
   head: () => ({
@@ -21,7 +22,12 @@ export const Route = createFileRoute("/_authenticated/app/book/")({
 function BookIndex() {
   const listFn = useServerFn(getMyBookings);
   const cancelFn = useServerFn(cancelBooking);
+  const scoresFn = useServerFn(getMyScores);
   const { data, refetch } = useQuery({ queryKey: ["my-bookings"], queryFn: () => listFn({}) });
+  const { data: scores, isLoading: scoresLoading } = useQuery({
+    queryKey: ["my-scores"],
+    queryFn: () => scoresFn(),
+  });
 
   async function cancel(id: string) {
     try {
@@ -37,12 +43,26 @@ function BookIndex() {
     (row) => row.status !== "cancelled" && new Date(row.starts_at).getTime() > Date.now(),
   );
 
+  const hasScore = (scores?.length ?? 0) > 0;
+
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
       <h1 className="text-3xl">Book a session</h1>
       <p className="mt-3 text-base text-muted-foreground">
         Pick the session you want, answer three short questions, and choose a time that suits you.
       </p>
+
+      {!scoresLoading && !hasScore ? (
+        <div className="mt-8 rounded-2xl border border-border bg-blush p-6">
+          <h2 className="text-xl">Take the Findability Score first</h2>
+          <p className="mt-2 text-base text-muted-foreground">
+            We read your score on the call, so we book you in once we know where to start.
+          </p>
+          <Button asChild className="mt-5">
+            <Link to="/score/quiz">Take the quiz</Link>
+          </Button>
+        </div>
+      ) : null}
 
       <div className="mt-8 grid gap-4">
         {BOOKABLE.map((service) => (
@@ -53,11 +73,17 @@ function BookIndex() {
             <h2 className="text-xl">{service.name}</h2>
             <p className="mt-2 text-base text-muted-foreground">{service.blurb}</p>
             <p className="mt-2 text-sm text-muted-foreground">{service.durationMinutes} minutes</p>
-            <Button asChild className="mt-5">
-              <Link to="/app/book/$slug" params={{ slug: service.slug }}>
-                Choose a time
-              </Link>
-            </Button>
+            {hasScore ? (
+              <Button asChild className="mt-5">
+                <Link to="/app/book/$slug" params={{ slug: service.slug }}>
+                  Choose a time
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild className="mt-5">
+                <Link to="/score/quiz">Take the score first</Link>
+              </Button>
+            )}
           </div>
         ))}
       </div>

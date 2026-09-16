@@ -27,6 +27,7 @@ import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as PodcastApplyRouteImport } from './routes/podcast.apply'
+import { Route as PodcastBookRouteImport } from './routes/podcast.book'
 import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
@@ -141,6 +142,11 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
 const PodcastApplyRoute = PodcastApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
+  getParentRoute: () => PodcastRoute,
+} as any)
+const PodcastBookRoute = PodcastBookRouteImport.update({
+  id: '/book',
+  path: '/book',
   getParentRoute: () => PodcastRoute,
 } as any)
 const ScoreQuizRoute = ScoreQuizRouteImport.update({
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
+  '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
@@ -352,6 +359,7 @@ export interface FileRoutesByTo {
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
+  '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn': typeof LearnIndexRoute
@@ -399,6 +407,7 @@ export interface FileRoutesById {
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
+  '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/learn/': typeof LearnIndexRoute
@@ -446,6 +455,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
+    | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn/'
@@ -490,6 +500,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
+    | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
+    | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
     | '/learn/'
@@ -714,6 +726,13 @@ declare module '@tanstack/react-router' {
       path: '/apply'
       fullPath: '/podcast/apply'
       preLoaderRoute: typeof PodcastApplyRouteImport
+      parentRoute: typeof PodcastRoute
+    }
+    '/podcast/book': {
+      id: '/podcast/book'
+      path: '/book'
+      fullPath: '/podcast/book'
+      preLoaderRoute: typeof PodcastBookRouteImport
       parentRoute: typeof PodcastRoute
     }
     '/score/quiz': {
@@ -970,10 +989,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface PodcastRouteChildren {
   PodcastApplyRoute: typeof PodcastApplyRoute
+  PodcastBookRoute: typeof PodcastBookRoute
 }
 
 const PodcastRouteChildren: PodcastRouteChildren = {
   PodcastApplyRoute: PodcastApplyRoute,
+  PodcastBookRoute: PodcastBookRoute,
 }
 
 const PodcastRouteWithChildren =
