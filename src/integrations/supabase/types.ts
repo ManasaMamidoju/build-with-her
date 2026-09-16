@@ -116,6 +116,24 @@ export type Database = {
           },
         ]
       }
+      blog_post_views: {
+        Row: {
+          slug: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          slug: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          slug?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           cancelled_at: string | null
@@ -131,7 +149,7 @@ export type Database = {
           starts_at: string
           status: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           cancelled_at?: string | null
@@ -147,7 +165,7 @@ export type Database = {
           starts_at: string
           status?: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           cancelled_at?: string | null
@@ -163,7 +181,7 @@ export type Database = {
           starts_at?: string
           status?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -1704,6 +1722,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_blog_post_view: { Args: { _slug: string }; Returns: undefined }
       people_find_or_create: {
         Args: {
           _business_name?: string
