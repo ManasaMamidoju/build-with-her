@@ -119,8 +119,8 @@ function Home() {
               </div>
               <h1 className="mt-6">If she cannot find you, she cannot pay you.</h1>
               <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-                Build With Her Media scores how findable your business is, then builds the pieces that
-                are missing. For women who own the business, not just the calendar.
+                Build With Her Media scores how findable your business is, then builds the pieces
+                that are missing. For women who own the business, not just the calendar.
               </p>
               <div className="mt-10">
                 <Button asChild size="lg" className="h-12 px-7 text-base">
@@ -182,8 +182,8 @@ function Home() {
       <section className="container-editorial py-16 md:py-24">
         <h2>Latest episodes</h2>
         <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-          No episodes published yet. The first ones appear here as soon as they go live, each with the
-          guest, her business and her links.
+          No episodes published yet. The first ones appear here as soon as they go live, each with
+          the guest, her business and her links.
         </p>
       </section>
 

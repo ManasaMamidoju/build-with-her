@@ -62,7 +62,10 @@ function Events() {
       ) : (
         <div className="mt-10 grid gap-4">
           {events.map((event) => (
-            <article key={event.slug} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <article
+              key={event.slug}
+              className="rounded-2xl border border-border bg-card p-6 shadow-card"
+            >
               <p className="eyebrow text-muted-foreground">{formatDay(event.starts_at)}</p>
               <h2 className="mt-2 text-2xl">{event.title}</h2>
               <p className="mt-1 text-base text-muted-foreground">
@@ -102,8 +105,8 @@ function Events() {
       <section className="mt-12 rounded-2xl bg-blush p-8">
         <h2 className="text-2xl">Cannot make it?</h2>
         <p className="mt-3 text-base text-muted-foreground">
-          The score works the same from your kitchen table. Three minutes, and you get the same three
-          fixes we would give you at the booth.
+          The score works the same from your kitchen table. Three minutes, and you get the same
+          three fixes we would give you at the booth.
         </p>
         <Button asChild size="lg" className="mt-6 h-12 px-7 text-base">
           <Link to="/score/quiz">Take the quiz</Link>

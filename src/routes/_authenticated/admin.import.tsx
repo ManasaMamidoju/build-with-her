@@ -11,7 +11,10 @@ export const Route = createFileRoute("/_authenticated/admin/import")({
   head: () => ({
     meta: [
       { title: "Bring people in | Build With Her Media" },
-      { name: "description", content: "Upload a spreadsheet export and see what will happen first." },
+      {
+        name: "description",
+        content: "Upload a spreadsheet export and see what will happen first.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -206,7 +209,8 @@ function ImportPeople() {
             title="No email address"
             note="We cannot match these. Chase the email and add them again."
             items={report.missingEmail.map(
-              (row) => `${row.name || "No name"} ${row.businessName ? `· ${row.businessName}` : ""}`,
+              (row) =>
+                `${row.name || "No name"} ${row.businessName ? `· ${row.businessName}` : ""}`,
             )}
             emptyNote="Everyone in the file has an email address."
           />

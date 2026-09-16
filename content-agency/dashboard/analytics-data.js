@@ -1,41 +1,41 @@
 window.ANALYTICS_DATA = {
-  "updated": "2026-06-02T08:15:25Z",
-  "accounts": {
-    "digi": {
-      "ig_followers": 118,
-      "ig_avg_views": 86,
-      "ig_avg_likes": 17,
-      "ig_posts": 44,
-      "tiktok_followers": 14,
-      "tiktok_avg_views": 0,
-      "tiktok_videos": 3,
-      "youtube_subs": 0,
-      "youtube_videos": 0,
-      "youtube_views": 0
+  updated: "2026-06-02T08:15:25Z",
+  accounts: {
+    digi: {
+      ig_followers: 118,
+      ig_avg_views: 86,
+      ig_avg_likes: 17,
+      ig_posts: 44,
+      tiktok_followers: 14,
+      tiktok_avg_views: 0,
+      tiktok_videos: 3,
+      youtube_subs: 0,
+      youtube_videos: 0,
+      youtube_views: 0,
     },
-    "manasa": {
-      "ig_followers": 1299,
-      "ig_avg_views": 1315,
-      "ig_avg_likes": 50,
-      "ig_posts": 228,
-      "tiktok_followers": 6420,
-      "tiktok_avg_views": 0,
-      "tiktok_videos": 219,
-      "youtube_subs": 0,
-      "youtube_videos": 0,
-      "youtube_views": 0
+    manasa: {
+      ig_followers: 1299,
+      ig_avg_views: 1315,
+      ig_avg_likes: 50,
+      ig_posts: 228,
+      tiktok_followers: 6420,
+      tiktok_avg_views: 0,
+      tiktok_videos: 219,
+      youtube_subs: 0,
+      youtube_videos: 0,
+      youtube_views: 0,
     },
-    "bwh": {
-      "ig_followers": 0,
-      "ig_avg_views": 0,
-      "ig_avg_likes": 0,
-      "ig_posts": 0,
-      "tiktok_followers": 0,
-      "tiktok_avg_views": 0,
-      "tiktok_videos": 0,
-      "youtube_subs": 0,
-      "youtube_videos": 0,
-      "youtube_views": 0
-    }
-  }
+    bwh: {
+      ig_followers: 0,
+      ig_avg_views: 0,
+      ig_avg_likes: 0,
+      ig_posts: 0,
+      tiktok_followers: 0,
+      tiktok_avg_views: 0,
+      tiktok_videos: 0,
+      youtube_subs: 0,
+      youtube_videos: 0,
+      youtube_views: 0,
+    },
+  },
 };

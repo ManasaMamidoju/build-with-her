@@ -142,9 +142,7 @@ function Contact() {
         </form>
       )}
 
-      <p className="mt-10 text-sm text-muted-foreground">
-        You can also write to {SITE.email}.
-      </p>
+      <p className="mt-10 text-sm text-muted-foreground">You can also write to {SITE.email}.</p>
     </main>
   );
 }

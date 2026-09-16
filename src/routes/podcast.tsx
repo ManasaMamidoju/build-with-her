@@ -73,7 +73,10 @@ function Podcast() {
         <h2 className="text-2xl">The two formats</h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {formats.map((format) => (
-            <div key={format.slug} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div
+              key={format.slug}
+              className="rounded-2xl border border-border bg-card p-6 shadow-card"
+            >
               <p className="eyebrow text-primary">{format.step}</p>
               <h3 className="mt-2 text-xl">{format.name}</h3>
               <p className="numeric mt-2 text-lg text-primary">{format.price}</p>

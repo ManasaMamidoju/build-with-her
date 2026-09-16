@@ -51,13 +51,20 @@ export const getAvailability = createServerFn({ method: "GET" })
         const step = Math.max(rule.slot_minutes, data.durationMinutes) + rule.buffer_minutes;
         const noticeMs = rule.min_notice_hours * 3600000;
 
-        for (let minute = rule.start_minute; minute + data.durationMinutes <= rule.end_minute; minute += step) {
+        for (
+          let minute = rule.start_minute;
+          minute + data.durationMinutes <= rule.end_minute;
+          minute += step
+        ) {
           const start = Date.UTC(y, m, d, NEW_YORK_OFFSET_HOURS, minute);
           const end = start + data.durationMinutes * 60000;
           if (start < now + noticeMs) continue;
           const clash = taken.some((b) => start < b.end && end > b.start);
           if (clash) continue;
-          slots.push({ startsAt: new Date(start).toISOString(), endsAt: new Date(end).toISOString() });
+          slots.push({
+            startsAt: new Date(start).toISOString(),
+            endsAt: new Date(end).toISOString(),
+          });
         }
       }
     }
@@ -115,7 +122,7 @@ export const createBooking = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("touchpoints").insert({
       profile_id: context.userId,
-      email: String(context.claims['email'] ?? "") || null,
+      email: String(context.claims["email"] ?? "") || null,
       kind: "booking_created",
       detail: { service: data.serviceSlug, startsAt: start.toISOString() },
     });

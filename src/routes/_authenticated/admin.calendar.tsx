@@ -76,7 +76,10 @@ function Calendar() {
                 ) : (
                   <ul className="mt-3 space-y-3">
                     {inDay.map((row) => (
-                      <li key={row.id} className="rounded-xl border border-border bg-background p-3">
+                      <li
+                        key={row.id}
+                        className="rounded-xl border border-border bg-background p-3"
+                      >
                         <p className="numeric text-sm">{formatTime(row.starts_at)}</p>
                         <Link
                           to="/admin/people/$id"

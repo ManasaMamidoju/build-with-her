@@ -192,7 +192,9 @@ function WaitlistForm({ service }: { service: Service }) {
       setDone(true);
     } catch (error) {
       console.error(error);
-      toast.error("We could not add you to the list. Please check your email address and try again.");
+      toast.error(
+        "We could not add you to the list. Please check your email address and try again.",
+      );
     } finally {
       setSaving(false);
     }

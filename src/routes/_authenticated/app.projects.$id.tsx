@@ -46,7 +46,9 @@ function MyProject() {
   });
 
   if (isLoading) {
-    return <p className="container-editorial py-12 text-muted-foreground">Fetching your project.</p>;
+    return (
+      <p className="container-editorial py-12 text-muted-foreground">Fetching your project.</p>
+    );
   }
 
   if (!data) {
@@ -60,7 +62,7 @@ function MyProject() {
     );
   }
 
-  const project = data.project as any;
+  const { project } = data;
 
   return (
     <div className="container-editorial py-12">
@@ -79,7 +81,7 @@ function MyProject() {
       <section className="mt-10">
         <h2 className="text-2xl">Where we are</h2>
         <ol className="mt-4 space-y-2">
-          {(data.stages ?? []).map((stage: any, index: number) => (
+          {(data.stages ?? []).map((stage, index: number) => (
             <li
               key={stage.id}
               className={`flex items-center justify-between rounded-xl border p-4 ${
@@ -115,10 +117,13 @@ function MyProject() {
         ) : null}
 
         <div className="mt-6 space-y-4">
-          {(data.deliverables ?? []).map((item: any) => {
+          {(data.deliverables ?? []).map((item) => {
             const waitingOnHer = item.stage === "client_review";
             return (
-              <div key={item.id} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <div
+                key={item.id}
+                className="rounded-2xl border border-border bg-card p-6 shadow-card"
+              >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <p className="text-lg font-medium">{item.title}</p>
                   <p className="text-sm text-muted-foreground">

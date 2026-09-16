@@ -46,8 +46,8 @@ function EditorQueue() {
     <div>
       <h1 className="text-3xl">My editing queue</h1>
       <p className="mt-2 text-base text-muted-foreground">
-        Only the pieces assigned to you, soonest due first. Drop your edited link in and hand it back
-        for review.
+        Only the pieces assigned to you, soonest due first. Drop your edited link in and hand it
+        back for review.
       </p>
 
       {isLoading ? <p className="mt-8 text-muted-foreground">Fetching your queue.</p> : null}
@@ -62,7 +62,7 @@ function EditorQueue() {
       ) : null}
 
       <div className="mt-8 space-y-3">
-        {rows.map((item: any) => (
+        {rows.map((item) => (
           <div key={item.id} className="rounded-2xl border border-border bg-card p-5 shadow-card">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <p className="text-lg font-medium">{item.title}</p>

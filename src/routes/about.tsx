@@ -33,7 +33,9 @@ function About() {
         <RoseMark className="h-7 w-7 text-primary" />
         <p className="eyebrow text-primary">About us</p>
       </div>
-      <h1 className="mt-4 text-4xl">We film the women who build things, then we build the machine</h1>
+      <h1 className="mt-4 text-4xl">
+        We film the women who build things, then we build the machine
+      </h1>
       <p className="prose-editorial mt-5 text-lg text-muted-foreground">
         {SITE.name} exists because the best businesses we meet are invisible. A woman who is
         excellent at her work loses to someone louder with half the skill, and she assumes she needs
@@ -53,9 +55,9 @@ function About() {
       <section className="mt-10">
         <h2 className="text-2xl">Who runs it</h2>
         <p className="prose-editorial mt-3 text-base text-muted-foreground">
-          Manasa runs the studio. She built her own business the hard way, hired the wrong help, paid
-          for things that did nothing, and worked out what actually moves bookings. That is why the
-          score exists: so you can see where you stand without paying anyone to tell you.
+          Manasa runs the studio. She built her own business the hard way, hired the wrong help,
+          paid for things that did nothing, and worked out what actually moves bookings. That is why
+          the score exists: so you can see where you stand without paying anyone to tell you.
         </p>
       </section>
 

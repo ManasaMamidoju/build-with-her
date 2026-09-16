@@ -68,7 +68,10 @@ function Pipeline() {
                 ) : (
                   <ul className="mt-4 space-y-3">
                     {column.map((person) => (
-                      <li key={person.id} className="rounded-xl border border-border bg-background p-3">
+                      <li
+                        key={person.id}
+                        className="rounded-xl border border-border bg-background p-3"
+                      >
                         <Link
                           to="/admin/people/$id"
                           params={{ id: person.id }}
@@ -77,7 +80,9 @@ function Pipeline() {
                           {person.full_name ?? person.email ?? "No name yet"}
                         </Link>
                         {person.business_name ? (
-                          <p className="mt-1 text-xs text-muted-foreground">{person.business_name}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {person.business_name}
+                          </p>
                         ) : null}
                         <div className="mt-3 flex gap-2">
                           <Button

@@ -12,7 +12,10 @@ export const Route = createFileRoute("/_authenticated/app/score")({
   head: () => ({
     meta: [
       { title: "Your score | Build With Her Media" },
-      { name: "description", content: "Your latest Findability Score, area by area, with your fixes." },
+      {
+        name: "description",
+        content: "Your latest Findability Score, area by area, with your fixes.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -51,7 +54,9 @@ function MyScore() {
               <span className="text-xl text-muted-foreground"> / 100</span>
             </p>
             <p className="mt-2 text-lg">{latest.band}</p>
-            <p className="mt-1 text-sm text-muted-foreground">Taken {formatDay(latest.createdAt)}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Taken {formatDay(latest.createdAt)}
+            </p>
           </section>
 
           <section className="mt-10">

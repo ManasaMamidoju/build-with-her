@@ -1,13 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import {
-  AREA_ORDER,
-  AREA_POINTS,
-  bandFor,
-  QUESTIONS,
-  type AreaKey,
-} from "@/lib/score-rubric";
+import { AREA_ORDER, AREA_POINTS, bandFor, QUESTIONS, type AreaKey } from "@/lib/score-rubric";
 import { SITE } from "@/lib/site";
 
 const handle = z.string().trim().max(160).optional().or(z.literal(""));
@@ -201,9 +195,7 @@ export const getScoreByToken = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
       .from("score_submissions")
-      .select(
-        "full_name, business_name, total_score, band, area_scores, top_fixes, created_at",
-      )
+      .select("full_name, business_name, total_score, band, area_scores, top_fixes, created_at")
       .eq("token", data.token)
       .maybeSingle();
 

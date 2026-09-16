@@ -22,7 +22,10 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({
     meta: [
       { title: "Studio settings | Build With Her Media" },
-      { name: "description", content: "Your hours, your email wording, your industries, your team." },
+      {
+        name: "description",
+        content: "Your hours, your email wording, your industries, your team.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -314,7 +317,10 @@ function Templates({ templates, onChange }: { templates: Template[]; onChange: (
                     className="mt-2"
                     value={draft.subject}
                     onChange={(event) =>
-                      setDrafts({ ...drafts, [template.id]: { ...draft, subject: event.target.value } })
+                      setDrafts({
+                        ...drafts,
+                        [template.id]: { ...draft, subject: event.target.value },
+                      })
                     }
                   />
                 </div>
@@ -326,7 +332,10 @@ function Templates({ templates, onChange }: { templates: Template[]; onChange: (
                     className="mt-2"
                     value={draft.body}
                     onChange={(event) =>
-                      setDrafts({ ...drafts, [template.id]: { ...draft, body: event.target.value } })
+                      setDrafts({
+                        ...drafts,
+                        [template.id]: { ...draft, body: event.target.value },
+                      })
                     }
                   />
                 </div>
@@ -415,7 +424,10 @@ function Team({ team, onChange }: { team: TeamMember[]; onChange: () => void }) 
   async function grant() {
     try {
       await grantFn({
-        data: { email: email.trim(), role: role as "admin" | "content_manager" | "editor" | "network_member" },
+        data: {
+          email: email.trim(),
+          role: role as "admin" | "content_manager" | "editor" | "network_member",
+        },
       });
       setEmail("");
       toast.success("Access given");
@@ -453,7 +465,9 @@ function Team({ team, onChange }: { team: TeamMember[]; onChange: () => void }) 
               key={member.id}
               className="flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-card p-4"
             >
-              <span className="text-sm font-medium">{member.name ?? member.email ?? "Someone"}</span>
+              <span className="text-sm font-medium">
+                {member.name ?? member.email ?? "Someone"}
+              </span>
               <span className="text-sm text-muted-foreground">{member.email}</span>
               <span className="text-sm text-muted-foreground">
                 {ROLE_LABELS[member.role] ?? member.role}

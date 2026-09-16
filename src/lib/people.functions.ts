@@ -2,8 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { AuthedContext } from "@/lib/server-context";
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
+async function assertAdmin(context: AuthedContext) {
   const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
@@ -58,17 +59,11 @@ export const getPersonRecord = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // The id may be a people id, or a profile id coming from an older link.
-    let person: any = null;
     const byId = await supabaseAdmin.from("people").select("*").eq("id", data.id).maybeSingle();
-    person = byId.data;
-    if (!person) {
-      const byProfile = await supabaseAdmin
-        .from("people")
-        .select("*")
-        .eq("profile_id", data.id)
-        .maybeSingle();
-      person = byProfile.data;
-    }
+    const byProfile = byId.data
+      ? null
+      : await supabaseAdmin.from("people").select("*").eq("profile_id", data.id).maybeSingle();
+    const person = byId.data ?? byProfile?.data ?? null;
     if (!person) return null;
 
     const profileIds = person.profile_id ? [person.profile_id] : [];
@@ -107,7 +102,9 @@ export const getPersonRecord = createServerFn({ method: "GET" })
               .select("id, service_slug, starts_at, status")
               .eq("user_id", profileIds[0])
               .order("starts_at", { ascending: false })
-          : Promise.resolve({ data: [] as any[] }),
+          : Promise.resolve({
+              data: [] as { id: string; service_slug: string; starts_at: string; status: string }[],
+            }),
       ]);
 
     return {
@@ -119,16 +116,14 @@ export const getPersonRecord = createServerFn({ method: "GET" })
       touchpoints: touchpoints.data ?? [],
       waitlists: waitlists.data ?? [],
       applications: applications.data ?? [],
-      bookings: (bookings as any).data ?? [],
+      bookings: bookings.data ?? [],
     };
   });
 
 export const addPersonRecordNote = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
-    z
-      .object({ personId: z.string().uuid(), body: z.string().trim().min(1).max(4000) })
-      .parse(data),
+    z.object({ personId: z.string().uuid(), body: z.string().trim().min(1).max(4000) }).parse(data),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);

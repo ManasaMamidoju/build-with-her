@@ -31,8 +31,8 @@ function Mission() {
       <p className="eyebrow text-primary">Our mission</p>
       <h1 className="mt-3 text-4xl">Ten thousand women found, booked and paid</h1>
       <p className="prose-editorial mt-5 text-lg text-muted-foreground">
-        The longer version of this, with the numbers behind it, is being written. Until then that one
-        line is the whole plan.
+        The longer version of this, with the numbers behind it, is being written. Until then that
+        one line is the whole plan.
       </p>
       <Button asChild size="lg" className="mt-10 h-12 px-7 text-base">
         <Link to="/score/quiz">Take the quiz</Link>

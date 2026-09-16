@@ -35,8 +35,7 @@ function PodcastPipeline() {
   });
 
   const move = useMutation({
-    mutationFn: (input: { id: string; status?: string; notes?: string }) =>
-      update({ data: input }),
+    mutationFn: (input: { id: string; status?: string; notes?: string }) => update({ data: input }),
     onSuccess: () => {
       toast.success("Saved");
       queryClient.invalidateQueries({ queryKey: ["admin", "podcast-applications"] });
@@ -88,7 +87,7 @@ function PodcastPipeline() {
       </div>
 
       <div className="mt-8 space-y-3">
-        {rows.map((row: any) => (
+        {rows.map((row) => (
           <div key={row.id} className="rounded-2xl border border-border bg-card p-5 shadow-card">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -195,9 +194,9 @@ function InterviewTracker() {
     queryFn: () => fetchInterviews({ data: { search, status } }),
   });
 
-  const rows = (data ?? []) as any[];
+  const rows = data ?? [];
   const statuses = Array.from(
-    new Set(((data ?? []) as any[]).map((row) => row.overall_status).filter(Boolean)),
+    new Set(rows.map((row) => row.overall_status).filter(Boolean)),
   ) as string[];
 
   return (

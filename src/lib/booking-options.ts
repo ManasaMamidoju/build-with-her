@@ -36,10 +36,15 @@ export const BOOKABLE: BookableService[] = [
     name: "2-Hour Strategy Consult",
     durationMinutes: 120,
     blurb: "Two hours on your offer, pricing, pages and follow up, ending with a build plan.",
-    paymentNote: "Card payment turns on once our payment account is live. For now we hold your time and invoice you.",
+    paymentNote:
+      "Card payment turns on once our payment account is live. For now we hold your time and invoice you.",
     intake: [
       { id: "goal", label: "What do you want decided by the end?", long: true, required: true },
-      { id: "revenue", label: "Roughly what do you bring in each month?", helper: "A range is fine." },
+      {
+        id: "revenue",
+        label: "Roughly what do you bring in each month?",
+        helper: "A range is fine.",
+      },
       { id: "links", label: "Where can we see you online?" },
       { id: "blockers", label: "What have you already tried that did not work?", long: true },
     ],

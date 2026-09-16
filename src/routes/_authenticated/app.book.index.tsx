@@ -46,7 +46,10 @@ function BookIndex() {
 
       <div className="mt-8 grid gap-4">
         {BOOKABLE.map((service) => (
-          <div key={service.slug} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+          <div
+            key={service.slug}
+            className="rounded-2xl border border-border bg-card p-6 shadow-card"
+          >
             <h2 className="text-xl">{service.name}</h2>
             <p className="mt-2 text-base text-muted-foreground">{service.blurb}</p>
             <p className="mt-2 text-sm text-muted-foreground">{service.durationMinutes} minutes</p>

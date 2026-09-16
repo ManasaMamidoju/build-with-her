@@ -17,8 +17,9 @@ export type ScoreSummary = {
 function normaliseAreas(raw: unknown): { area: AreaKey; earned: number; outOf: number }[] {
   if (!Array.isArray(raw)) return [];
   return raw
-    .filter((row): row is { area: AreaKey; earned: number; outOf: number } =>
-      Boolean(row) && typeof row === "object" && "area" in (row as object),
+    .filter(
+      (row): row is { area: AreaKey; earned: number; outOf: number } =>
+        Boolean(row) && typeof row === "object" && "area" in (row as object),
     )
     .sort((a, b) => AREA_ORDER.indexOf(a.area) - AREA_ORDER.indexOf(b.area));
 }
@@ -27,7 +28,7 @@ function normaliseAreas(raw: unknown): { area: AreaKey; earned: number; outOf: n
 export const getMyScores = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const email = String(context.claims['email'] ?? "").toLowerCase();
+    const email = String(context.claims["email"] ?? "").toLowerCase();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     if (email) {
@@ -119,7 +120,9 @@ const settingsSchema = z.object({
   consentSms: z.boolean(),
   consentCommunity: z.boolean(),
   handles: z
-    .array(z.object({ platform: z.string().trim().min(1).max(40), handle: z.string().trim().max(120) }))
+    .array(
+      z.object({ platform: z.string().trim().min(1).max(40), handle: z.string().trim().max(120) }),
+    )
     .max(10),
 });
 

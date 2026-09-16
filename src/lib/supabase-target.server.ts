@@ -11,20 +11,20 @@ const OWNER_SUPABASE_URL = "https://srqnyhwknkpqrajefwjs.supabase.co";
 const OWNER_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_fjSs-jThuB_rEiAJgIddTw_ZMkTFPhz";
 
 export function applyOwnerSupabaseEnv() {
-  const url = process.env['EXTERNAL_SUPABASE_URL'] || OWNER_SUPABASE_URL;
-  const anon = process.env['EXTERNAL_SUPABASE_ANON_KEY'] || OWNER_SUPABASE_PUBLISHABLE_KEY;
-  const serviceRole = process.env['EXTERNAL_SUPABASE_SERVICE_ROLE_KEY'];
+  const url = process.env["EXTERNAL_SUPABASE_URL"] || OWNER_SUPABASE_URL;
+  const anon = process.env["EXTERNAL_SUPABASE_ANON_KEY"] || OWNER_SUPABASE_PUBLISHABLE_KEY;
+  const serviceRole = process.env["EXTERNAL_SUPABASE_SERVICE_ROLE_KEY"];
 
-  process.env['SUPABASE_URL'] = url;
+  process.env["SUPABASE_URL"] = url;
   const ref = url.replace(/^https?:\/\//, "").split(".")[0];
-  if (ref) process.env['SUPABASE_PROJECT_ID'] = ref;
-  process.env['SUPABASE_PUBLISHABLE_KEY'] = anon;
-  if (serviceRole) process.env['SUPABASE_SERVICE_ROLE_KEY'] = serviceRole;
+  if (ref) process.env["SUPABASE_PROJECT_ID"] = ref;
+  process.env["SUPABASE_PUBLISHABLE_KEY"] = anon;
+  if (serviceRole) process.env["SUPABASE_SERVICE_ROLE_KEY"] = serviceRole;
 }
 
 applyOwnerSupabaseEnv();
 
 export const supabaseTarget = {
-  url: process.env['SUPABASE_URL'],
+  url: process.env["SUPABASE_URL"],
   external: true,
 };

@@ -25,8 +25,8 @@ function NotFoundComponent() {
         <h1 className="font-display text-6xl text-primary">Not here</h1>
         <h2 className="mt-4 text-2xl">This page has not been built yet</h2>
         <p className="mt-3 text-base text-muted-foreground">
-          The link may be old, or the page is still on the way. Start from the home page and you will
-          find your way.
+          The link may be old, or the page is still on the way. Start from the home page and you
+          will find your way.
         </p>
         <div className="mt-8">
           <Link

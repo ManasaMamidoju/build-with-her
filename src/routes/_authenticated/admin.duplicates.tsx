@@ -59,14 +59,12 @@ function DuplicatesPage() {
         </p>
       ) : (
         <ul className="mt-8 space-y-4">
-          {data!.map((row: any) => (
+          {data!.map((row) => (
             <li
               key={`${row.person_a_id}-${row.person_b_id}`}
               className="rounded-2xl border border-border bg-card p-5"
             >
-              <p className="text-sm text-muted-foreground">
-                {REASON[row.reason] ?? row.reason}
-              </p>
+              <p className="text-sm text-muted-foreground">{REASON[row.reason] ?? row.reason}</p>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <Side
                   name={row.person_a_name}

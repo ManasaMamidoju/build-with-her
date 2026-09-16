@@ -105,7 +105,11 @@ export function SiteHeader() {
               </Link>
             ))}
             {isAdmin ? (
-              <Link to="/admin" onClick={() => setOpen(false)} className="py-3 text-base text-primary">
+              <Link
+                to="/admin"
+                onClick={() => setOpen(false)}
+                className="py-3 text-base text-primary"
+              >
                 Studio
               </Link>
             ) : (

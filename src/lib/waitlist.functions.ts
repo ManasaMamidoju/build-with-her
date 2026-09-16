@@ -28,7 +28,6 @@ export const joinWaitlist = createServerFn({ method: "POST" })
       message: "You are already on this list. We will be in touch.",
     });
 
-
     const { data: personId, error: personError } = await supabaseAdmin.rpc(
       "people_find_or_create",
       {

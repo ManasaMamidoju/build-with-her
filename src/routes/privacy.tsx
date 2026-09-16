@@ -33,17 +33,17 @@ function PrivacyPage() {
         <section>
           <h2 className="text-2xl">What we collect</h2>
           <p className="mt-3">
-            Your name and email, your business name and website, your social handles, the answers you
-            give in the Findability Score, the pages you visit, and where you came from, such as a
-            podcast, a social post, an event QR code or a partner link.
+            Your name and email, your business name and website, your social handles, the answers
+            you give in the Findability Score, the pages you visit, and where you came from, such as
+            a podcast, a social post, an event QR code or a partner link.
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl">Why we keep it</h2>
           <p className="mt-3">
-            To calculate and email your score, to run your bookings and reminders, to deliver the work
-            you paid for, and to send you the emails you asked for. We use one small cookie to
+            To calculate and email your score, to run your bookings and reminders, to deliver the
+            work you paid for, and to send you the emails you asked for. We use one small cookie to
             remember which link brought you here.
           </p>
         </section>
@@ -68,8 +68,8 @@ function PrivacyPage() {
         <section>
           <h2 className="text-2xl">Your choices</h2>
           <p className="mt-3">
-            You can ask for a copy of your information, ask us to correct it, or ask us to delete your
-            account and everything attached to it. Write to {SITE.email} and we will handle it.
+            You can ask for a copy of your information, ask us to correct it, or ask us to delete
+            your account and everything attached to it. Write to {SITE.email} and we will handle it.
           </p>
         </section>
 
