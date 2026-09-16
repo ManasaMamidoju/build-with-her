@@ -695,6 +695,45 @@ export type Database = {
         }
         Relationships: []
       }
+      interview_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          interview_id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          interview_id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          interview_id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_contacts_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_contacts_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interviews: {
         Row: {
           approved_for_posting: boolean
