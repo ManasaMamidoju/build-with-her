@@ -4,6 +4,8 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { canonical } from "@/lib/site";
 
@@ -14,13 +16,13 @@ export const Route = createFileRoute("/login")({
       {
         name: "description",
         content:
-          "Sign in with Google to see your Findability Score, your bookings and your projects.",
+          "Sign in with Google or email to see your Findability Score, your bookings and your projects.",
       },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Sign in to Build With Her Media" },
       {
         property: "og:description",
-        content: "Sign in with Google to see your score, bookings and projects.",
+        content: "Sign in with Google or email to see your score, bookings and projects.",
       },
     ],
     links: [{ rel: "canonical", href: canonical("/login") }],
@@ -30,6 +32,9 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const [busy, setBusy] = useState(false);
+  const [emailBusy, setEmailBusy] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
@@ -38,7 +43,10 @@ function LoginPage() {
       if (active) setSignedIn(Boolean(data.session));
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) setSignedIn(true);
+      if (event === "SIGNED_IN" && session) {
+        setSignedIn(true);
+        window.location.href = "/";
+      }
       if (event === "SIGNED_OUT") setSignedIn(false);
     });
     return () => {
@@ -60,6 +68,25 @@ function LoginPage() {
       toast.error("That sign in did not go through. Try once more.");
       return;
     }
+  };
+
+  const signInWithEmail = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!email.trim() || !password) {
+      toast.error("Enter your email and password.");
+      return;
+    }
+    setEmailBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (error) {
+      setEmailBusy(false);
+      toast.error("That email and password did not match. Try again.");
+      return;
+    }
+    window.location.href = "/";
   };
 
   const signOut = async () => {
@@ -88,9 +115,50 @@ function LoginPage() {
             </Button>
           </div>
         ) : (
-          <Button className="mt-8 w-full" onClick={signIn} disabled={busy}>
-            {busy ? "Opening Google" : "Continue with Google"}
-          </Button>
+          <div className="mt-8 space-y-6">
+            <Button className="w-full" onClick={signIn} disabled={busy || emailBusy}>
+              {busy ? "Opening Google" : "Continue with Google"}
+            </Button>
+
+            <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
+              <span className="h-px flex-1 bg-border" />
+              or with email
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <form className="space-y-4" onSubmit={signInWithEmail}>
+              <div className="space-y-2">
+                <Label htmlFor="login-email">Email</Label>
+                <Input
+                  id="login-email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@yourbusiness.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="login-password">Password</Label>
+                <Input
+                  id="login-password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Your password"
+                />
+              </div>
+              <Button
+                type="submit"
+                variant="outline"
+                className="w-full"
+                disabled={emailBusy || busy}
+              >
+                {emailBusy ? "Signing in" : "Sign in with email"}
+              </Button>
+            </form>
+          </div>
         )}
 
         <p className="mt-6 text-sm text-muted-foreground">

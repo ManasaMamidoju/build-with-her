@@ -8,6 +8,27 @@
       "when": 1789596410353,
       "tag": "0000_interviews_public_view",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789596626360,
+      "tag": "0001_blog_view_counts_and_booking_user",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789596831280,
+      "tag": "0002_tighten_interviews_profiles_application_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789596898855,
+      "tag": "0003_interview_contacts_table",
+      "breakpoints": true
     }
   ]
 }

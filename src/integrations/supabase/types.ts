@@ -116,6 +116,24 @@ export type Database = {
           },
         ]
       }
+      blog_post_views: {
+        Row: {
+          slug: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          slug: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          slug?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           cancelled_at: string | null
@@ -131,7 +149,7 @@ export type Database = {
           starts_at: string
           status: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           cancelled_at?: string | null
@@ -147,7 +165,7 @@ export type Database = {
           starts_at: string
           status?: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           cancelled_at?: string | null
@@ -163,7 +181,7 @@ export type Database = {
           starts_at?: string
           status?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -676,6 +694,45 @@ export type Database = {
           sort_order?: number
         }
         Relationships: []
+      }
+      interview_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          interview_id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          interview_id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          interview_id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_contacts_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_contacts_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       interviews: {
         Row: {
@@ -1704,6 +1761,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_blog_post_view: { Args: { _slug: string }; Returns: undefined }
       people_find_or_create: {
         Args: {
           _business_name?: string

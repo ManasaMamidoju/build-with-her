@@ -23,10 +23,11 @@ function publicClient() {
   });
 }
 
-/** Only interviews with consent, approval and a Posted status are readable here. */
+/** Only interviews with consent, approval and a Posted status are readable here.
+ *  Reads the interviews_public view, which can never return email or phone. */
 export const listPublicInterviews = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await publicClient()
-    .from("interviews")
+    .from("interviews_public")
     .select(
       "slug, full_name, business_name, instagram, event_name, interview_date, final_video_link, posted_links",
     )
