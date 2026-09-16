@@ -6,7 +6,10 @@ import { STAGE_TEMPLATES, type ProjectType } from "@/lib/project-templates";
 import type { AuthedContext } from "@/lib/server-context";
 import type { Database } from "@/integrations/supabase/types";
 
-async function hasAnyRole(context: AuthedContext, roles: readonly string[]) {
+async function hasAnyRole(
+  context: AuthedContext,
+  roles: readonly Database["public"]["Enums"]["app_role"][],
+) {
   for (const role of roles) {
     const { data } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -314,7 +317,7 @@ export const listMyAssignments = createServerFn({ method: "GET" })
     const { data: projects } = await supabaseAdmin
       .from("projects")
       .select("id, name, profile_id")
-      .in("id", [...new Set(rows.map((row: { project_id: string }) => row.project_id))]);
+      .in("id", [...new Set(rows.map((row) => row.project_id))]);
 
     const ids = (projects ?? []).map((p) => p.profile_id).filter(Boolean) as string[];
     const people = new Map<string, { full_name: string | null; business_name: string | null }>();
@@ -331,7 +334,7 @@ export const listMyAssignments = createServerFn({ method: "GET" })
       }
     }
 
-    return rows.map((row: { project_id: string }) => {
+    return rows.map((row) => {
       const project = (projects ?? []).find((p) => p.id === row.project_id);
       return {
         ...row,

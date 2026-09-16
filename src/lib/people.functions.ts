@@ -100,7 +100,7 @@ export const getPersonRecord = createServerFn({ method: "GET" })
           ? supabaseAdmin
               .from("bookings")
               .select("id, service_slug, starts_at, status")
-              .eq("user_id", profileIds[0])
+              .eq("user_id", profileIds[0]!)
               .order("starts_at", { ascending: false })
           : Promise.resolve({
               data: [] as { id: string; service_slug: string; starts_at: string; status: string }[],

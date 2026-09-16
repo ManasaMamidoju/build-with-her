@@ -81,13 +81,17 @@ function Calendar() {
                         className="rounded-xl border border-border bg-background p-3"
                       >
                         <p className="numeric text-sm">{formatTime(row.starts_at)}</p>
-                        <Link
-                          to="/admin/people/$id"
-                          params={{ id: row.user_id }}
-                          className="mt-1 block text-sm font-medium underline-offset-4 hover:underline"
-                        >
-                          {row.personName}
-                        </Link>
+                        {row.user_id || row.person_id ? (
+                          <Link
+                            to="/admin/people/$id"
+                            params={{ id: row.user_id ?? row.person_id! }}
+                            className="mt-1 block text-sm font-medium underline-offset-4 hover:underline"
+                          >
+                            {row.personName}
+                          </Link>
+                        ) : (
+                          <p className="mt-1 text-sm font-medium">{row.personName}</p>
+                        )}
                         <p className="mt-1 text-xs text-muted-foreground">
                           {bookableBySlug(row.service_slug)?.name ?? row.service_slug}
                         </p>

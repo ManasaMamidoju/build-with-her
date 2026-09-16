@@ -53,12 +53,14 @@ export const getStudioCalendar = createServerFn({ method: "GET" })
 
     const { data: bookings } = await supabaseAdmin
       .from("bookings")
-      .select("id, user_id, service_slug, starts_at, ends_at, status")
+      .select("id, user_id, person_id, service_slug, starts_at, ends_at, status")
       .gte("starts_at", data.fromIso)
       .lt("starts_at", data.toIso)
       .order("starts_at", { ascending: true });
 
-    const ids = Array.from(new Set((bookings ?? []).map((b) => b.user_id)));
+    const ids = Array.from(
+      new Set((bookings ?? []).map((b) => b.user_id).filter((id): id is string => id !== null)),
+    );
     const { data: people } = ids.length
       ? await supabaseAdmin.from("profiles").select("id, full_name, email").in("id", ids)
       : { data: [] as { id: string; full_name: string | null; email: string | null }[] };
@@ -67,7 +69,9 @@ export const getStudioCalendar = createServerFn({ method: "GET" })
 
     return (bookings ?? []).map((b) => ({
       ...b,
-      personName: byId.get(b.user_id)?.full_name ?? byId.get(b.user_id)?.email ?? "Someone",
+      personName: b.user_id
+        ? (byId.get(b.user_id)?.full_name ?? byId.get(b.user_id)?.email ?? "Someone")
+        : "Guest",
     }));
   });
 

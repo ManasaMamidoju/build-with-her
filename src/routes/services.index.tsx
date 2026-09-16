@@ -5,6 +5,7 @@ import { RoseMark } from "@/components/brand/RoseMark";
 import { Button } from "@/components/ui/button";
 import { BandFirstStep } from "@/components/services/BandFirstStep";
 import { PriceTag } from "@/components/services/PriceTag";
+import { TestimonialsComingSoon } from "@/components/site/TestimonialsComingSoon";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { SERVICES } from "@/lib/services";
 import { canonical } from "@/lib/site";

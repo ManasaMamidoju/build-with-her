@@ -283,7 +283,7 @@ function InterviewTracker() {
                     {row.final_video_link || row.video_link ? (
                       <a
                         className="underline"
-                        href={row.final_video_link || row.video_link}
+                        href={row.final_video_link || row.video_link || undefined}
                         target="_blank"
                         rel="noreferrer"
                       >
