@@ -101,7 +101,7 @@ async function syncCalendarOnCreate(
       summary: `${service?.name ?? serviceSlug} — ${recipient.fullName}`,
       startsAt,
       endsAt,
-      attendeeEmail: recipient.email || undefined,
+      ...(recipient.email ? { attendeeEmail: recipient.email } : {}),
     });
     if (result) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
