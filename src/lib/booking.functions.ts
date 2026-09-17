@@ -2,9 +2,109 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { bookableBySlug, formatWhen } from "@/lib/booking-options";
 import { computeSlots, type Slot } from "@/lib/slot-engine.server";
+import { SITE } from "@/lib/site";
+import type { AuthedContext } from "@/lib/server-context";
 
 export type { Slot };
+
+async function getRecipient(context: AuthedContext) {
+  const { data: profile } = await context.supabase
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", context.userId)
+    .maybeSingle();
+  const email = profile?.email ?? "";
+  return { email, fullName: profile?.full_name || email.split("@")[0] || "there" };
+}
+
+async function sendBookingConfirmation(
+  context: AuthedContext,
+  bookingId: string,
+  serviceSlug: string,
+  whenLabel: string,
+) {
+  try {
+    const recipient = await getRecipient(context);
+    if (!recipient.email) return;
+    const service = bookableBySlug(serviceSlug);
+    const serviceName = service?.name ?? serviceSlug;
+    const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
+    await triggerN8nEmail({
+      event: "booking_confirmation",
+      idempotencyKey: `booking_confirmation:${bookingId}`,
+      recipient,
+      data: {
+        serviceName,
+        whenLabel,
+        durationMinutes: service?.durationMinutes ?? 0,
+        locationNote: "We will send the video link before the session.",
+      },
+    });
+    await triggerN8nEmail({
+      event: "booking_admin_notify",
+      idempotencyKey: `booking_admin_notify:${bookingId}`,
+      recipient: { email: SITE.email, fullName: "Manasa" },
+      data: {
+        personName: recipient.fullName,
+        personEmail: recipient.email,
+        serviceName,
+        whenLabel,
+        adminUrl: `${SITE.url}/admin/calendar`,
+      },
+    });
+  } catch (error) {
+    console.error("booking confirmation email failed", error);
+  }
+}
+
+async function sendBookingReschedule(
+  context: AuthedContext,
+  bookingId: string,
+  serviceSlug: string,
+  oldWhenLabel: string,
+  newWhenLabel: string,
+) {
+  try {
+    const recipient = await getRecipient(context);
+    if (!recipient.email) return;
+    const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
+    await triggerN8nEmail({
+      event: "booking_reschedule",
+      idempotencyKey: `booking_reschedule:${bookingId}:${newWhenLabel}`,
+      recipient,
+      data: {
+        serviceName: bookableBySlug(serviceSlug)?.name ?? serviceSlug,
+        oldWhenLabel,
+        newWhenLabel,
+      },
+    });
+  } catch (error) {
+    console.error("booking reschedule email failed", error);
+  }
+}
+
+async function sendBookingCancelled(
+  context: AuthedContext,
+  bookingId: string,
+  serviceSlug: string,
+  whenLabel: string,
+) {
+  try {
+    const recipient = await getRecipient(context);
+    if (!recipient.email) return;
+    const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
+    await triggerN8nEmail({
+      event: "booking_cancelled",
+      idempotencyKey: `booking_cancelled:${bookingId}`,
+      recipient,
+      data: { serviceName: bookableBySlug(serviceSlug)?.name ?? serviceSlug, whenLabel },
+    });
+  } catch (error) {
+    console.error("booking cancelled email failed", error);
+  }
+}
 
 export const getAvailability = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -100,6 +200,13 @@ export const createBooking = createServerFn({ method: "POST" })
       detail: { service: data.serviceSlug, startsAt: start.toISOString() },
     });
 
+    await sendBookingConfirmation(
+      context,
+      row.id,
+      data.serviceSlug,
+      formatWhen(start.toISOString()),
+    );
+
     return { id: row.id as string };
   });
 
@@ -119,7 +226,7 @@ export const cancelBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row } = await context.supabase
       .from("bookings")
-      .select("starts_at, status")
+      .select("starts_at, status, service_slug")
       .eq("id", data.id)
       .maybeSingle();
 
@@ -133,6 +240,9 @@ export const cancelBooking = createServerFn({ method: "POST" })
       .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw new Error("We could not cancel that. Please try again.");
+
+    await sendBookingCancelled(context, data.id, row.service_slug, formatWhen(row.starts_at));
+
     return { ok: true as const };
   });
 
@@ -150,7 +260,7 @@ export const rescheduleBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row } = await context.supabase
       .from("bookings")
-      .select("starts_at, reschedule_count")
+      .select("starts_at, reschedule_count, service_slug")
       .eq("id", data.id)
       .maybeSingle();
 
@@ -174,5 +284,14 @@ export const rescheduleBooking = createServerFn({ method: "POST" })
       .eq("id", data.id);
 
     if (error) throw new Error("We could not move that. Please try again.");
+
+    await sendBookingReschedule(
+      context,
+      data.id,
+      row.service_slug,
+      formatWhen(row.starts_at),
+      formatWhen(start.toISOString()),
+    );
+
     return { ok: true as const };
   });

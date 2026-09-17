@@ -138,6 +138,7 @@ export type Database = {
           intake: Json;
           meet_link: string | null;
           person_id: string | null;
+          reminder_sent_at: string | null;
           reschedule_count: number;
           service_slug: string;
           starts_at: string;
@@ -154,6 +155,7 @@ export type Database = {
           intake?: Json;
           meet_link?: string | null;
           person_id?: string | null;
+          reminder_sent_at?: string | null;
           reschedule_count?: number;
           service_slug: string;
           starts_at: string;
@@ -170,6 +172,7 @@ export type Database = {
           intake?: Json;
           meet_link?: string | null;
           person_id?: string | null;
+          reminder_sent_at?: string | null;
           reschedule_count?: number;
           service_slug?: string;
           starts_at?: string;
