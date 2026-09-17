@@ -51,7 +51,7 @@ function NotFoundPost() {
         The link may be old. Here is everything we have written.
       </p>
       <Button asChild size="lg" className="mt-8 h-12 px-7 text-base">
-        <Link to="/blog">See the blog</Link>
+        <Link to="/learn">See everything we have written</Link>
       </Button>
     </main>
   );

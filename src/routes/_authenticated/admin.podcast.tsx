@@ -257,14 +257,20 @@ function InterviewTracker() {
             {rows.map((row) => (
               <tr key={row.id} className="border-t border-border align-top">
                 <td className="px-4 py-3">{row.full_name}</td>
-                <td className="px-4 py-3 text-muted-foreground">{row.business_name || "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{row.event_name || "—"}</td>
-                <td className="numeric px-4 py-3 text-muted-foreground">
-                  {row.interview_date || "—"}
+                <td className="px-4 py-3 text-muted-foreground">
+                  {row.business_name || "Not set"}
                 </td>
-                <td className="px-4 py-3">{row.overall_status || "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{row.editing_status || "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{row.posting_status || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.event_name || "Not set"}</td>
+                <td className="numeric px-4 py-3 text-muted-foreground">
+                  {row.interview_date || "Not set"}
+                </td>
+                <td className="px-4 py-3">{row.overall_status || "Not set"}</td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {row.editing_status || "Not set"}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {row.posting_status || "Not set"}
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {row.consent_confirmed ? "Yes" : "Not yet"}
                 </td>

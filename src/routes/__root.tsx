@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { captureSourceFromLocation } from "@/lib/source-capture";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 
 function NotFoundComponent() {
   return (
@@ -143,6 +144,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <OrganizationJsonLd />
+      <WebSiteJsonLd />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <div className="flex min-h-screen flex-col">
         <SiteHeader />

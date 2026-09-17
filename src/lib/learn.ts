@@ -15,7 +15,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "be-found",
     area: "source",
-    title: "How buyers actually find you",
+    title: "How clients actually find you",
     description:
       "The three places people look for a business like yours, and what has to be true in each one before they can find you.",
     readMinutes: 6,
@@ -26,7 +26,7 @@ export const ARTICLES: Article[] = [
         heading: "The three places",
         body: [
           "Search, maps and social. Search is someone typing what they need. Maps is someone standing nearby wanting it now. Social is someone asking a friend, or scrolling and recognising you.",
-          "You do not need to win all three. You need to be complete in the one where your buyers already are, and present in the other two.",
+          "You do not need to win all three. You need to be complete in the one where your clients already are, and present in the other two.",
         ],
       },
       {
@@ -58,7 +58,7 @@ export const ARTICLES: Article[] = [
       "How to turn a slogan into a sentence that tells a stranger what you do, for whom, where, and what it costs.",
     readMinutes: 5,
     intro:
-      "A buyer decides in a few seconds whether you are for her. A slogan does not help her. A sentence does.",
+      "Clients decide in a few seconds whether you are for them. A slogan does not help them. A sentence does.",
     sections: [
       {
         heading: "The shape of the sentence",
@@ -96,7 +96,7 @@ export const ARTICLES: Article[] = [
       "Reviews, results and photos, gathered as part of finishing the job rather than chased afterwards.",
     readMinutes: 6,
     intro:
-      "Buyers trust other buyers more than they trust you. Proof is not bragging. It is the evidence that lets a stranger take the risk.",
+      "Clients trust other clients more than they trust you. Proof is not bragging. It is the evidence that lets a stranger take the risk.",
     sections: [
       {
         heading: "Ask at the peak, not later",
