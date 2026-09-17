@@ -9,17 +9,16 @@ The SCALE rubric, five areas out of 100 points: Source (25), Clarity (20), Attra
 
 ## Pages
 - /: home, what the score is and the three ways in
+- /score: framing for the Findability Score before the quiz starts
 - /score/quiz: the free Findability Score quiz
 - /services: ways to work with us — clarity call, strategy consult, automation build, bootcamp, podcast, custom work
-- /podcast: the podcast, its formats, and how to be a guest
+- /podcast: the podcast, published guest interviews, its formats, and how to be a guest
 - /podcast/book: book a podcast guest slot directly, no sign-in or score required
-- /learn: five free explainers on being found, booked and paid
-- /blog: opinions on findability, SEO, AEO and marketing advice, from Manasa
-- /about: who runs Build With Her Media
-- /mission: why the business exists
+- /podcast/apply: apply to be a podcast guest
+- /learn: the SCALE framework, one article per step, plus everything else we have written (formerly /blog)
+- /about: who runs Build With Her Media and our mission (formerly /mission)
 - /community: the community
-- /events: upcoming events
-- /interviews: published guest interviews
+- /events: upcoming and past events
 - /contact: how to reach us
 - /login: sign in with Google
 - /terms: terms of service

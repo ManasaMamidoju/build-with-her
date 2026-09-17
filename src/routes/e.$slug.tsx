@@ -106,9 +106,12 @@ function EventSignIn() {
         <RoseMark className="h-7 w-7 text-primary" />
         <p className="eyebrow text-primary">{formatDay(event.starts_at)}</p>
       </div>
-      <h1 className="mt-4 text-3xl">{event.title}</h1>
+      <h1 className="mt-4 text-3xl">You met Manasa at {event.title}.</h1>
       <p className="mt-1 text-base text-muted-foreground">
         {[event.venue, event.city].filter(Boolean).join(", ")}
+      </p>
+      <p className="mt-4 text-base text-muted-foreground">
+        Sixty seconds and you are in. Then take the score if you want to see where clients lose you.
       </p>
 
       {done ? (
