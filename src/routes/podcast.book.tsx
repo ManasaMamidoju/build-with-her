@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 
 import { RoseMark } from "@/components/brand/RoseMark";
@@ -18,7 +19,12 @@ import { createPodcastBooking, getPodcastAvailability } from "@/lib/podcast-book
 import { canonical } from "@/lib/site";
 import { getCapturedSource } from "@/lib/source-capture";
 
+const searchSchema = z.object({
+  slug: z.enum(["podcast-street", "podcast-longform"]).optional(),
+});
+
 export const Route = createFileRoute("/podcast/book")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Book a podcast slot | Build With Her Media" },
@@ -35,8 +41,9 @@ export const Route = createFileRoute("/podcast/book")({
 });
 
 function PodcastBook() {
+  const { slug: preselected } = Route.useSearch();
   const [slug, setSlug] = useState<(typeof PODCAST_BOOKABLE)[number]["slug"]>(
-    PODCAST_BOOKABLE[0]!.slug,
+    preselected ?? PODCAST_BOOKABLE[0]!.slug,
   );
   const service = podcastBookableBySlug(slug)!;
 

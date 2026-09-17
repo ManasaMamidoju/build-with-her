@@ -5,16 +5,23 @@ import { Check } from "lucide-react";
 
 import { RoseMark } from "@/components/brand/RoseMark";
 import { Button } from "@/components/ui/button";
+import { InstagramEmbed } from "@/components/blog/InstagramEmbed";
 import { BlogPostingJsonLd } from "@/components/seo/JsonLd";
-import { blogPostBySlug, BLOG_POSTS } from "@/lib/blog";
-import { recordBlogView } from "@/lib/blog.functions";
+import {
+  getPublishedBlogPostBySlug,
+  getPublishedBlogPosts,
+  recordBlogView,
+} from "@/lib/blog.functions";
 import { canonical } from "@/lib/site";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
-    const post = blogPostBySlug(params.slug);
+  loader: async ({ params }) => {
+    const [post, allPosts] = await Promise.all([
+      getPublishedBlogPostBySlug({ data: { slug: params.slug } }),
+      getPublishedBlogPosts(),
+    ]);
     if (!post) throw notFound();
-    return { slug: params.slug };
+    return { post, others: allPosts.filter((p) => p.slug !== post.slug).slice(0, 3) };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) {
@@ -25,7 +32,7 @@ export const Route = createFileRoute("/blog/$slug")({
         ],
       };
     }
-    const post = blogPostBySlug(params.slug)!;
+    const { post } = loaderData;
     const title = `${post.title} | Build With Her Media`;
     return {
       meta: [
@@ -58,8 +65,8 @@ function NotFoundPost() {
 }
 
 function BlogPostPage() {
-  const { slug } = Route.useLoaderData();
-  const post = blogPostBySlug(slug)!;
+  const { post, others } = Route.useLoaderData();
+  const slug = post.slug;
   const recordView = useServerFn(recordBlogView);
 
   useEffect(() => {
@@ -73,8 +80,6 @@ function BlogPostPage() {
     recordView({ data: { slug } }).catch(() => {});
   }, [slug, recordView]);
 
-  const others = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3);
-
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
       <div className="flex items-center gap-3">
@@ -85,6 +90,30 @@ function BlogPostPage() {
       <h1 className="mt-6 text-4xl">{post.title}</h1>
       <p className="prose-editorial mt-5 text-lg text-muted-foreground">{post.intro}</p>
       <p className="mt-3 text-sm text-muted-foreground">{post.readMinutes} minute read</p>
+
+      {post.interview ? (
+        <section className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-card">
+          <p className="text-sm text-muted-foreground">
+            An interview with{" "}
+            <span className="font-medium text-foreground">{post.interview.guestName}</span>
+            {post.interview.businessName ? ` · ${post.interview.businessName}` : ""}
+          </p>
+          <div className="mt-4">
+            <InstagramEmbed url={post.interview.instagramUrl} />
+          </div>
+          {post.interview.backlinkLabel ? (
+            <Button asChild variant="outline" className="mt-4">
+              <a
+                href={post.interview.businessWebsite ?? post.interview.instagramUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {post.interview.backlinkLabel}
+              </a>
+            </Button>
+          ) : null}
+        </section>
+      ) : null}
 
       <div className="mt-10 space-y-10">
         {post.sections.map((section) => (

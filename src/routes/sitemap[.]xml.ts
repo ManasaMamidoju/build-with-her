@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ARTICLES } from "@/lib/learn";
-import { BLOG_POSTS } from "@/lib/blog";
 import { SERVICES } from "@/lib/services";
 import { canonical } from "@/lib/site";
 
@@ -25,11 +24,17 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: blogPosts } = await supabaseAdmin
+          .from("blog_posts")
+          .select("slug")
+          .eq("status", "published");
+
         const paths = [
           ...STATIC_PATHS,
           ...SERVICES.map((service) => `/services/${service.slug}`),
           ...ARTICLES.map((article) => `/learn/${article.slug}`),
-          ...BLOG_POSTS.map((post) => `/blog/${post.slug}`),
+          ...(blogPosts ?? []).map((post) => `/blog/${post.slug}`),
         ];
 
         const body = `<?xml version="1.0" encoding="UTF-8"?>

@@ -12,6 +12,47 @@ type EmailAutomation =
       idempotencyKey: string;
       recipient: { email: string; fullName: string };
       data: { serviceName: string; serviceUrl: string; scoreUrl: string };
+    }
+  | {
+      event: "booking_confirmation";
+      idempotencyKey: string;
+      recipient: { email: string; fullName: string };
+      data: {
+        serviceName: string;
+        whenLabel: string;
+        durationMinutes: number;
+        locationNote: string;
+      };
+    }
+  | {
+      event: "booking_reminder";
+      idempotencyKey: string;
+      recipient: { email: string; fullName: string };
+      data: { serviceName: string; whenLabel: string };
+    }
+  | {
+      event: "booking_admin_notify";
+      idempotencyKey: string;
+      recipient: { email: string; fullName: string };
+      data: {
+        personName: string;
+        personEmail: string;
+        serviceName: string;
+        whenLabel: string;
+        adminUrl: string;
+      };
+    }
+  | {
+      event: "booking_reschedule";
+      idempotencyKey: string;
+      recipient: { email: string; fullName: string };
+      data: { serviceName: string; oldWhenLabel: string; newWhenLabel: string };
+    }
+  | {
+      event: "booking_cancelled";
+      idempotencyKey: string;
+      recipient: { email: string; fullName: string };
+      data: { serviceName: string; whenLabel: string };
     };
 
 export async function triggerN8nEmail(payload: EmailAutomation) {

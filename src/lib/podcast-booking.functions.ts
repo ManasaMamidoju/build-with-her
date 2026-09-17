@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { podcastBookableBySlug } from "@/lib/booking-options";
+import { formatWhen, podcastBookableBySlug } from "@/lib/booking-options";
 import { computeSlots, type Slot } from "@/lib/slot-engine.server";
+import { SITE } from "@/lib/site";
 
 const podcastSlug = z.enum(["podcast-street", "podcast-longform"]);
 
@@ -120,6 +121,55 @@ export const createPodcastBooking = createServerFn({ method: "POST" })
       detail: { service: data.slug, startsAt: start.toISOString() },
     });
     if (touchError) console.error("touchpoint write failed", touchError.message);
+
+    const whenLabel = formatWhen(start.toISOString());
+    try {
+      const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
+      await triggerN8nEmail({
+        event: "booking_confirmation",
+        idempotencyKey: `booking_confirmation:${row.id}`,
+        recipient: { email, fullName: data.fullName },
+        data: {
+          serviceName: service.name,
+          whenLabel,
+          durationMinutes: service.durationMinutes,
+          locationNote: "We will send filming details before your slot.",
+        },
+      });
+      await triggerN8nEmail({
+        event: "booking_admin_notify",
+        idempotencyKey: `booking_admin_notify:${row.id}`,
+        recipient: { email: SITE.email, fullName: "Manasa" },
+        data: {
+          personName: data.fullName,
+          personEmail: email,
+          serviceName: service.name,
+          whenLabel,
+          adminUrl: `${SITE.url}/admin/podcast`,
+        },
+      });
+    } catch (emailError) {
+      console.error("podcast booking email failed", emailError);
+    }
+
+    try {
+      const { upsertCalendarEvent } = await import("@/lib/google-calendar.server");
+      const result = await upsertCalendarEvent({
+        googleEventId: null,
+        summary: `${service.name} — ${data.fullName}`,
+        startsAt: start.toISOString(),
+        endsAt: end.toISOString(),
+        attendeeEmail: email,
+      });
+      if (result) {
+        await supabaseAdmin
+          .from("bookings")
+          .update({ google_event_id: result.googleEventId, meet_link: result.meetLink })
+          .eq("id", row.id);
+      }
+    } catch (calendarError) {
+      console.error("podcast booking calendar sync failed", calendarError);
+    }
 
     return { id: row.id as string };
   });

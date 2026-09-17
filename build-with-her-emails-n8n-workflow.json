@@ -29,6 +29,23 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.valid }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "f0f1d0c4-083f-4413-85f5-f7fcce377743",
+      "name": "Signature Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
         "rules": {
           "rules": [
             {
@@ -38,18 +55,38 @@
             {
               "value": "waitlist_confirm",
               "output": 1
+            },
+            {
+              "value": "booking_confirmation",
+              "output": 2
+            },
+            {
+              "value": "booking_reminder",
+              "output": 3
+            },
+            {
+              "value": "booking_admin_notify",
+              "output": 4
+            },
+            {
+              "value": "booking_reschedule",
+              "output": 5
+            },
+            {
+              "value": "booking_cancelled",
+              "output": 6
             }
           ]
         },
         "dataType": "string",
         "value1": "={{ $json.event }}",
-        "fallbackOutput": 2
+        "fallbackOutput": 7
       },
       "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
       "name": "Route by Event",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
-      "position": [650, 300]
+      "position": [800, 300]
     },
     {
       "parameters": {
@@ -83,7 +120,7 @@
       "name": "Prepare Score Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [850, 150]
+      "position": [1000, 0]
     },
     {
       "parameters": {
@@ -117,7 +154,177 @@
       "name": "Prepare Waitlist Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [850, 450]
+      "position": [1000, 150]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "You're booked: {{ $json.data.serviceName }}"
+            },
+            {
+              "name": "text",
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nYou are booked for your {{ $json.data.serviceName }} on {{ $json.data.whenLabel }} ({{ $json.data.durationMinutes }} minutes).\n\n{{ $json.data.locationNote }}\n\nManasa\nBuild With Her Media"
+            },
+            {
+              "name": "html",
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>You are booked for your <strong>{{ $json.data.serviceName }}</strong> on <strong>{{ $json.data.whenLabel }}</strong> ({{ $json.data.durationMinutes }} minutes).</p><p>{{ $json.data.locationNote }}</p><p>Manasa<br>Build With Her Media</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1847ba35-3d17-4da6-bf42-2df9c7828197",
+      "name": "Prepare Booking Confirmation Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "Reminder: your {{ $json.data.serviceName }} is coming up"
+            },
+            {
+              "name": "text",
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nJust a reminder that your {{ $json.data.serviceName }} is on {{ $json.data.whenLabel }}.\n\nSee you then.\n\nManasa\nBuild With Her Media"
+            },
+            {
+              "name": "html",
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>Just a reminder that your <strong>{{ $json.data.serviceName }}</strong> is on <strong>{{ $json.data.whenLabel }}</strong>.</p><p>See you then.</p><p>Manasa<br>Build With Her Media</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c6d3a1e0-746f-4d0b-a036-b8f4eb58d152",
+      "name": "Prepare Booking Reminder Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1000, 450]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "New booking: {{ $json.data.personName }} — {{ $json.data.serviceName }}"
+            },
+            {
+              "name": "text",
+              "value": "{{ $json.data.personName }} ({{ $json.data.personEmail }}) just booked {{ $json.data.serviceName }} for {{ $json.data.whenLabel }}.\n\nOpen the studio calendar: {{ $json.data.adminUrl }}"
+            },
+            {
+              "name": "html",
+              "value": "<p><strong>{{ $json.data.personName }}</strong> ({{ $json.data.personEmail }}) just booked <strong>{{ $json.data.serviceName }}</strong> for <strong>{{ $json.data.whenLabel }}</strong>.</p><p><a href=\"{{ $json.data.adminUrl }}\">Open the studio calendar</a></p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2d41f9a-6153-4583-bf45-8975378d9d52",
+      "name": "Prepare Booking Admin Notify Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1000, 600]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "Your {{ $json.data.serviceName }} moved to {{ $json.data.newWhenLabel }}"
+            },
+            {
+              "name": "text",
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nYour {{ $json.data.serviceName }} has moved from {{ $json.data.oldWhenLabel }} to {{ $json.data.newWhenLabel }}.\n\nManasa\nBuild With Her Media"
+            },
+            {
+              "name": "html",
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>Your <strong>{{ $json.data.serviceName }}</strong> has moved from {{ $json.data.oldWhenLabel }} to <strong>{{ $json.data.newWhenLabel }}</strong>.</p><p>Manasa<br>Build With Her Media</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ba023d3a-1a73-4425-9831-6346bd5c2b0d",
+      "name": "Prepare Booking Reschedule Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1000, 750]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "toEmail",
+              "value": "={{ $json.recipient.email }}"
+            },
+            {
+              "name": "toName",
+              "value": "={{ $json.recipient.fullName }}"
+            },
+            {
+              "name": "subject",
+              "value": "Your {{ $json.data.serviceName }} on {{ $json.data.whenLabel }} is cancelled"
+            },
+            {
+              "name": "text",
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nYour {{ $json.data.serviceName }} on {{ $json.data.whenLabel }} has been cancelled. Reach out any time to pick a new time.\n\nManasa\nBuild With Her Media"
+            },
+            {
+              "name": "html",
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>Your <strong>{{ $json.data.serviceName }}</strong> on {{ $json.data.whenLabel }} has been cancelled. Reach out any time to pick a new time.</p><p>Manasa<br>Build With Her Media</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "260cdcb9-8bc5-416b-bfc6-b31dd6611161",
+      "name": "Prepare Booking Cancelled Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1000, 900]
     },
     {
       "parameters": {
@@ -132,7 +339,7 @@
       "name": "Send Score Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1050, 150]
+      "position": [1200, 0]
     },
     {
       "parameters": {
@@ -147,7 +354,82 @@
       "name": "Send Waitlist Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1050, 450]
+      "position": [1200, 150]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "546c760a-74bf-4c0e-86f0-ad86742a1de0",
+      "name": "Send Booking Confirmation Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "9c420f65-abf9-4b92-9a77-c40e53b9becf",
+      "name": "Send Booking Reminder Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 450]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "00007286-73d1-4e2c-8ac3-67c3447ae5b8",
+      "name": "Send Booking Admin Notify Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 600]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "f817d673-da6a-49d8-b173-a4d26128f09e",
+      "name": "Send Booking Reschedule Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 750]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "dcd38d5f-536f-4904-9473-5c8f645131e4",
+      "name": "Send Booking Cancelled Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 900]
     },
     {
       "parameters": {
@@ -158,7 +440,7 @@
       "name": "Respond Success",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1250, 300]
+      "position": [1450, 450]
     },
     {
       "parameters": {
@@ -169,7 +451,7 @@
       "name": "Respond Forbidden",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [650, 500]
+      "position": [600, 500]
     }
   ],
   "connections": {
@@ -188,7 +470,25 @@
       "main": [
         [
           {
+            "node": "Signature Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature Valid?": {
+      "main": [
+        [
+          {
             "node": "Route by Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Forbidden",
             "type": "main",
             "index": 0
           }
@@ -207,6 +507,41 @@
         [
           {
             "node": "Prepare Waitlist Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Booking Confirmation Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Booking Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Booking Admin Notify Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Booking Reschedule Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Booking Cancelled Email",
             "type": "main",
             "index": 0
           }
@@ -242,6 +577,61 @@
         ]
       ]
     },
+    "Prepare Booking Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Confirmation Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Booking Reminder Email": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Booking Admin Notify Email": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Admin Notify Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Booking Reschedule Email": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Reschedule Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Booking Cancelled Email": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Cancelled Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Send Score Email": {
       "main": [
         [
@@ -254,6 +644,61 @@
       ]
     },
     "Send Waitlist Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Reminder Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Admin Notify Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Reschedule Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Cancelled Email": {
       "main": [
         [
           {

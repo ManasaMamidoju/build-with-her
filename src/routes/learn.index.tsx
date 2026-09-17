@@ -6,8 +6,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ARTICLES } from "@/lib/learn";
-import { BLOG_POSTS } from "@/lib/blog";
-import { getBlogViewCounts } from "@/lib/blog.functions";
+import { getBlogViewCounts, getPublishedBlogPosts } from "@/lib/blog.functions";
 import { AREA_ORDER, AREAS } from "@/lib/score-rubric";
 import { SITE, canonical } from "@/lib/site";
 
@@ -45,12 +44,14 @@ function LearnIndex() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<Sort>("recent");
 
+  const postsFn = useServerFn(getPublishedBlogPosts);
+  const { data: allPosts } = useQuery({ queryKey: ["blog", "posts"], queryFn: () => postsFn() });
   const viewsFn = useServerFn(getBlogViewCounts);
   const { data: views } = useQuery({ queryKey: ["blog", "views"], queryFn: () => viewsFn() });
 
   const posts = useMemo(() => {
     const term = search.trim().toLowerCase();
-    let list = BLOG_POSTS.filter((post) => {
+    let list = (allPosts ?? []).filter((post) => {
       if (!term) return true;
       return (
         post.title.toLowerCase().includes(term) ||
@@ -66,7 +67,7 @@ function LearnIndex() {
     });
 
     return list;
-  }, [search, sort, views]);
+  }, [allPosts, search, sort, views]);
 
   return (
     <main className="container-editorial max-w-4xl py-12 md:py-16">

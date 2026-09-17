@@ -103,6 +103,16 @@ function BookIndex() {
                   {bookableBySlug(row.service_slug)?.name ?? row.service_slug}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">{formatWhen(row.starts_at)}</p>
+                {row.meet_link ? (
+                  <a
+                    href={row.meet_link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-block text-sm text-primary underline"
+                  >
+                    Join by Google Meet
+                  </a>
+                ) : null}
                 <div className="mt-4 flex flex-wrap gap-3">
                   <Button asChild variant="outline" size="sm">
                     <Link to="/app/book/$slug" params={{ slug: row.service_slug }}>

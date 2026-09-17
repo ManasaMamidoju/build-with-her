@@ -25,6 +25,8 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin.route'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as BookSlugRouteImport } from './routes/book.$slug'
+import { Route as CronSendBookingRemindersRouteImport } from './routes/cron.send-booking-reminders'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
@@ -35,6 +37,7 @@ import { Route as ScoreQuizRouteImport } from './routes/score.quiz'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
 import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
 import { Route as AuthenticatedAdminDuplicatesRouteImport } from './routes/_authenticated/admin.duplicates'
 import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenticated/admin.events'
@@ -137,6 +140,17 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookSlugRoute = BookSlugRouteImport.update({
+  id: '/book/$slug',
+  path: '/book/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CronSendBookingRemindersRoute =
+  CronSendBookingRemindersRouteImport.update({
+    id: '/cron/send-booking-reminders',
+    path: '/cron/send-booking-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
   path: '/e/$slug',
@@ -185,6 +199,11 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedAdminCalendarRoute =
@@ -330,6 +349,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/book/$slug': typeof BookSlugRoute
+  '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
@@ -340,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/learn/': typeof LearnIndexRoute
   '/score/': typeof ScoreIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/duplicates': typeof AuthenticatedAdminDuplicatesRoute
   '/admin/events': typeof AuthenticatedAdminEventsRoute
@@ -378,6 +400,8 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/book/$slug': typeof BookSlugRoute
+  '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
@@ -388,6 +412,7 @@ export interface FileRoutesByTo {
   '/learn': typeof LearnIndexRoute
   '/score': typeof ScoreIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/duplicates': typeof AuthenticatedAdminDuplicatesRoute
   '/admin/events': typeof AuthenticatedAdminEventsRoute
@@ -429,6 +454,8 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/book/$slug': typeof BookSlugRoute
+  '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/podcast/apply': typeof PodcastApplyRoute
@@ -439,6 +466,7 @@ export interface FileRoutesById {
   '/learn/': typeof LearnIndexRoute
   '/score/': typeof ScoreIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/_authenticated/admin/duplicates': typeof AuthenticatedAdminDuplicatesRoute
   '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRoute
@@ -480,6 +508,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/blog/$slug'
+    | '/book/$slug'
+    | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
@@ -490,6 +520,7 @@ export interface FileRouteTypes {
     | '/learn/'
     | '/score/'
     | '/services/'
+    | '/admin/blog'
     | '/admin/calendar'
     | '/admin/duplicates'
     | '/admin/events'
@@ -528,6 +559,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/blog/$slug'
+    | '/book/$slug'
+    | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
@@ -538,6 +571,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/score'
     | '/services'
+    | '/admin/blog'
     | '/admin/calendar'
     | '/admin/duplicates'
     | '/admin/events'
@@ -578,6 +612,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/admin'
     | '/blog/$slug'
+    | '/book/$slug'
+    | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
     | '/podcast/apply'
@@ -588,6 +624,7 @@ export interface FileRouteTypes {
     | '/learn/'
     | '/score/'
     | '/services/'
+    | '/_authenticated/admin/blog'
     | '/_authenticated/admin/calendar'
     | '/_authenticated/admin/duplicates'
     | '/_authenticated/admin/events'
@@ -628,6 +665,8 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  BookSlugRoute: typeof BookSlugRoute
+  CronSendBookingRemindersRoute: typeof CronSendBookingRemindersRoute
   ESlugRoute: typeof ESlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
   ScoreQuizRoute: typeof ScoreQuizRoute
@@ -753,6 +792,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/book/$slug': {
+      id: '/book/$slug'
+      path: '/book/$slug'
+      fullPath: '/book/$slug'
+      preLoaderRoute: typeof BookSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cron/send-booking-reminders': {
+      id: '/cron/send-booking-reminders'
+      path: '/cron/send-booking-reminders'
+      fullPath: '/cron/send-booking-reminders'
+      preLoaderRoute: typeof CronSendBookingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/e/$slug': {
       id: '/e/$slug'
       path: '/e/$slug'
@@ -821,6 +874,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/calendar': {
@@ -981,6 +1041,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCalendarRoute: typeof AuthenticatedAdminCalendarRoute
   AuthenticatedAdminDuplicatesRoute: typeof AuthenticatedAdminDuplicatesRoute
   AuthenticatedAdminEventsRoute: typeof AuthenticatedAdminEventsRoute
@@ -999,6 +1060,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminCalendarRoute: AuthenticatedAdminCalendarRoute,
     AuthenticatedAdminDuplicatesRoute: AuthenticatedAdminDuplicatesRoute,
     AuthenticatedAdminEventsRoute: AuthenticatedAdminEventsRoute,
@@ -1075,6 +1137,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
+  BookSlugRoute: BookSlugRoute,
+  CronSendBookingRemindersRoute: CronSendBookingRemindersRoute,
   ESlugRoute: ESlugRoute,
   LearnSlugRoute: LearnSlugRoute,
   ScoreQuizRoute: ScoreQuizRoute,
