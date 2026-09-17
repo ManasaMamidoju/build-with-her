@@ -5,8 +5,7 @@ import { Check, Copy, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { ScoreRing } from "@/components/services/ScoreRing";
-import { AREAS, BAND_COLOR_CLASS, type AreaKey } from "@/lib/score-rubric";
+import { AREAS, type AreaKey } from "@/lib/score-rubric";
 import { OFFER_KINDS, offersFor } from "@/lib/offers";
 import { getScoreByToken } from "@/lib/score.functions";
 
@@ -56,13 +55,6 @@ function ResultPage() {
 
   const firstName = result.fullName.split(" ")[0] ?? result.fullName;
   const matchedOffers = offersFor(result.total, result.areaScores, 5);
-  const bandColorClass = BAND_COLOR_CLASS[result.band] ?? "text-primary";
-  const lowestArea = [...result.areaScores].sort((a, b) => {
-    const aPct = a.outOf ? a.earned / a.outOf : 1;
-    const bPct = b.outOf ? b.earned / b.outOf : 1;
-    return aPct - bPct;
-  })[0];
-  const lowestAreaInfo = lowestArea ? AREAS[lowestArea.area as AreaKey] : undefined;
 
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
@@ -71,29 +63,18 @@ function ResultPage() {
         <p className="eyebrow text-primary">Your Findability Score</p>
       </div>
 
-      <section className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow-card">
+      <section className="mt-6 rounded-2xl border border-border bg-card p-8 shadow-card">
         <p className="text-base text-muted-foreground">
           {firstName}
           {result.businessName ? `, ${result.businessName}` : ""}
         </p>
-        <div className="mt-6">
-          <ScoreRing score={result.total} />
-        </div>
-        <h1 className={`mt-6 text-3xl ${bandColorClass}`}>{result.band}</h1>
-        <p className="prose-editorial mx-auto mt-3 text-lg text-muted-foreground">
-          {result.bandLine}
+        <p className="numeric mt-2 font-display text-7xl leading-none text-primary">
+          {result.total}
+          <span className="text-2xl text-muted-foreground"> / 100</span>
         </p>
-        <p className="eyebrow mt-6 inline-block rounded-full bg-secondary px-4 py-2 text-muted-foreground">
-          Self-reported. The automated check is coming.
-        </p>
+        <h1 className="mt-4 text-3xl">{result.band}</h1>
+        <p className="mt-3 text-lg text-muted-foreground">{result.bandLine}</p>
       </section>
-
-      {lowestAreaInfo ? (
-        <section className="mt-8 rounded-2xl bg-blush p-6">
-          <p className="eyebrow text-crimson-dark">Start here: {lowestAreaInfo.title}</p>
-          <p className="mt-2 text-base text-crimson-dark">{lowestAreaInfo.blurb}</p>
-        </section>
-      ) : null}
 
       <section className="mt-10">
         <h2 className="text-2xl">Your five areas</h2>
@@ -171,26 +152,6 @@ function ResultPage() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className="mt-12 grid gap-4 sm:grid-cols-3">
-        <Link
-          to="/community"
-          className="rounded-2xl border border-border bg-card p-5 text-base text-foreground shadow-card transition-colors hover:border-primary"
-        >
-          Join the free WhatsApp community
-        </Link>
-        <a
-          href="https://youtube.com/@buildwithher"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-2xl border border-border bg-card p-5 text-base text-foreground shadow-card transition-colors hover:border-primary"
-        >
-          Watch the full SCALE tutorial
-        </a>
-        <p className="rounded-2xl border border-dashed border-border bg-card p-5 text-base text-muted-foreground">
-          The workbook is not built yet. It lands here first.
-        </p>
       </section>
 
       <section className="mt-12 rounded-2xl bg-secondary p-8">

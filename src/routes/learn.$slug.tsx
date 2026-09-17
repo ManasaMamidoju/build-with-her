@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { ArticleJsonLd } from "@/components/seo/JsonLd";
 import { articleBySlug } from "@/lib/learn";
 import { AREAS } from "@/lib/score-rubric";
 import { canonical } from "@/lib/site";
@@ -39,12 +38,9 @@ function ArticlePage() {
 
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
-      <ArticleJsonLd slug={article.slug} title={article.title} description={article.description} />
       <p className="eyebrow text-primary">{AREAS[article.area]?.title}</p>
       <h1 className="mt-3 text-4xl">{article.title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        By Manasa · {article.readMinutes} minute read
-      </p>
+      <p className="mt-2 text-sm text-muted-foreground">{article.readMinutes} minute read</p>
       <p className="prose-editorial mt-6 text-lg">{article.intro}</p>
 
       {article.sections.map((section) => (

@@ -1,60 +1,38 @@
 import { Link } from "@tanstack/react-router";
 
 import { RoseMark } from "@/components/brand/RoseMark";
-import {
-  InstagramIcon,
-  LinkedinIcon,
-  TiktokIcon,
-  YoutubeIcon,
-} from "@/components/site/SocialIcons";
-import { DIGIMAIDS_URL, SITE, SOCIAL } from "@/lib/site";
-
-const socialLinks = [
-  { href: SOCIAL.instagram, label: "Instagram", Icon: InstagramIcon },
-  { href: SOCIAL.youtube, label: "YouTube", Icon: YoutubeIcon },
-  { href: SOCIAL.linkedin, label: "LinkedIn", Icon: LinkedinIcon },
-  { href: SOCIAL.tiktok, label: "TikTok", Icon: TiktokIcon },
-] as const;
+import { SITE } from "@/lib/site";
 
 export function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border bg-secondary">
-      <div className="container-editorial grid gap-10 py-14 md:grid-cols-4">
+      <div className="container-editorial grid gap-10 py-14 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">
             <RoseMark className="h-7 w-7 text-primary" />
             <span className="font-display text-lg font-semibold">Build With Her Media</span>
           </div>
-          <p className="mt-4 max-w-xs text-base text-muted-foreground">{SITE.tagline}</p>
+          <p className="mt-4 max-w-sm text-base text-muted-foreground">
+            Media, systems and AI for women who own businesses. {SITE.tagline}
+          </p>
         </div>
 
         <div>
-          <p className="eyebrow text-muted-foreground">Start</p>
+          <p className="eyebrow text-muted-foreground">Pages</p>
           <ul className="mt-4 space-y-3 text-base">
             <li>
-              <Link to="/score" className="text-foreground hover:text-primary">
-                Findability Score
+              <Link to="/" className="text-foreground hover:text-primary">
+                Home
               </Link>
             </li>
             <li>
               <Link to="/services" className="text-foreground hover:text-primary">
-                Services
+                Ways to work with us
               </Link>
             </li>
-            <li>
-              <Link to="/contact" className="text-foreground hover:text-primary">
-                Book a call
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <p className="eyebrow text-muted-foreground">Watch and read</p>
-          <ul className="mt-4 space-y-3 text-base">
             <li>
               <Link to="/podcast" className="text-foreground hover:text-primary">
-                Podcast
+                The podcast
               </Link>
             </li>
             <li>
@@ -67,20 +45,30 @@ export function SiteFooter() {
                 Events
               </Link>
             </li>
+            <li>
+              <Link to="/community" className="text-foreground hover:text-primary">
+                Community
+              </Link>
+            </li>
+            <li>
+              <Link to="/score/quiz" className="text-foreground hover:text-primary">
+                Take the quiz
+              </Link>
+            </li>
           </ul>
         </div>
 
         <div>
-          <p className="eyebrow text-muted-foreground">Company</p>
+          <p className="eyebrow text-muted-foreground">The details</p>
           <ul className="mt-4 space-y-3 text-base">
             <li>
               <Link to="/about" className="text-foreground hover:text-primary">
-                About
+                About us
               </Link>
             </li>
             <li>
-              <Link to="/community" className="text-foreground hover:text-primary">
-                Community
+              <Link to="/mission" className="text-foreground hover:text-primary">
+                Our mission
               </Link>
             </li>
             <li>
@@ -89,49 +77,38 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link to="/login" className="text-foreground hover:text-primary">
+                Sign in
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="md:col-span-3">
+          <p className="eyebrow text-muted-foreground">Legal</p>
+          <ul className="mt-4 flex flex-wrap gap-6 text-base">
+            <li>
               <Link to="/terms" className="text-foreground hover:text-primary">
-                Terms
+                Terms of Service
               </Link>
             </li>
             <li>
               <Link to="/privacy" className="text-foreground hover:text-primary">
-                Privacy
+                Privacy Notice
               </Link>
+            </li>
+            <li>
+              <a href={`mailto:${SITE.email}`} className="text-foreground hover:text-primary">
+                {SITE.email}
+              </a>
             </li>
           </ul>
         </div>
       </div>
 
       <div className="border-t border-border">
-        <div className="container-editorial flex flex-col gap-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-          <p>
-            {SITE.legalName}, {SITE.city}
-          </p>
-          <div className="flex items-center gap-4">
-            {socialLinks.map(({ href, label, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={label}
-                className="text-muted-foreground transition-colors hover:text-primary"
-              >
-                <Icon className="h-5 w-5" />
-              </a>
-            ))}
-          </div>
-        </div>
-        <div className="container-editorial pb-6 text-sm text-muted-foreground">
-          Want the automations without the media?{" "}
-          <a
-            href={DIGIMAIDS_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="text-foreground underline-offset-4 hover:text-primary hover:underline"
-          >
-            Visit DigiMAIDS.
-          </a>
+        <div className="container-editorial py-6 text-sm text-muted-foreground">
+          © {new Date().getFullYear()} {SITE.legalName}. Built by women, for women.
         </div>
       </div>
     </footer>

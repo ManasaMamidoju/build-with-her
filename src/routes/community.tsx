@@ -1,28 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { joinWaitlist } from "@/lib/waitlist.functions";
-import { getCapturedSource } from "@/lib/source-capture";
-import { canonical, SOCIAL } from "@/lib/site";
+import { canonical } from "@/lib/site";
 
 export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
-      { title: "Women building alongside you | Build With Her Media" },
+      { title: "The community of women building alongside you | Build With Her Media" },
       {
         name: "description",
         content:
-          "Free, and the fastest way to get an answer from someone who has done it. The WhatsApp community, the Instagram broadcast and the Skool community.",
+          "A group of women running real businesses, sharing what works, keeping each other publishing and passing on clients.",
       },
       { property: "og:title", content: "Women building alongside you" },
       {
         property: "og:description",
-        content: "Free, and the fastest way to get an answer from someone who has done it.",
+        content: "Share what works, find suppliers, pass on clients, keep each other publishing.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -32,6 +26,21 @@ export const Route = createFileRoute("/community")({
   component: Community,
 });
 
+const WAYS = [
+  {
+    title: "The group chat",
+    body: "Day to day questions, quick answers, and the small wins that keep you going. This is where most women start.",
+  },
+  {
+    title: "The broadcast",
+    body: "One message from us when something matters: a cohort opening, a new tutorial, an event where we will be.",
+  },
+  {
+    title: "The classroom",
+    body: "Where the bootcamp lessons and recordings live, once your cohort starts. Yours to keep afterwards.",
+  },
+];
+
 function Community() {
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
@@ -39,37 +48,37 @@ function Community() {
         <RoseMark className="h-7 w-7 text-primary" />
         <p className="eyebrow text-primary">Community</p>
       </div>
-      <h1 className="mt-4 text-4xl">Women building alongside you</h1>
+      <h1 className="mt-4 text-4xl">You are not doing this on your own</h1>
       <p className="prose-editorial mt-4 text-lg text-muted-foreground">
-        Free, and the fastest way to get an answer from someone who has done it.
+        Every woman in here runs something real. There is no ranking, no pitching, and no pretending
+        business is easier than it is. You bring a question, someone who solved it last year answers
+        it.
       </p>
 
-      <div className="mt-10 grid gap-5">
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-          <h2 className="text-xl">WhatsApp community</h2>
-          <p className="mt-2 text-base text-muted-foreground">
-            Questions, wins, and the tool links from every episode. Women only. Invitations go out
-            by hand so the room stays useful.
-          </p>
-          <Button asChild size="lg" className="mt-5 h-11 px-6">
+      <div className="mt-10 grid gap-4">
+        {WAYS.map((way) => (
+          <div key={way.title} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <h2 className="text-xl">{way.title}</h2>
+            <p className="mt-2 text-base text-muted-foreground">{way.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <section className="mt-12 rounded-2xl bg-blush p-8">
+        <h2 className="text-2xl">How to get in</h2>
+        <p className="mt-3 text-base text-muted-foreground">
+          Invitations go out by hand, so the room stays useful. Take the Findability Score and tick
+          the community box, or ask us on your clarity call and we will add you the same week.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild size="lg" className="h-12 px-7 text-base">
+            <Link to="/score/quiz">Take the quiz</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-12 px-7 text-base">
             <Link to="/contact">Ask for an invite</Link>
           </Button>
         </div>
-
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-          <h2 className="text-xl">Instagram broadcast</h2>
-          <p className="mt-2 text-base text-muted-foreground">
-            Short updates when episodes and events drop.
-          </p>
-          <Button asChild size="lg" variant="outline" className="mt-5 h-11 px-6">
-            <a href={SOCIAL.instagram} target="_blank" rel="noreferrer">
-              Join the broadcast
-            </a>
-          </Button>
-        </div>
-
-        <SkoolCard />
-      </div>
+      </section>
 
       <p className="mt-10 text-sm text-muted-foreground">
         Already with us? Turn the community invite on in{" "}
@@ -79,68 +88,5 @@ function Community() {
         .
       </p>
     </main>
-  );
-}
-
-function SkoolCard() {
-  const join = useServerFn(joinWaitlist);
-  const [email, setEmail] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [done, setDone] = useState(false);
-
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    if (saving) return;
-    setSaving(true);
-    try {
-      await join({
-        data: {
-          serviceSlug: "skool-community",
-          fullName: email.split("@")[0] || "Skool waitlist",
-          email,
-          consentEmail: true,
-          source: getCapturedSource()?.src ?? "direct",
-        },
-      });
-      setDone(true);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "We could not add you to the list.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-xl">The Skool community</h2>
-        <span className="eyebrow rounded-full bg-secondary px-3 py-1 text-muted-foreground">
-          In progress
-        </span>
-      </div>
-      <p className="mt-2 text-base text-muted-foreground">
-        A paid space with replays, templates and monthly calls. Opening when the first bootcamp
-        does.
-      </p>
-      {done ? (
-        <p className="mt-5 text-base text-crimson-dark">
-          You are on the list. You hear before anyone else.
-        </p>
-      ) : (
-        <form onSubmit={submit} className="mt-5 flex flex-wrap gap-3">
-          <Input
-            type="email"
-            required
-            placeholder="you@yourbusiness.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="h-11 max-w-xs"
-          />
-          <Button type="submit" size="lg" disabled={saving} className="h-11 px-6">
-            {saving ? "Joining" : "Join the waitlist"}
-          </Button>
-        </form>
-      )}
-    </div>
   );
 }

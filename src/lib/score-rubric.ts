@@ -26,7 +26,7 @@ export const AREAS: Record<
     key: "source",
     title: "Where you show up",
     short: "Where you show up",
-    blurb: "Whether a client looking for what you sell can actually land on you.",
+    blurb: "Whether a buyer looking for what you sell can actually land on you.",
     points: 25,
   },
   clarity: {
@@ -48,7 +48,7 @@ export const AREAS: Record<
     key: "land",
     title: "How they book you",
     short: "How they book",
-    blurb: "Whether an interested client can book, pay and turn up without waiting on you.",
+    blurb: "Whether an interested buyer can book, pay and turn up without waiting on you.",
     points: 15,
   },
   elevate: {
@@ -82,7 +82,7 @@ export const QUESTIONS: Question[] = [
   {
     id: "own_site",
     area: "source",
-    question: "Where does a client actually land when they look you up?",
+    question: "Where does a buyer actually land when she looks you up?",
     points: 4,
     choices: [
       { value: "site", label: "My own website on my own domain", credit: 1 },
@@ -91,7 +91,7 @@ export const QUESTIONS: Question[] = [
       { value: "social", label: "My social profile only", credit: 0.2 },
       { value: "none", label: "Nowhere I would want her to land", credit: 0 },
     ],
-    fix: "Put up a real site on your own domain so you own the place clients land.",
+    fix: "Put up a real site on your own domain so you own the place buyers land.",
   },
   {
     id: "search_name",
@@ -104,7 +104,7 @@ export const QUESTIONS: Question[] = [
       { value: "others", label: "Other businesses with similar names come up first", credit: 0.25 },
       { value: "nothing", label: "Nothing useful, or I have never checked", credit: 0 },
     ],
-    fix: "Search your own business name today, write down every place a client lands, and fix the top three.",
+    fix: "Search your own business name today, write down every place a buyer lands, and fix the top three.",
   },
   {
     id: "search_service",
@@ -160,7 +160,7 @@ export const QUESTIONS: Question[] = [
       { value: "dormant", label: "I have profiles but they are dormant", credit: 0.1 },
       { value: "none", label: "None", credit: 0 },
     ],
-    fix: "Pick the one place your clients already spend time, get active there weekly, and link it back to your site.",
+    fix: "Pick the one place your buyer already spends time, get active there weekly, and link it back to your site.",
   },
 
   // How clear your offer is, 20 points
@@ -223,7 +223,7 @@ export const QUESTIONS: Question[] = [
     question: "Does anything say why you rather than the next person?",
     points: 3,
     choices: [
-      { value: "clear", label: "Yes, one clear reason a client would repeat back", credit: 1 },
+      { value: "clear", label: "Yes, one clear reason a buyer would repeat back", credit: 1 },
       { value: "listed", label: "I list qualities like caring and professional", credit: 0.3 },
       { value: "no", label: "Nothing, I look like everyone else", credit: 0 },
     ],
@@ -296,7 +296,7 @@ export const QUESTIONS: Question[] = [
       { value: "luck", label: "Occasionally, by luck", credit: 0.35 },
       { value: "no", label: "No", credit: 0 },
     ],
-    fix: "Name five businesses that already serve your clients and set up one clear way for them to send clients to you.",
+    fix: "Name five businesses that already serve your buyer and set up one clear way for them to send her to you.",
   },
   {
     id: "video",
@@ -309,7 +309,7 @@ export const QUESTIONS: Question[] = [
       { value: "buried", label: "A little, buried in my feed", credit: 0.35 },
       { value: "none", label: "None, and the idea makes me nervous", credit: 0 },
     ],
-    fix: "Record one honest ten minute conversation about your work and put it where a client will find it.",
+    fix: "Record one honest ten minute conversation about your work and put it where a buyer will find it.",
   },
   {
     id: "press",
@@ -323,7 +323,7 @@ export const QUESTIONS: Question[] = [
       { value: "asked", label: "I have been asked but never followed up", credit: 0.25 },
       { value: "no", label: "Never", credit: 0 },
     ],
-    fix: "Pitch yourself to three podcasts or newsletters your clients already read, with one specific story to tell.",
+    fix: "Pitch yourself to three podcasts or newsletters your buyer already reads, with one specific story to tell.",
   },
   {
     id: "story",
@@ -486,13 +486,13 @@ export const BANDS = [
     min: 0,
     max: 39,
     name: "Undiscoverable",
-    line: "Clients looking for exactly what you sell will not find you yet.",
+    line: "A buyer looking for exactly what you sell will not find you yet.",
   },
   {
     min: 40,
     max: 54,
     name: "Invisible with a pulse",
-    line: "You exist online, but almost nothing is working to bring you clients.",
+    line: "You exist online, but almost nothing is working to bring you buyers.",
   },
   {
     min: 55,
@@ -517,14 +517,6 @@ export const BANDS = [
 export function bandFor(total: number) {
   return BANDS.find((band) => total >= band.min && total <= band.max) ?? BANDS[0];
 }
-
-export const BAND_COLOR_CLASS: Record<string, string> = {
-  Undiscoverable: "text-band-undiscoverable",
-  "Invisible with a pulse": "text-band-invisible",
-  Leaky: "text-band-leaky",
-  Solid: "text-band-solid",
-  Compounding: "text-band-compounding",
-};
 
 export const AREA_POINTS: Record<AreaKey, number> = AREA_ORDER.reduce(
   (acc, key) => {

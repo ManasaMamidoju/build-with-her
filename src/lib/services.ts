@@ -68,7 +68,7 @@ export const SERVICES: Service[] = [
       "A woman who already sells something and wants a sharp plan rather than someone to do the work.",
     includes: [
       "A rewrite of how you describe what you sell",
-      "Your pricing and packages reviewed against what clients already pay you",
+      "Your pricing and packages reviewed against what buyers already pay you",
       "A page-by-page map of what to publish and in what order",
       "The recording and the written plan, yours to keep",
     ],
@@ -192,7 +192,7 @@ export const SERVICES: Service[] = [
     summary:
       "A full sit-down episode about your business, cut into a long episode plus a run of clips and one street-style piece.",
     bestFor:
-      "A woman with a story, results and a reason for clients to trust her over everyone else.",
+      "A woman with a story, results and a reason for buyers to trust her over everyone else.",
     includes: [
       "A full filmed episode with proper sound and lighting",
       "Five to six edited clips plus one street-style piece",
@@ -249,7 +249,7 @@ export const BAND_FIRST_STEP: Record<
   { headline: string; primary: ServiceSlug; secondary: ServiceSlug }
 > = {
   Undiscoverable: {
-    headline: "Start with a free call. Nothing else matters until clients can find you.",
+    headline: "Start with a free call. Nothing else matters until buyers can find you.",
     primary: "clarity-call",
     secondary: "bootcamp",
   },

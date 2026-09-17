@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FaqJsonLd, Script } from "@/components/seo/JsonLd";
+import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { serviceBySlug, SERVICES, type Service } from "@/lib/services";
-import { canonical, SITE } from "@/lib/site";
+import { canonical } from "@/lib/site";
 import { getCapturedSource } from "@/lib/source-capture";
 import { joinWaitlist } from "@/lib/waitlist.functions";
 
@@ -67,26 +67,9 @@ function NotFoundService() {
 function ServiceDetail() {
   const { service } = Route.useLoaderData();
   const others = SERVICES.filter((s) => s.slug !== service.slug).slice(0, 3);
-  const numericPrice = service.price.match(/\$([\d,]+)/)?.[1]?.replace(/,/g, "");
 
   return (
     <main className="container-editorial py-12 md:py-16">
-      <Script
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Service",
-          name: service.name,
-          description: service.summary,
-          provider: { "@type": "Organization", name: SITE.name },
-          url: canonical(`/services/${service.slug}`),
-          offers: {
-            "@type": "Offer",
-            priceCurrency: "USD",
-            ...(numericPrice ? { price: numericPrice } : {}),
-            availability: "https://schema.org/InStock",
-          },
-        }}
-      />
       <div className="flex items-center gap-3">
         <RoseMark className="h-7 w-7 text-primary" />
         <p className="eyebrow text-primary">{service.step}</p>
@@ -169,18 +152,6 @@ function ServiceDetail() {
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="mt-16 rounded-2xl bg-primary p-10 text-center text-primary-foreground">
-        <h2 className="text-primary-foreground">Not sure which one?</h2>
-        <p className="mt-3 text-lg text-primary-foreground/85">Take the score and it tells you.</p>
-        <Button
-          asChild
-          size="lg"
-          className="mt-7 h-12 bg-white px-7 text-base text-primary hover:bg-white/90"
-        >
-          <Link to="/score/quiz">Get your Findability Score</Link>
-        </Button>
       </section>
     </main>
   );

@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { AREA_ORDER, AREAS, QUESTIONS, type AreaKey } from "@/lib/score-rubric";
 import { submitScore } from "@/lib/score.functions";
@@ -88,9 +89,13 @@ const emptyDetails: Details = {
 function QuizPage() {
   const navigate = useNavigate();
   const submit = useServerFn(submitScore);
+  const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [details, setDetails] = useState<Details>(emptyDetails);
   const [saving, setSaving] = useState(false);
+
+  const totalSteps = AREA_ORDER.length + 1;
+  const isDetailsStep = step === AREA_ORDER.length;
 
   useEffect(() => {
     try {
@@ -109,8 +114,15 @@ function QuizPage() {
     }
   }, [answers]);
 
-  const answeredCount = useMemo(() => QUESTIONS.filter((q) => answers[q.id]).length, [answers]);
-  const progressPct = Math.round((answeredCount / QUESTIONS.length) * 100);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
+  const areaKey = AREA_ORDER[Math.min(step, AREA_ORDER.length - 1)] as AreaKey;
+  const area = AREAS[areaKey];
+  const areaQuestions = QUESTIONS.filter((q) => q.area === areaKey);
+  const answeredInArea = areaQuestions.filter((q) => answers[q.id]).length;
+  const areaComplete = answeredInArea === areaQuestions.length;
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -132,172 +144,125 @@ function QuizPage() {
   }
 
   return (
-    <main>
-      <div className="sticky top-16 z-30 h-14 border-b border-border bg-background/95 backdrop-blur">
-        <div className="container-editorial flex h-full items-center gap-4">
-          <RoseMark className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-          <p className="eyebrow shrink-0 text-primary">Findability Score</p>
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-secondary">
-            <div
-              className="h-full rounded-full bg-rose transition-all duration-300"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-          <span className="shrink-0 text-sm tabular-nums text-muted-foreground">
-            {answeredCount} of {QUESTIONS.length} answered
-          </span>
-        </div>
+    <main className="container-editorial max-w-3xl py-12 md:py-16">
+      <div className="flex items-center gap-3">
+        <RoseMark className="h-7 w-7 text-primary" />
+        <p className="eyebrow text-primary">Findability Score</p>
       </div>
 
-      <div className="container-editorial max-w-3xl py-10 md:py-14">
-        {AREA_ORDER.map((areaKey: AreaKey) => {
-          const area = AREAS[areaKey];
-          const areaQuestions = QUESTIONS.filter((q) => q.area === areaKey);
-          return (
-            <section key={areaKey} className="mt-14 first:mt-0 scroll-mt-24" id={areaKey}>
-              <h2>{area.title}</h2>
-              <p className="mt-2 text-base text-muted-foreground">{area.blurb}</p>
+      <div className="mt-6">
+        <div className="flex items-baseline justify-between text-sm text-muted-foreground">
+          <span>
+            Step {step + 1} of {totalSteps}
+          </span>
+          <span>{isDetailsStep ? "Where to send it" : area.short}</span>
+        </div>
+        <Progress value={((step + 1) / totalSteps) * 100} className="mt-3 h-2" />
+      </div>
 
-              <div className="mt-8 space-y-8">
-                {areaQuestions.map((question) => (
-                  <fieldset key={question.id}>
-                    <legend className="text-lg font-medium">{question.question}</legend>
-                    {question.helper ? (
-                      <p className="mt-1 text-sm text-muted-foreground">{question.helper}</p>
-                    ) : null}
-                    <div className="mt-4 grid gap-2">
-                      {question.choices.map((choice) => {
-                        const selected = answers[question.id] === choice.value;
-                        return (
-                          <button
-                            key={choice.value}
-                            type="button"
-                            onClick={() =>
-                              setAnswers((prev) => ({ ...prev, [question.id]: choice.value }))
-                            }
-                            aria-pressed={selected}
-                            className={
-                              selected
-                                ? "min-h-11 rounded-xl border-2 border-primary bg-secondary px-4 py-3 text-left text-base"
-                                : "min-h-11 rounded-xl border border-border bg-card px-4 py-3 text-left text-base transition-colors hover:border-primary"
-                            }
-                          >
-                            {choice.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </fieldset>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-
-        <section className="mt-16 rounded-2xl border border-border bg-card p-7 shadow-card md:p-9">
-          <h2>Before you see your score</h2>
-          <p className="mt-2 text-base text-muted-foreground">
-            Enter a good email to get your score. Your result appears on the next screen straight
-            away, at a private link you can come back to any time.
+      {isDetailsStep ? (
+        <form onSubmit={handleSubmit} className="mt-10">
+          <h1 className="text-3xl">Where should your score go?</h1>
+          <p className="mt-3 text-base text-muted-foreground">
+            Your result appears on the next screen straight away. We keep it at a private link so
+            you can come back to it any time.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-8">
-            <div className="grid gap-5">
-              <div>
-                <Label htmlFor="fullName">Your name</Label>
-                <Input
-                  id="fullName"
-                  required
-                  maxLength={120}
-                  value={details.fullName}
-                  onChange={(e) => setDetails({ ...details, fullName: e.target.value })}
-                  className="mt-2 h-12"
-                  autoComplete="name"
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  maxLength={255}
-                  value={details.email}
-                  onChange={(e) => setDetails({ ...details, email: e.target.value })}
-                  className="mt-2 h-12"
-                  autoComplete="email"
-                />
-                <p className="mt-2 text-sm text-muted-foreground">
-                  This is where your score and your fixes go.
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="businessName">Business name</Label>
-                <Input
-                  id="businessName"
-                  maxLength={160}
-                  value={details.businessName}
-                  onChange={(e) => setDetails({ ...details, businessName: e.target.value })}
-                  className="mt-2 h-12"
-                  autoComplete="organization"
-                />
-              </div>
-              <div>
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  maxLength={255}
-                  placeholder="yourbusiness.com"
-                  value={details.website}
-                  onChange={(e) => setDetails({ ...details, website: e.target.value })}
-                  className="mt-2 h-12"
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">Phone, if you want a call instead</Label>
-                <Input
-                  id="phone"
-                  maxLength={40}
-                  value={details.phone}
-                  onChange={(e) => setDetails({ ...details, phone: e.target.value })}
-                  className="mt-2 h-12"
-                  autoComplete="tel"
-                />
-                <p className="mt-2 text-sm text-muted-foreground">
-                  We text you back only about your call, and only if you leave a number.
-                </p>
-              </div>
+          <div className="mt-8 grid gap-5">
+            <div>
+              <Label htmlFor="fullName">Your name</Label>
+              <Input
+                id="fullName"
+                required
+                maxLength={120}
+                value={details.fullName}
+                onChange={(e) => setDetails({ ...details, fullName: e.target.value })}
+                className="mt-2 h-12"
+                autoComplete="name"
+              />
             </div>
-
-            <fieldset className="mt-10 rounded-2xl border border-border bg-secondary p-6">
-              <legend className="px-2 text-lg font-medium">All of your handles</legend>
-              <p className="text-sm text-muted-foreground">
-                Every place you show up, even the quiet ones. We look at all of them before your
-                call, so leave nothing out. Skip the ones you do not use.
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                maxLength={255}
+                value={details.email}
+                onChange={(e) => setDetails({ ...details, email: e.target.value })}
+                className="mt-2 h-12"
+                autoComplete="email"
+              />
+              <p className="mt-2 text-sm text-muted-foreground">
+                This is where your score and your fixes go.
               </p>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                {HANDLE_FIELDS.map((field) => (
-                  <div key={field.key}>
-                    <Label htmlFor={`handle-${field.key}`}>{field.label}</Label>
-                    <Input
-                      id={`handle-${field.key}`}
-                      maxLength={160}
-                      placeholder={field.placeholder}
-                      value={details.handles[field.key]}
-                      onChange={(e) =>
-                        setDetails({
-                          ...details,
-                          handles: { ...details.handles, [field.key]: e.target.value },
-                        })
-                      }
-                      className="mt-2 h-12"
-                    />
-                  </div>
-                ))}
-              </div>
-            </fieldset>
+            </div>
+            <div>
+              <Label htmlFor="businessName">Business name</Label>
+              <Input
+                id="businessName"
+                maxLength={160}
+                value={details.businessName}
+                onChange={(e) => setDetails({ ...details, businessName: e.target.value })}
+                className="mt-2 h-12"
+                autoComplete="organization"
+              />
+            </div>
+            <div>
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                maxLength={255}
+                placeholder="yourbusiness.com"
+                value={details.website}
+                onChange={(e) => setDetails({ ...details, website: e.target.value })}
+                className="mt-2 h-12"
+              />
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone, if you want a call instead</Label>
+              <Input
+                id="phone"
+                maxLength={40}
+                value={details.phone}
+                onChange={(e) => setDetails({ ...details, phone: e.target.value })}
+                className="mt-2 h-12"
+                autoComplete="tel"
+              />
+            </div>
+          </div>
 
-            <div className="mt-8 space-y-4">
+          <fieldset className="mt-10 rounded-2xl border border-border bg-card p-6">
+            <legend className="px-2 text-lg font-medium">All of your handles</legend>
+            <p className="text-sm text-muted-foreground">
+              Every place you show up, even the quiet ones. We look at all of them before your call,
+              so leave nothing out. Skip the ones you do not use.
+            </p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {HANDLE_FIELDS.map((field) => (
+                <div key={field.key}>
+                  <Label htmlFor={`handle-${field.key}`}>{field.label}</Label>
+                  <Input
+                    id={`handle-${field.key}`}
+                    maxLength={160}
+                    placeholder={field.placeholder}
+                    value={details.handles[field.key]}
+                    onChange={(e) =>
+                      setDetails({
+                        ...details,
+                        handles: { ...details.handles, [field.key]: e.target.value },
+                      })
+                    }
+                    className="mt-2 h-12"
+                  />
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mt-8 rounded-2xl bg-secondary p-6">
+            <legend className="px-2 text-lg font-medium">Before you see your score</legend>
+            <div className="mt-2 space-y-4">
               <label className="flex items-start gap-3 text-base">
                 <Checkbox
                   checked={details.consentEmail}
@@ -350,26 +315,94 @@ function QuizPage() {
             <p className="mt-4 text-sm text-muted-foreground">
               We never sell your details and we never share your handles outside our team.
             </p>
+          </fieldset>
 
-            <div className="mt-9">
-              <Button
-                type="submit"
-                size="lg"
-                className="h-12 px-7 text-base"
-                disabled={saving || !details.consentTerms}
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Working out your score
-                  </>
-                ) : (
-                  "Get my score"
-                )}
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Button
+              type="submit"
+              size="lg"
+              className="h-12 px-7 text-base"
+              disabled={saving || !details.consentTerms}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Working out your score
+                </>
+              ) : (
+                "Show me my score"
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setStep((s) => s - 1)}
+              disabled={saving}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="mt-10">
+          <h1 className="text-3xl">{area.title}</h1>
+          <p className="mt-3 text-base text-muted-foreground">{area.blurb}</p>
+
+          <div className="mt-8 space-y-8">
+            {areaQuestions.map((question) => (
+              <fieldset key={question.id}>
+                <legend className="text-lg font-medium">{question.question}</legend>
+                {question.helper ? (
+                  <p className="mt-1 text-sm text-muted-foreground">{question.helper}</p>
+                ) : null}
+                <div className="mt-4 grid gap-2">
+                  {question.choices.map((choice) => {
+                    const selected = answers[question.id] === choice.value;
+                    return (
+                      <button
+                        key={choice.value}
+                        type="button"
+                        onClick={() =>
+                          setAnswers((prev) => ({ ...prev, [question.id]: choice.value }))
+                        }
+                        aria-pressed={selected}
+                        className={
+                          selected
+                            ? "rounded-xl border-2 border-primary bg-secondary px-4 py-3 text-left text-base"
+                            : "rounded-xl border border-border bg-card px-4 py-3 text-left text-base transition-colors hover:border-primary"
+                        }
+                      >
+                        {choice.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Button
+              size="lg"
+              className="h-12 px-7 text-base"
+              onClick={() => setStep((s) => s + 1)}
+              disabled={!areaComplete}
+            >
+              {step === AREA_ORDER.length - 1 ? "Last step" : "Next area"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            {step > 0 ? (
+              <Button type="button" variant="ghost" onClick={() => setStep((s) => s - 1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back
               </Button>
-            </div>
-          </form>
-        </section>
-      </div>
+            ) : null}
+            {!areaComplete ? (
+              <p className="text-sm text-muted-foreground">
+                {areaQuestions.length - answeredInArea} to go in this area
+              </p>
+            ) : null}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

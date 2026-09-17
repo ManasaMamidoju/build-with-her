@@ -33,7 +33,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         heading: "What the score checks instead",
         body: [
-          "Five things, none of them about how often you post: whether clients can find you at all, whether what you sell is stated plainly, whether there is proof strangers can trust, whether they can book and pay without waiting on you, and whether any of this compounds instead of resetting every month.",
+          "Five things, none of them about how often you post: whether buyers can find you at all, whether what you sell is stated plainly, whether there is proof strangers can trust, whether she can book and pay without waiting on you, and whether any of this compounds instead of resetting every month.",
           "Content sits inside one of those five, not above all of them. A brilliant reel that links to a bio that links to nothing is reach without a landing.",
         ],
       },
@@ -136,15 +136,15 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "boss-babe-marketing-is-hurting-you",
     title: '"Boss babe" marketing is not helping you get taken seriously',
     description:
-      "The language a lot of women's business content uses to sell to you is the same language keeping serious clients from taking you seriously.",
+      "The language a lot of women's business content uses to sell to you is the same language keeping serious buyers from taking you seriously.",
     publishedAt: "2026-09-02",
     readMinutes: 5,
     tags: ["brand voice", "opinion"],
     intro:
-      'I do not use "boss babe," "crushing it," "hustle harder," or "game-changer" anywhere in my own marketing, on purpose. Not because the women using that language are not real or not working hard. Because I have watched it cost them credibility with the exact clients who could afford to hire them.',
+      'I do not use "boss babe," "crushing it," "hustle harder," or "game-changer" anywhere in my own marketing, on purpose. Not because the women using that language are not real or not working hard. Because I have watched it cost them credibility with the exact buyers who could afford to hire them.',
     sections: [
       {
-        heading: "Hype is a tell, and clients with money have learned it",
+        heading: "Hype is a tell, and buyers with money have learned it",
         body: [
           'A woman who has been burned before by a service she overpaid for reads "crushing it" and "level up your business" as a warning sign, the same way she reads three exclamation marks in a row. It signals a sale is coming, before any value has been shown.',
           "The businesses that actually book the higher-paying, lower-drama clients tend to sound calmer, not louder. Plain descriptions of what they do, a price, and evidence, instead of energy standing in for substance.",

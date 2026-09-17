@@ -42,54 +42,13 @@ export const Route = createFileRoute("/events")({
   ),
 });
 
-function EventRow({ event }: { event: ReturnType<typeof Route.useLoaderData>[number] }) {
-  return (
-    <article className="rounded-2xl border border-border bg-card p-6 shadow-card">
-      <p className="eyebrow text-muted-foreground">{formatDay(event.starts_at)}</p>
-      <h3 className="mt-2 text-2xl">{event.title}</h3>
-      <p className="mt-1 text-base text-muted-foreground">
-        {[event.venue, event.city].filter(Boolean).join(", ")}
-      </p>
-      {event.description ? (
-        <p className="mt-3 text-base text-muted-foreground">{event.description}</p>
-      ) : null}
-      <Button asChild variant="outline" className="mt-5">
-        <Link to="/e/$slug" params={{ slug: event.slug }}>
-          Sign in at this event
-        </Link>
-      </Button>
-      <Script
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Event",
-          name: event.title,
-          startDate: event.starts_at,
-          endDate: event.ends_at ?? undefined,
-          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-          eventStatus: "https://schema.org/EventScheduled",
-          location: {
-            "@type": "Place",
-            name: event.venue ?? event.city ?? "To be announced",
-            address: event.city ?? undefined,
-          },
-          description: event.description ?? undefined,
-          url: canonical(`/e/${event.slug}`),
-        }}
-      />
-    </article>
-  );
-}
-
 function Events() {
   const events = Route.useLoaderData();
-  const now = Date.now();
-  const upcoming = events.filter((event) => new Date(event.starts_at).getTime() >= now);
-  const past = events.filter((event) => new Date(event.starts_at).getTime() < now);
 
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
       <p className="eyebrow text-primary">Events</p>
-      <h1 className="mt-3 text-4xl">Where to find us in person</h1>
+      <h1 className="mt-3 text-4xl">Come and find us in person</h1>
       <p className="prose-editorial mt-4 text-lg text-muted-foreground">
         At every event we sit with women, read the Findability Score together and name the one thing
         costing the most money. It takes ten minutes and costs nothing.
@@ -101,32 +60,46 @@ function Events() {
           you.
         </p>
       ) : (
-        <>
-          <section className="mt-10">
-            <h2 className="text-xl">Coming up</h2>
-            {upcoming.length === 0 ? (
-              <p className="mt-4 text-base text-muted-foreground">
-                Nothing on the calendar right now. Take the score in the meantime.
+        <div className="mt-10 grid gap-4">
+          {events.map((event) => (
+            <article
+              key={event.slug}
+              className="rounded-2xl border border-border bg-card p-6 shadow-card"
+            >
+              <p className="eyebrow text-muted-foreground">{formatDay(event.starts_at)}</p>
+              <h2 className="mt-2 text-2xl">{event.title}</h2>
+              <p className="mt-1 text-base text-muted-foreground">
+                {[event.venue, event.city].filter(Boolean).join(", ")}
               </p>
-            ) : (
-              <div className="mt-4 grid gap-4">
-                {upcoming.map((event) => (
-                  <EventRow key={event.slug} event={event} />
-                ))}
-              </div>
-            )}
-          </section>
-          {past.length > 0 ? (
-            <section className="mt-12">
-              <h2 className="text-xl">Past</h2>
-              <div className="mt-4 grid gap-4 opacity-80">
-                {past.map((event) => (
-                  <EventRow key={event.slug} event={event} />
-                ))}
-              </div>
-            </section>
-          ) : null}
-        </>
+              {event.description ? (
+                <p className="mt-3 text-base text-muted-foreground">{event.description}</p>
+              ) : null}
+              <Button asChild variant="outline" className="mt-5">
+                <Link to="/e/$slug" params={{ slug: event.slug }}>
+                  Sign in at this event
+                </Link>
+              </Button>
+              <Script
+                data={{
+                  "@context": "https://schema.org",
+                  "@type": "Event",
+                  name: event.title,
+                  startDate: event.starts_at,
+                  endDate: event.ends_at ?? undefined,
+                  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+                  eventStatus: "https://schema.org/EventScheduled",
+                  location: {
+                    "@type": "Place",
+                    name: event.venue ?? event.city ?? "To be announced",
+                    address: event.city ?? undefined,
+                  },
+                  description: event.description ?? undefined,
+                  url: canonical(`/e/${event.slug}`),
+                }}
+              />
+            </article>
+          ))}
+        </div>
       )}
 
       <section className="mt-12 rounded-2xl bg-blush p-8">

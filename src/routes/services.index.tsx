@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { RoseMark } from "@/components/brand/RoseMark";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { PriceTag } from "@/components/services/PriceTag";
 import { TestimonialsComingSoon } from "@/components/site/TestimonialsComingSoon";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { SERVICES } from "@/lib/services";
-import { canonical, DIGIMAIDS_URL } from "@/lib/site";
+import { canonical } from "@/lib/site";
 
 const FAQS = [
   {
@@ -60,10 +60,11 @@ function ServicesPage() {
         <p className="eyebrow text-primary">Ways to work with us</p>
       </div>
 
-      <h1 className="mt-6 max-w-3xl">One path. Start where your score says.</h1>
+      <h1 className="mt-6 max-w-3xl">Start free, and only pay when the next step is obvious</h1>
       <p className="prose-editorial mt-5 text-lg text-muted-foreground">
-        Every offer below fixes a specific gap in your Findability Score. Take the score first and
-        the right one is highlighted for you.
+        Every woman here starts in the same place: the score, then a free call. What comes after
+        depends on what the score found, and on whether you want to run the machine yourself or have
+        us build it.
       </p>
 
       <div className="mt-10">
@@ -71,72 +72,29 @@ function ServicesPage() {
       </div>
 
       <section className="mt-14">
-        <div className="relative">
-          <div
-            className="absolute top-2 bottom-2 left-5 hidden w-px bg-line md:block"
-            aria-hidden="true"
-          />
-          <div className="space-y-8">
-            {SERVICES.map((service) => (
-              <article key={service.slug} className="relative md:pl-16">
-                <span
-                  className="absolute top-2 left-1.5 hidden h-7 w-7 items-center justify-center rounded-full border-2 border-rose bg-background md:flex"
-                  aria-hidden="true"
-                >
-                  <RoseMark className="h-3.5 w-3.5 text-primary" />
-                </span>
-                <div className="rounded-2xl border border-border bg-card p-7 shadow-card">
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <div>
-                      <p className="eyebrow text-muted-foreground">{service.step}</p>
-                      <h2 className="mt-2 text-2xl">{service.name}</h2>
-                    </div>
-                    <div className="text-right">
-                      <p className="numeric text-xl text-primary">
-                        <PriceTag service={service} />
-                      </p>
-                      <p className="text-sm text-muted-foreground">{service.duration}</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 max-w-2xl text-base text-muted-foreground">
-                    {service.summary}
-                  </p>
-                  <p className="mt-4 text-sm">
-                    <span className="font-medium">Best for:</span>{" "}
-                    <span className="text-muted-foreground">{service.bestFor}</span>
-                  </p>
-                  <ul className="mt-5 grid gap-2 sm:grid-cols-2">
-                    {service.includes.map((item) => (
-                      <li key={item} className="flex gap-2 text-sm text-muted-foreground">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button asChild size="lg" className="mt-6 h-12 px-7 text-base">
-                    <Link to="/services/$slug" params={{ slug: service.slug }}>
-                      {service.ctaLabel}
-                    </Link>
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
+        <h2 className="text-2xl">The ladder</h2>
+        <div className="mt-7 grid gap-6 md:grid-cols-2">
+          {SERVICES.map((service) => (
+            <article
+              key={service.slug}
+              className="flex flex-col rounded-2xl border border-border bg-card p-7 shadow-card"
+            >
+              <p className="eyebrow text-muted-foreground">{service.step}</p>
+              <h3 className="mt-3 text-xl">{service.name}</h3>
+              <p className="numeric mt-2 text-lg text-primary">
+                <PriceTag service={service} />
+              </p>
+              <p className="mt-3 flex-1 text-base text-muted-foreground">{service.summary}</p>
+              <p className="mt-4 text-sm text-muted-foreground">{service.duration}</p>
+              <Button asChild variant="outline" className="mt-6 h-11 justify-between">
+                <Link to="/services/$slug" params={{ slug: service.slug }}>
+                  See what is included
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </article>
+          ))}
         </div>
-      </section>
-
-      <section className="mt-10 rounded-2xl border border-dashed border-border bg-blush p-6 text-center">
-        <p className="text-base text-crimson-dark">
-          Only want the automations, none of the media? That is DigiMAIDS.
-        </p>
-        <a
-          href={DIGIMAIDS_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-block text-base font-medium text-primary underline-offset-4 hover:underline"
-        >
-          Visit DigiMAIDS
-        </a>
       </section>
 
       <section className="mt-16">
