@@ -70,7 +70,8 @@ function BlogIndex() {
       <p className="eyebrow text-primary">Blog</p>
       <h1 className="mt-3 text-4xl">Opinions, not filler</h1>
       <p className="prose-editorial mt-4 text-lg text-muted-foreground">
-        The things I do not agree with in this industry, said plainly, with what to do instead.
+        The things I do not agree with in this industry, said plainly, with what to do instead —
+        plus real interviews with women entrepreneurs about how they actually use AI.
       </p>
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
