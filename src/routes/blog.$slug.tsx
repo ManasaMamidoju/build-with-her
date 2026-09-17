@@ -7,15 +7,21 @@ import { RoseMark } from "@/components/brand/RoseMark";
 import { Button } from "@/components/ui/button";
 import { InstagramEmbed } from "@/components/blog/InstagramEmbed";
 import { BlogPostingJsonLd } from "@/components/seo/JsonLd";
-import { blogPostBySlug, BLOG_POSTS } from "@/lib/blog";
-import { recordBlogView } from "@/lib/blog.functions";
+import {
+  getPublishedBlogPostBySlug,
+  getPublishedBlogPosts,
+  recordBlogView,
+} from "@/lib/blog.functions";
 import { canonical } from "@/lib/site";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
-    const post = blogPostBySlug(params.slug);
+  loader: async ({ params }) => {
+    const [post, allPosts] = await Promise.all([
+      getPublishedBlogPostBySlug({ data: { slug: params.slug } }),
+      getPublishedBlogPosts(),
+    ]);
     if (!post) throw notFound();
-    return { slug: params.slug };
+    return { post, others: allPosts.filter((p) => p.slug !== post.slug).slice(0, 3) };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) {
@@ -26,7 +32,7 @@ export const Route = createFileRoute("/blog/$slug")({
         ],
       };
     }
-    const post = blogPostBySlug(params.slug)!;
+    const { post } = loaderData;
     const title = `${post.title} | Build With Her Media`;
     return {
       meta: [
@@ -59,8 +65,8 @@ function NotFoundPost() {
 }
 
 function BlogPostPage() {
-  const { slug } = Route.useLoaderData();
-  const post = blogPostBySlug(slug)!;
+  const { post, others } = Route.useLoaderData();
+  const slug = post.slug;
   const recordView = useServerFn(recordBlogView);
 
   useEffect(() => {
@@ -73,8 +79,6 @@ function BlogPostPage() {
     }
     recordView({ data: { slug } }).catch(() => {});
   }, [slug, recordView]);
-
-  const others = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">

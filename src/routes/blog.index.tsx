@@ -4,8 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 
 import { Input } from "@/components/ui/input";
-import { BLOG_POSTS } from "@/lib/blog";
-import { getBlogViewCounts } from "@/lib/blog.functions";
+import { getBlogViewCounts, getPublishedBlogPosts } from "@/lib/blog.functions";
 import { canonical } from "@/lib/site";
 
 const SORTS = [
@@ -42,12 +41,14 @@ function BlogIndex() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<Sort>("recent");
 
+  const postsFn = useServerFn(getPublishedBlogPosts);
+  const { data: allPosts } = useQuery({ queryKey: ["blog", "posts"], queryFn: () => postsFn() });
   const viewsFn = useServerFn(getBlogViewCounts);
   const { data: views } = useQuery({ queryKey: ["blog", "views"], queryFn: () => viewsFn() });
 
   const posts = useMemo(() => {
     const term = search.trim().toLowerCase();
-    let list = BLOG_POSTS.filter((post) => {
+    let list = (allPosts ?? []).filter((post) => {
       if (!term) return true;
       return (
         post.title.toLowerCase().includes(term) ||
@@ -63,7 +64,7 @@ function BlogIndex() {
     });
 
     return list;
-  }, [search, sort, views]);
+  }, [allPosts, search, sort, views]);
 
   return (
     <main className="container-editorial max-w-4xl py-12 md:py-16">

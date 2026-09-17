@@ -11,6 +11,7 @@ const LINKS = [
   { to: "/admin/calendar", label: "Calendar" },
   { to: "/admin/duplicates", label: "Possible duplicates" },
   { to: "/admin/podcast", label: "Podcast" },
+  { to: "/admin/blog", label: "Blog" },
   { to: "/admin/projects", label: "Projects" },
   { to: "/admin/queue", label: "My queue" },
   { to: "/admin/events", label: "Events" },
