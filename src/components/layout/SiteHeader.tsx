@@ -10,13 +10,13 @@ import { RoseMark } from "@/components/brand/RoseMark";
 import { amIAdmin } from "@/lib/admin.functions";
 
 const links = [
-  { to: "/", label: "Home" },
-  { to: "/services", label: "Ways to work with us" },
+  { to: "/score", label: "Score" },
+  { to: "/services", label: "Services" },
   { to: "/podcast", label: "Podcast" },
-  { to: "/interviews", label: "Interviews" },
   { to: "/learn", label: "Learn" },
-  { to: "/blog", label: "Blog" },
+  { to: "/events", label: "Events" },
   { to: "/about", label: "About" },
+  { to: "/community", label: "Community" },
 ] as const;
 
 export function SiteHeader() {
@@ -48,6 +48,9 @@ export function SiteHeader() {
   });
   const isAdmin = signedIn && adminCheck?.isAdmin === true;
 
+  const accountLabel = isAdmin ? "Studio" : signedIn ? "My account" : "Sign in";
+  const accountTo = isAdmin ? "/admin" : signedIn ? "/app" : "/login";
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="container-editorial flex h-16 items-center justify-between gap-4">
@@ -58,32 +61,34 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           {links.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               className="text-sm text-muted-foreground transition-colors hover:text-primary"
               activeProps={{ className: "text-sm text-primary" }}
-              activeOptions={{ exact: link.to === "/" }}
             >
               {link.label}
             </Link>
           ))}
-          {isAdmin ? (
-            <Button asChild size="sm">
-              <Link to="/admin">Studio</Link>
-            </Button>
-          ) : (
-            <Button asChild size="sm" variant={signedIn ? "outline" : "default"}>
-              <Link to="/login">{signedIn ? "My account" : "Sign in"}</Link>
-            </Button>
-          )}
         </nav>
+
+        <div className="hidden items-center gap-5 lg:flex">
+          <Link
+            to={accountTo}
+            className="text-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+          >
+            {accountLabel}
+          </Link>
+          <Button asChild size="sm" className="h-10 px-5">
+            <Link to="/score">Get your Findability Score</Link>
+          </Button>
+        </div>
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground lg:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
@@ -93,7 +98,7 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <nav className="border-t border-border bg-background md:hidden">
+        <nav className="border-t border-border bg-background lg:hidden">
           <div className="container-editorial flex flex-col py-3">
             {links.map((link) => (
               <Link
@@ -105,23 +110,18 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            {isAdmin ? (
-              <Link
-                to="/admin"
-                onClick={() => setOpen(false)}
-                className="py-3 text-base text-primary"
-              >
-                Studio
+            <Link
+              to={accountTo}
+              onClick={() => setOpen(false)}
+              className="py-3 text-base text-primary"
+            >
+              {accountLabel}
+            </Link>
+            <Button asChild size="lg" className="mt-2 h-12 w-full text-base">
+              <Link to="/score" onClick={() => setOpen(false)}>
+                Get your Findability Score
               </Link>
-            ) : (
-              <Link
-                to="/login"
-                onClick={() => setOpen(false)}
-                className="py-3 text-base text-primary"
-              >
-                {signedIn ? "My account" : "Sign in"}
-              </Link>
-            )}
+            </Button>
           </div>
         </nav>
       ) : null}
