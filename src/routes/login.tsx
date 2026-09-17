@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RoseMark } from "@/components/brand/RoseMark";
+import { takePostLoginRedirect } from "@/lib/post-login-redirect";
 import { canonical } from "@/lib/site";
 
 export const Route = createFileRoute("/login")({
@@ -45,7 +46,7 @@ function LoginPage() {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         setSignedIn(true);
-        window.location.href = "/";
+        window.location.href = takePostLoginRedirect() ?? "/";
       }
       if (event === "SIGNED_OUT") setSignedIn(false);
     });
@@ -86,7 +87,7 @@ function LoginPage() {
       toast.error("That email and password did not match. Try again.");
       return;
     }
-    window.location.href = "/";
+    window.location.href = takePostLoginRedirect() ?? "/";
   };
 
   const signOut = async () => {

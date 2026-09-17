@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FaqJsonLd, Script } from "@/components/seo/JsonLd";
+import { bookableBySlug } from "@/lib/booking-options";
 import { serviceBySlug, SERVICES, type Service } from "@/lib/services";
 import { canonical, SITE } from "@/lib/site";
 import { getCapturedSource } from "@/lib/source-capture";
@@ -133,6 +134,19 @@ function ServiceDetail() {
           <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
             <Link to="/score/quiz">Take the quiz</Link>
           </Button>
+          {bookableBySlug(service.slug) ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Already have your score?{" "}
+              <Link
+                to="/book/$slug"
+                params={{ slug: service.slug }}
+                className="text-primary underline"
+              >
+                Book directly
+              </Link>
+              .
+            </p>
+          ) : null}
         </section>
       )}
 

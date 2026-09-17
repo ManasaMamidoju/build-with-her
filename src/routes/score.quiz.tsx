@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { AREA_ORDER, AREAS, QUESTIONS, type AreaKey } from "@/lib/score-rubric";
+import { AREA_ORDER, AREAS, QUESTIONS, type AreaKey, type Question } from "@/lib/score-rubric";
 import { submitScore } from "@/lib/score.functions";
 import { getCapturedSource } from "@/lib/source-capture";
 import { rememberScoreToken } from "@/lib/score-memory";
@@ -93,6 +93,7 @@ function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [details, setDetails] = useState<Details>(emptyDetails);
   const [saving, setSaving] = useState(false);
+  const questionRefs = useRef<Record<string, HTMLFieldSetElement | null>>({});
 
   const totalSteps = AREA_ORDER.length + 1;
   const isDetailsStep = step === AREA_ORDER.length;
@@ -123,6 +124,26 @@ function QuizPage() {
   const areaQuestions = QUESTIONS.filter((q) => q.area === areaKey);
   const answeredInArea = areaQuestions.filter((q) => answers[q.id]).length;
   const areaComplete = answeredInArea === areaQuestions.length;
+
+  function chooseAnswer(question: Question, value: string) {
+    const wasComplete = areaComplete;
+    const next = { ...answers, [question.id]: value };
+    setAnswers(next);
+
+    const idx = areaQuestions.findIndex((q) => q.id === question.id);
+    const upNext = areaQuestions.slice(idx + 1).find((q) => !next[q.id]);
+
+    if (upNext) {
+      window.setTimeout(() => {
+        const el = questionRefs.current[upNext.id];
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        el?.focus({ preventScroll: true });
+      }, 150);
+    } else if (!wasComplete) {
+      // That was the last question in this area: move on once she can see her pick land.
+      window.setTimeout(() => setStep((s) => s + 1), 450);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -349,7 +370,14 @@ function QuizPage() {
 
           <div className="mt-8 space-y-8">
             {areaQuestions.map((question) => (
-              <fieldset key={question.id}>
+              <fieldset
+                key={question.id}
+                ref={(el) => {
+                  questionRefs.current[question.id] = el;
+                }}
+                tabIndex={-1}
+                className="scroll-mt-24 outline-none"
+              >
                 <legend className="text-lg font-medium">{question.question}</legend>
                 {question.helper ? (
                   <p className="mt-1 text-sm text-muted-foreground">{question.helper}</p>
@@ -361,9 +389,7 @@ function QuizPage() {
                       <button
                         key={choice.value}
                         type="button"
-                        onClick={() =>
-                          setAnswers((prev) => ({ ...prev, [question.id]: choice.value }))
-                        }
+                        onClick={() => chooseAnswer(question, choice.value)}
                         aria-pressed={selected}
                         className={
                           selected
