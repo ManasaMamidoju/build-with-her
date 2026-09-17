@@ -85,6 +85,60 @@ async function sendBookingReschedule(
   }
 }
 
+async function syncCalendarOnCreate(
+  context: AuthedContext,
+  bookingId: string,
+  serviceSlug: string,
+  startsAt: string,
+  endsAt: string,
+) {
+  try {
+    const recipient = await getRecipient(context);
+    const service = bookableBySlug(serviceSlug);
+    const { upsertCalendarEvent } = await import("@/lib/google-calendar.server");
+    const result = await upsertCalendarEvent({
+      googleEventId: null,
+      summary: `${service?.name ?? serviceSlug} — ${recipient.fullName}`,
+      startsAt,
+      endsAt,
+      attendeeEmail: recipient.email || undefined,
+    });
+    if (result) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin
+        .from("bookings")
+        .update({ google_event_id: result.googleEventId, meet_link: result.meetLink })
+        .eq("id", bookingId);
+    }
+  } catch (error) {
+    console.error("calendar sync (create) failed", error);
+  }
+}
+
+async function syncCalendarOnReschedule(
+  googleEventId: string | null,
+  startsAt: string,
+  endsAt: string,
+) {
+  if (!googleEventId) return;
+  try {
+    const { upsertCalendarEvent } = await import("@/lib/google-calendar.server");
+    await upsertCalendarEvent({ googleEventId, startsAt, endsAt });
+  } catch (error) {
+    console.error("calendar sync (reschedule) failed", error);
+  }
+}
+
+async function syncCalendarOnCancel(googleEventId: string | null) {
+  if (!googleEventId) return;
+  try {
+    const { deleteCalendarEvent } = await import("@/lib/google-calendar.server");
+    await deleteCalendarEvent(googleEventId);
+  } catch (error) {
+    console.error("calendar sync (cancel) failed", error);
+  }
+}
+
 async function sendBookingCancelled(
   context: AuthedContext,
   bookingId: string,
@@ -206,6 +260,13 @@ export const createBooking = createServerFn({ method: "POST" })
       data.serviceSlug,
       formatWhen(start.toISOString()),
     );
+    await syncCalendarOnCreate(
+      context,
+      row.id,
+      data.serviceSlug,
+      start.toISOString(),
+      end.toISOString(),
+    );
 
     return { id: row.id as string };
   });
@@ -215,7 +276,7 @@ export const getMyBookings = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data } = await context.supabase
       .from("bookings")
-      .select("id, service_slug, starts_at, ends_at, status, reschedule_count")
+      .select("id, service_slug, starts_at, ends_at, status, reschedule_count, meet_link")
       .order("starts_at", { ascending: true });
     return data ?? [];
   });
@@ -226,7 +287,7 @@ export const cancelBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row } = await context.supabase
       .from("bookings")
-      .select("starts_at, status, service_slug")
+      .select("starts_at, status, service_slug, google_event_id")
       .eq("id", data.id)
       .maybeSingle();
 
@@ -242,6 +303,7 @@ export const cancelBooking = createServerFn({ method: "POST" })
     if (error) throw new Error("We could not cancel that. Please try again.");
 
     await sendBookingCancelled(context, data.id, row.service_slug, formatWhen(row.starts_at));
+    await syncCalendarOnCancel(row.google_event_id);
 
     return { ok: true as const };
   });
@@ -260,7 +322,7 @@ export const rescheduleBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row } = await context.supabase
       .from("bookings")
-      .select("starts_at, reschedule_count, service_slug")
+      .select("starts_at, reschedule_count, service_slug, google_event_id")
       .eq("id", data.id)
       .maybeSingle();
 
@@ -292,6 +354,7 @@ export const rescheduleBooking = createServerFn({ method: "POST" })
       formatWhen(row.starts_at),
       formatWhen(start.toISOString()),
     );
+    await syncCalendarOnReschedule(row.google_event_id, start.toISOString(), end.toISOString());
 
     return { ok: true as const };
   });

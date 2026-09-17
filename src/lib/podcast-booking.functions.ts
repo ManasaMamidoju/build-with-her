@@ -152,5 +152,24 @@ export const createPodcastBooking = createServerFn({ method: "POST" })
       console.error("podcast booking email failed", emailError);
     }
 
+    try {
+      const { upsertCalendarEvent } = await import("@/lib/google-calendar.server");
+      const result = await upsertCalendarEvent({
+        googleEventId: null,
+        summary: `${service.name} — ${data.fullName}`,
+        startsAt: start.toISOString(),
+        endsAt: end.toISOString(),
+        attendeeEmail: email,
+      });
+      if (result) {
+        await supabaseAdmin
+          .from("bookings")
+          .update({ google_event_id: result.googleEventId, meet_link: result.meetLink })
+          .eq("id", row.id);
+      }
+    } catch (calendarError) {
+      console.error("podcast booking calendar sync failed", calendarError);
+    }
+
     return { id: row.id as string };
   });
