@@ -16,7 +16,10 @@
       "name": "Daily 6am (Mon-Sat)",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
-      "position": [0, 300]
+      "position": [
+        0,
+        300
+      ]
     },
     {
       "parameters": {
@@ -26,7 +29,10 @@
       "name": "Run Pipeline (Trend + Script + Caption)",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [220, 300]
+      "position": [
+        220,
+        300
+      ]
     },
     {
       "parameters": {
@@ -44,7 +50,10 @@
       "name": "Pipeline succeeded?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [440, 300]
+      "position": [
+        440,
+        300
+      ]
     },
     {
       "parameters": {
@@ -54,49 +63,39 @@
       "name": "Send Morning Brief",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [660, 200]
+      "position": [
+        660,
+        200
+      ]
     },
     {
       "parameters": {
-        "url": "https://graph.facebook.com/v19.0/={{ $env.WHATSAPP_PHONE_ID }}/messages",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "url": "=https://graph.facebook.com/v19.0/{{ $env.WHATSAPP_PHONE_ID }}/messages",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
               "value": "=Bearer {{ $env.WHATSAPP_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "messaging_product",
-              "value": "whatsapp"
-            },
-            {
-              "name": "to",
-              "value": "={{ $env.WHATSAPP_TO_NUMBER }}"
-            },
-            {
-              "name": "type",
-              "value": "text"
-            },
-            {
-              "name": "text",
-              "value": "={ \"body\": \"PIPELINE FAILED\\n\\n{{ $json.stdout }}\" }"
-            }
-          ]
-        }
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $env.WHATSAPP_TO_NUMBER }}\",\n  \"type\": \"text\",\n  \"text\": { \"body\": \"PIPELINE FAILED\\n\\n{{ $json.stdout }}\" }\n}"
       },
       "id": "alert-failure",
       "name": "Alert: Pipeline Failed",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [660, 420]
+      "position": [
+        660,
+        420
+      ]
     }
   ],
   "connections": {
@@ -144,6 +143,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "tags": ["digimaids", "daily", "content"],
+  "tags": [
+    "digimaids",
+    "daily",
+    "content"
+  ],
   "notes": "Runs Mon-Sat at 6am. Triggers full pipeline: Trend Scout → Script Writer → Caption Writer → Morning Brief. Sends WhatsApp alert if any step fails."
 }

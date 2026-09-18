@@ -183,7 +183,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ model: 'claude-opus-4-7', max_tokens: 1024, messages: [{ role: 'user', content: 'You are analyzing a street interview with a woman entrepreneur. Find the single most surprising or relatable quote. Return JSON only (no markdown, no explanation) with exactly these fields: hook_quote, timestamp_start, timestamp_end, why_it_works, editor_brief_card (formatted for WhatsApp).\\n\\nTranscript:\\n' + $json.transcript }] }) }}",
+        "body": "={{ JSON.stringify({ model: 'claude-sonnet-5', max_tokens: 1024, messages: [{ role: 'user', content: 'You are analyzing a street interview with a woman entrepreneur. Find the single most surprising or relatable quote. Return JSON only (no markdown, no explanation) with exactly these fields: hook_quote, timestamp_start, timestamp_end, why_it_works, editor_brief_card (formatted for WhatsApp).\\n\\nTranscript:\\n' + $json.transcript }] }) }}",
         "options": {}
       },
       "credentials": {

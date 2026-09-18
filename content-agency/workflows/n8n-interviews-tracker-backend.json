@@ -1,0 +1,347 @@
+{
+  "name": "Build With Her Interviews Tracker Backend",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Basic LLM Chain", "type": "main", "index": 0 }]]
+    },
+    "Basic LLM Chain": {
+      "main": [[{ "node": "Create a database page", "type": "main", "index": 0 }]]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [[{ "node": "Basic LLM Chain", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Create a database page": {
+      "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]]
+    },
+    "Edit Fields": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    },
+    "fetchNotionWebhook": {
+      "main": [[{ "node": "Get many database pages", "type": "main", "index": 0 }]]
+    },
+    "Get many database pages": {
+      "main": [[{ "node": "Respond to Webhook1", "type": "main", "index": 0 }]]
+    },
+    "updateNotionWebhook": {
+      "main": [[{ "node": "Update a database page", "type": "main", "index": 0 }]]
+    },
+    "Update a database page": {
+      "main": [[{ "node": "Respond to Webhook2", "type": "main", "index": 0 }]]
+    }
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6e9d6a8d-a2ab-4d4f-b0ab-af12c2b32ce1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-160, 0],
+      "id": "2ee069e2-a166-4f01-8ce4-90dac4aaad96",
+      "name": "Webhook",
+      "webhookId": "6e9d6a8d-a2ab-4d4f-b0ab-af12c2b32ce1"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "e7d8155b-ee15-4b2f-a685-ccd46cc87f2f",
+          "mode": "list",
+          "cachedResultName": "Build With Her – Interviews CRM",
+          "cachedResultUrl": "https://www.notion.so/e7d8155bee154b2fa685ccd46cc87f2f"
+        },
+        "title": "={{ $json.notion_properties['Full Name'] }}",
+        "simple": false,
+        "propertiesUi": {
+          "propertyValues": [
+            { "key": "Full Name|title", "title": "={{ $json.notion_properties['Full Name'] }}" },
+            {
+              "key": "Instagram Handle or URL|url",
+              "urlValue": "={{ $json.notion_properties['Instagram Handle or URL'] }}"
+            },
+            {
+              "key": "Business / Brand Name|rich_text",
+              "textContent": "={{ $json.notion_properties['Business / Brand Name'] }}"
+            },
+            {
+              "key": "Consent Confirmed|checkbox",
+              "checkboxValue": "={{ $json.notion_properties['Consent Confirmed'] }}"
+            },
+            {
+              "key": "Overall Status|select",
+              "selectValue": "={{ $json.notion_properties['Overall Status'] }}"
+            },
+            {
+              "key": "Editing Status|select",
+              "selectValue": "={{ $json.notion_properties['Editing Status'] }}"
+            },
+            {
+              "key": "Posting Status|select",
+              "selectValue": "={{ $json.notion_properties['Posting Status'] }}"
+            },
+            {
+              "key": "Deep Research Status|select",
+              "selectValue": "={{ $json.notion_properties['Deep Research Status'] }}"
+            },
+            {
+              "key": "Edited Video Approved|checkbox",
+              "checkboxValue": "={{ $json.notion_properties['Edited Video Approved'] }}"
+            },
+            {
+              "key": "Approved for Posting|checkbox",
+              "checkboxValue": "={{ $json.notion_properties['Approved for Posting'] }}"
+            },
+            {
+              "key": "Interview Date|date",
+              "includeTime": false,
+              "date": "={{ $json.notion_properties['Interview Date'] }}"
+            },
+            {
+              "key": "Photo Link (Drive / URL)|url",
+              "ignoreIfEmpty": true,
+              "urlValue": "={{ $json.notion_properties['Photo Link (Drive / URL)'] }}"
+            },
+            {
+              "key": "Video Link (Drive / URL)|url",
+              "ignoreIfEmpty": true,
+              "urlValue": "={{ $json.notion_properties['Video Link (Drive / URL)'] }}"
+            },
+            {
+              "key": "Interview Location|rich_text",
+              "textContent": "={{ $json.notion_properties['Interview Location'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [416, 0],
+      "id": "6551a6b8-c317-4af2-9106-7d4638bd4aac",
+      "name": "Create a database page"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Incoming webhook payload (JSON string):\n{{ JSON.stringify($json) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an automation agent running inside n8n.  Your job: Take incoming webhook data from Lovable (street interview intake form) and produce a clean, validated payload to create a record in a Notion database named: “Build With Her – Interviews CRM”.  You MUST: - Normalize and validate the incoming data - Map fields to the exact Notion property names specified below - Return ONLY JSON (no markdown, no commentary) - Never invent values or fields that are not present - If required data is missing, return an error JSON with clear reasons  Database properties (exact names to use in output): CORE INFO - Full Name - Business / Brand Name - Instagram Handle or URL - Other Social Links - Email - Phone Number  INTERVIEW DETAILS - Interview Date - Interview Location - Notes / Context  MEDIA - Video Link (Drive / URL) - Photo Link (Drive / URL)  EDITOR TRACKING - Editor Assigned - Editing Status - Editing Notes - Final Video Link - Editor Due Date  APPROVALS - Edited Video Approved - Approved for Posting  POSTING & CONTENT - Posting Status - Scheduled Post Date - Posted Links - Posted Caption  PERMISSIONS & STATUS - Consent Confirmed - Overall Status  RESEARCH - Deep Research Status - Deep Research Summary  Defaults to set if NOT provided by Lovable: - Overall Status = \"Collected\" - Editing Status = \"Not Started\" - Posting Status = \"Not Scheduled\" - Deep Research Status = \"Not Run\" - Edited Video Approved = false - Approved for Posting = false - Consent Confirmed = false  Validation rules: Required: - Full Name (non-empty) - Business / Brand Name (non-empty) - Instagram Handle or URL (non-empty)  Normalization: - Trim whitespace on all text fields - Instagram:   - Accept @handle or URL   - If input starts with \"@\", remove \"@\"   - If input is a handle without \"http\", convert to https://instagram.com/{handle}   - If it already contains \"http\", keep as-is - Email: must contain \"@\" to be accepted; otherwise set to null and add a warning - Phone Number: keep digits + optional +; if invalid, set to null and add a warning - URLs: if provided and do not start with http:// or https://, prepend https://  Date handling: - If a date field is missing, leave it null - If present, output in ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ depending on input)  Output format: Return a single JSON object with exactly these keys:  1) \"ok\": boolean 2) \"errors\": array of strings (empty if ok=true) 3) \"warnings\": array of strings (empty if none) 4) \"notion_properties\": object mapping Notion property names to values 5) \"debug\": object containing sanitized received keys (no sensitive info like full phone/email)  When ok=true: - Provide \"notion_properties\" containing ONLY properties that have values or defaults. - Do NOT include unknown Notion properties.  When ok=false: - Provide errors, and notion_properties should be an empty object.  Incoming payload keys may include:  - fullName, name - businessBrandName, businessName, business, brandName - instagramHandleOrUrl, instagramHandleOrURL, instagramHandle, instagram, ig - otherSocialLinks, otherSocials, socials, otherLinks - email - phoneNumber, phone - interviewDate - interviewLocation, interviewLocationText, location - notes, context - videoLink, videoURL - photoLink, photoURL - consentConfirmed, consent   You should attempt to read from any of these keys, preferring the most specific. If multiple sources exist, prefer the explicitly named field.  Return ONLY JSON."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [48, 0],
+      "id": "47126b5e-0562-453f-945d-b28f44e326c6",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": { "responseFormat": "json_object" }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [-32, 208],
+      "id": "8c0d2ae1-e4e2-47ca-8c45-d49c0ff648b4",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": { "options": {} },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [800, 0],
+      "id": "830cf614-ee1d-4f9e-8a3d-1bb8da6d5b24",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "f60408e4-a2de-4068-aa77-8654977d9ddc", "name": "success", "value": true, "type": "boolean" },
+            { "id": "e45a2430-eeb6-411c-9086-e240f1f9801a", "name": "notionPageId", "value": "={{ $json.id }}", "type": "string" },
+            { "id": "609391f4-68a5-461b-a620-016c3085abfd", "name": "notionUrl", "value": "={{ $json.url }}", "type": "string" },
+            { "id": "6865a5ce-ab7f-416d-b001-6c1136dc9b5b", "name": "record", "value": "={{ $json.properties }}", "type": "object" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [624, 0],
+      "id": "b30d5438-27cd-466c-950b-52da3bcf6965",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fetch-interviews",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [192, 416],
+      "id": "2a55c75a-4bb3-4428-9c7f-58a4a7d92ff0",
+      "name": "fetchNotionWebhook",
+      "webhookId": "27f92325-15db-4d1a-b24b-d8caa9e581d0"
+    },
+    {
+      "parameters": { "respondWith": "allIncomingItems", "options": {} },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [608, 416],
+      "id": "65d6e89c-8c28-4271-96fb-e44c5e11e3d1",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "e7d8155b-ee15-4b2f-a685-ccd46cc87f2f",
+          "mode": "list",
+          "cachedResultName": "Build With Her – Interviews CRM",
+          "cachedResultUrl": "https://www.notion.so/e7d8155bee154b2fa685ccd46cc87f2f"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [400, 416],
+      "id": "671b8ee9-8644-4c00-9853-6bb3bb69d26e",
+      "name": "Get many database pages"
+    },
+    {
+      "parameters": { "respondWith": "allIncomingItems", "options": {} },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [592, 688],
+      "id": "80248ffe-3314-4a17-a5f1-e937a3020918",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "update-interviews",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [176, 688],
+      "id": "b9edbd16-1b55-45c8-8bd5-898b2948b3c3",
+      "name": "updateNotionWebhook",
+      "webhookId": "27f92325-15db-4d1a-b24b-d8caa9e581d0"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $json.body.pageId }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Editor Assigned|rich_text",
+              "ignoreIfEmpty": true,
+              "textContent": "={{ $json.body.notion_properties?.['Editor Assigned'] }}"
+            },
+            {
+              "key": "Editing Status|select",
+              "ignoreIfEmpty": true,
+              "selectValue": "={{ $json.body.notion_properties?.['Editing Status'] }}"
+            },
+            {
+              "key": "Editing Notes|rich_text",
+              "ignoreIfEmpty": true,
+              "textContent": "={{ $json.body.notion_properties?.['Editing Notes'] }}"
+            },
+            {
+              "key": "Final Video Link|url",
+              "ignoreIfEmpty": true,
+              "urlValue": "={{ $json.body.notion_properties?.['Final Video Link'] }}"
+            },
+            {
+              "key": "Editor Due Date|date",
+              "ignoreIfEmpty": true,
+              "includeTime": false,
+              "date": "={{ $json.body.notion_properties?.['Editor Due Date'] }}"
+            },
+            {
+              "key": "Edited Video Approved|checkbox",
+              "ignoreIfEmpty": true,
+              "checkboxValue": "={{ $json.body.notion_properties?.['Edited Video Approved'] }}"
+            },
+            {
+              "key": "Approved for Posting|checkbox",
+              "ignoreIfEmpty": true,
+              "checkboxValue": "={{ $json.body.notion_properties?.['Approved for Posting'] }}"
+            },
+            {
+              "key": "Posting Status|select",
+              "ignoreIfEmpty": true,
+              "selectValue": "={{ $json.body.notion_properties?.['Posting Status'] }}"
+            },
+            {
+              "key": "Scheduled Post Date|date",
+              "ignoreIfEmpty": true,
+              "includeTime": false,
+              "date": "={{ $json.body.notion_properties?.['Scheduled Post Date'] }}"
+            },
+            {
+              "key": "Posted Links|rich_text",
+              "ignoreIfEmpty": true,
+              "textContent": "={{ $json.body.notion_properties?.['Posted Links'] }}"
+            },
+            {
+              "key": "Posted Caption|rich_text",
+              "ignoreIfEmpty": true,
+              "textContent": "={{ $json.body.notion_properties?.['Posted Caption'] }}"
+            },
+            {
+              "key": "Overall Status|select",
+              "ignoreIfEmpty": true,
+              "selectValue": "={{ $json.body.notion_properties?.['Overall Status'] }}"
+            },
+            {
+              "key": "Deep Research Status|select",
+              "ignoreIfEmpty": true,
+              "selectValue": "={{ $json.body.notion_properties?.['Deep Research Status'] }}"
+            },
+            {
+              "key": "Deep Research Summary|rich_text",
+              "ignoreIfEmpty": true,
+              "textContent": "={{ $json.body.notion_properties?.['Deep Research Summary'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [384, 688],
+      "id": "a605d1f5-759f-432c-a0e4-d99731cb1d4f",
+      "name": "Update a database page"
+    }
+  ],
+  "meta": { "templateCredsSetupCompleted": true }
+}
