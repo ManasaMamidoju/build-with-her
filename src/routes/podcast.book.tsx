@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 
@@ -21,7 +21,6 @@ import { getCapturedSource } from "@/lib/source-capture";
 
 const searchSchema = z.object({
   slug: z.enum(["podcast-street", "podcast-longform"]).optional(),
-  paid: z.enum(["success", "cancelled"]).optional(),
 });
 
 export const Route = createFileRoute("/podcast/book")({
@@ -42,7 +41,7 @@ export const Route = createFileRoute("/podcast/book")({
 });
 
 function PodcastBook() {
-  const { slug: preselected, paid } = Route.useSearch();
+  const { slug: preselected } = Route.useSearch();
   const [slug, setSlug] = useState<(typeof PODCAST_BOOKABLE)[number]["slug"]>(
     preselected ?? PODCAST_BOOKABLE[0]!.slug,
   );
@@ -76,19 +75,11 @@ function PodcastBook() {
     return [...groups.entries()];
   }, [slots]);
 
-  useEffect(() => {
-    if (paid === "cancelled") {
-      toast.info(
-        "Payment was cancelled. Your slot is held — pick a time again to pay and confirm.",
-      );
-    }
-  }, [paid]);
-
   async function book() {
     if (!chosen || !form.fullName.trim() || !form.email.trim()) return;
     setSaving(true);
     try {
-      const result = await bookFn({
+      await bookFn({
         data: {
           slug,
           startsAt: chosen,
@@ -100,10 +91,6 @@ function PodcastBook() {
           source: getCapturedSource()?.src ?? "direct",
         },
       });
-      if (result.checkoutUrl) {
-        window.location.href = result.checkoutUrl;
-        return;
-      }
       setDone(true);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "We could not book that time.");
@@ -112,7 +99,7 @@ function PodcastBook() {
     }
   }
 
-  if (done || paid === "success") {
+  if (done) {
     return (
       <main className="container-editorial max-w-2xl py-20 text-center">
         <RoseMark className="mx-auto h-8 w-8 text-primary" />

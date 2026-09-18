@@ -254,36 +254,6 @@ export const createBooking = createServerFn({ method: "POST" })
       detail: { service: data.serviceSlug, startsAt: start.toISOString() },
     });
 
-    let checkoutUrl: string | null = null;
-    const service = bookableBySlug(data.serviceSlug);
-    if (service?.amountCents) {
-      try {
-        const recipient = await getRecipient(context);
-        const { createCheckoutSession } = await import("@/lib/stripe.server");
-        const session = await createCheckoutSession({
-          bookingId: row.id,
-          serviceName: service.name,
-          amountCents: service.amountCents,
-          customerEmail: recipient.email,
-          successUrl: `${SITE.url}/app/book?paid=success`,
-          cancelUrl: `${SITE.url}/app/book?paid=cancelled`,
-        });
-        if (session) {
-          checkoutUrl = session.url;
-          await supabaseAdmin
-            .from("bookings")
-            .update({
-              stripe_session_id: session.sessionId,
-              stripe_payment_status: "pending",
-              amount_cents: service.amountCents,
-            })
-            .eq("id", row.id);
-        }
-      } catch (stripeError) {
-        console.error("booking checkout session failed", stripeError);
-      }
-    }
-
     await sendBookingConfirmation(
       context,
       row.id,
@@ -298,7 +268,7 @@ export const createBooking = createServerFn({ method: "POST" })
       end.toISOString(),
     );
 
-    return { id: row.id as string, checkoutUrl };
+    return { id: row.id as string };
   });
 
 export const getMyBookings = createServerFn({ method: "GET" })

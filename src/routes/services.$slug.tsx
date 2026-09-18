@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FaqJsonLd, Script } from "@/components/seo/JsonLd";
-import { bookableBySlug, podcastBookableBySlug } from "@/lib/booking-options";
+import { bookableBySlug } from "@/lib/booking-options";
 import { serviceBySlug, SERVICES, type Service } from "@/lib/services";
 import { canonical, SITE } from "@/lib/site";
 import { getCapturedSource } from "@/lib/source-capture";
@@ -131,36 +131,22 @@ function ServiceDetail() {
         <section className="mt-12 rounded-2xl border border-border bg-blush p-8 shadow-card">
           <h2 className="text-2xl">{service.ctaLabel}</h2>
           <p className="mt-3 max-w-2xl text-base text-muted-foreground">{service.ctaNote}</p>
-          {service.slug === "podcast-street" ? (
-            <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
-              <Link to="/book/$slug" params={{ slug: service.slug }}>
-                Pick an open time
+          <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
+            <Link to="/score/quiz">Take the quiz</Link>
+          </Button>
+          {bookableBySlug(service.slug) ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Already have your score?{" "}
+              <Link
+                to="/book/$slug"
+                params={{ slug: service.slug }}
+                className="text-primary underline"
+              >
+                Book directly
               </Link>
-            </Button>
-          ) : podcastBookableBySlug(service.slug) ? (
-            <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
-              <Link to="/podcast/apply">Apply now</Link>
-            </Button>
-          ) : (
-            <>
-              <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
-                <Link to="/score/quiz">Take the quiz</Link>
-              </Button>
-              {bookableBySlug(service.slug) ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Already have your score?{" "}
-                  <Link
-                    to="/book/$slug"
-                    params={{ slug: service.slug }}
-                    className="text-primary underline"
-                  >
-                    Book directly
-                  </Link>
-                  .
-                </p>
-              ) : null}
-            </>
-          )}
+              .
+            </p>
+          ) : null}
         </section>
       )}
 

@@ -122,34 +122,6 @@ export const createPodcastBooking = createServerFn({ method: "POST" })
     });
     if (touchError) console.error("touchpoint write failed", touchError.message);
 
-    let checkoutUrl: string | null = null;
-    if (service.amountCents) {
-      try {
-        const { createCheckoutSession } = await import("@/lib/stripe.server");
-        const session = await createCheckoutSession({
-          bookingId: row.id,
-          serviceName: service.name,
-          amountCents: service.amountCents,
-          customerEmail: email,
-          successUrl: `${SITE.url}/podcast/book?slug=${data.slug}&paid=success`,
-          cancelUrl: `${SITE.url}/podcast/book?slug=${data.slug}&paid=cancelled`,
-        });
-        if (session) {
-          checkoutUrl = session.url;
-          await supabaseAdmin
-            .from("bookings")
-            .update({
-              stripe_session_id: session.sessionId,
-              stripe_payment_status: "pending",
-              amount_cents: service.amountCents,
-            })
-            .eq("id", row.id);
-        }
-      } catch (stripeError) {
-        console.error("podcast booking checkout session failed", stripeError);
-      }
-    }
-
     const whenLabel = formatWhen(start.toISOString());
     try {
       const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
@@ -199,5 +171,5 @@ export const createPodcastBooking = createServerFn({ method: "POST" })
       console.error("podcast booking calendar sync failed", calendarError);
     }
 
-    return { id: row.id as string, checkoutUrl };
+    return { id: row.id as string };
   });

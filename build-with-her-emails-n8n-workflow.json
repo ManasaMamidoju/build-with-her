@@ -328,143 +328,108 @@
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "f6a7b8c9-d0e1-2345-f123-456789012345",
       "name": "Send Score Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 0],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 0]
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "a7b8c9d0-e1f2-3456-a123-567890123456",
       "name": "Send Waitlist Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 150],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 150]
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "546c760a-74bf-4c0e-86f0-ad86742a1de0",
       "name": "Send Booking Confirmation Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 300],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 300]
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "9c420f65-abf9-4b92-9a77-c40e53b9becf",
       "name": "Send Booking Reminder Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 450],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 450]
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "00007286-73d1-4e2c-8ac3-67c3447ae5b8",
       "name": "Send Booking Admin Notify Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 600],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 600]
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "f817d673-da6a-49d8-b173-a4d26128f09e",
       "name": "Send Booking Reschedule Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 750],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 750]
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.toEmail }}",
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.toEmail }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "id": "dcd38d5f-536f-4904-9473-5c8f645131e4",
       "name": "Send Booking Cancelled Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [1200, 900],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
-          "name": "Build With Her Gmail"
-        }
-      }
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 900]
     },
     {
       "parameters": {

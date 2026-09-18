@@ -53,7 +53,7 @@ export const SERVICES: Service[] = [
       },
     ],
     ctaLabel: "Book your Clarity Call",
-    ctaNote: "Take the score first, then pick an open time below.",
+    ctaNote: "Booking opens shortly. Take the score first and we will hold your place.",
   },
   {
     slug: "strategy-consult",
@@ -84,8 +84,7 @@ export const SERVICES: Service[] = [
       },
     ],
     ctaLabel: "Book your strategy consult",
-    ctaNote:
-      "Take the score, then pick an open time below. Card payment turns on once our payment account is live; for now we hold your time and invoice you.",
+    ctaNote: "Payment and booking open shortly. Take the score and we will invite you first.",
   },
   {
     slug: "automation-build",
@@ -181,8 +180,8 @@ export const SERVICES: Service[] = [
         a: "On our podcast channels, and you get the files to post yourself.",
       },
     ],
-    ctaLabel: "Book a street-style spot",
-    ctaNote: "Pick an open time below. No sign-in and no score needed for this one.",
+    ctaLabel: "Ask about a street-style spot",
+    ctaNote: "Applications open shortly. Take the score and we will contact you when they do.",
   },
   {
     slug: "podcast-longform",
@@ -211,9 +210,8 @@ export const SERVICES: Service[] = [
         a: "Yes, and it works better that way, because the episode has somewhere to send people.",
       },
     ],
-    ctaLabel: "Apply for a long-form episode",
-    ctaNote:
-      "Tell us about your business and we will reply within five working days to schedule filming.",
+    ctaLabel: "Ask about a long-form episode",
+    ctaNote: "Applications open shortly. Take the score and we will contact you when they do.",
   },
   {
     slug: "custom-offer",

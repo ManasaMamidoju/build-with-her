@@ -6,8 +6,6 @@ export type BookableService = {
   durationMinutes: number;
   blurb: string;
   paymentNote?: string;
-  /** Set once a slot should be paid for at booking time via Stripe Checkout. */
-  amountCents?: number;
   intake: { id: string; label: string; helper?: string; long?: boolean; required?: boolean }[];
 };
 
@@ -40,7 +38,6 @@ export const BOOKABLE: BookableService[] = [
     blurb: "Two hours on your offer, pricing, pages and follow up, ending with a build plan.",
     paymentNote:
       "Card payment turns on once our payment account is live. For now we hold your time and invoice you.",
-    amountCents: 20000,
     intake: [
       { id: "goal", label: "What do you want decided by the end?", long: true, required: true },
       {
@@ -65,7 +62,6 @@ export const PODCAST_BOOKABLE: BookableService[] = [
     name: "Street-style interview",
     durationMinutes: 45,
     blurb: "A short, on-the-street conversation, guided so you never freeze.",
-    amountCents: 15000,
     intake: [],
   },
   {
@@ -73,7 +69,6 @@ export const PODCAST_BOOKABLE: BookableService[] = [
     name: "Long-form episode",
     durationMinutes: 180,
     blurb: "A full sit-down episode, half a day of filming with proper sound and lighting.",
-    amountCents: 200000,
     intake: [],
   },
 ];
