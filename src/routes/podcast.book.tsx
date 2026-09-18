@@ -78,7 +78,9 @@ function PodcastBook() {
 
   useEffect(() => {
     if (paid === "cancelled") {
-      toast.info("Payment was cancelled. Your slot is held — pick a time again to pay and confirm.");
+      toast.info(
+        "Payment was cancelled. Your slot is held — pick a time again to pay and confirm.",
+      );
     }
   }, [paid]);
 

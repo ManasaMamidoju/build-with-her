@@ -24,7 +24,10 @@ async function handleStripeWebhook(request: Request): Promise<Response> {
     data: { object: { id: string; metadata?: { booking_id?: string } } };
   };
 
-  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
+  if (
+    event.type === "checkout.session.completed" ||
+    event.type === "checkout.session.async_payment_succeeded"
+  ) {
     const bookingId = event.data.object.metadata?.booking_id;
     if (bookingId) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -36,7 +39,10 @@ async function handleStripeWebhook(request: Request): Promise<Response> {
     }
   }
 
-  if (event.type === "checkout.session.async_payment_failed" || event.type === "checkout.session.expired") {
+  if (
+    event.type === "checkout.session.async_payment_failed" ||
+    event.type === "checkout.session.expired"
+  ) {
     const bookingId = event.data.object.metadata?.booking_id;
     if (bookingId) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
