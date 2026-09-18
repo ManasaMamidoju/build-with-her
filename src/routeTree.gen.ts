@@ -26,6 +26,9 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
+import { Route as BookClarityRouteImport } from './routes/book.clarity'
+import { Route as BookPodcastRouteImport } from './routes/book.podcast'
+import { Route as BookStrategyRouteImport } from './routes/book.strategy'
 import { Route as CronSendBookingRemindersRouteImport } from './routes/cron.send-booking-reminders'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
@@ -143,6 +146,21 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
 const BookSlugRoute = BookSlugRouteImport.update({
   id: '/book/$slug',
   path: '/book/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookClarityRoute = BookClarityRouteImport.update({
+  id: '/book/clarity',
+  path: '/book/clarity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookPodcastRoute = BookPodcastRouteImport.update({
+  id: '/book/podcast',
+  path: '/book/podcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookStrategyRoute = BookStrategyRouteImport.update({
+  id: '/book/strategy',
+  path: '/book/strategy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CronSendBookingRemindersRoute =
@@ -350,6 +368,9 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
+  '/book/clarity': typeof BookClarityRoute
+  '/book/podcast': typeof BookPodcastRoute
+  '/book/strategy': typeof BookStrategyRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -401,6 +422,9 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
+  '/book/clarity': typeof BookClarityRoute
+  '/book/podcast': typeof BookPodcastRoute
+  '/book/strategy': typeof BookStrategyRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -455,6 +479,9 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
+  '/book/clarity': typeof BookClarityRoute
+  '/book/podcast': typeof BookPodcastRoute
+  '/book/strategy': typeof BookStrategyRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -509,6 +536,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog/$slug'
     | '/book/$slug'
+    | '/book/clarity'
+    | '/book/podcast'
+    | '/book/strategy'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -560,6 +590,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/book/$slug'
+    | '/book/clarity'
+    | '/book/podcast'
+    | '/book/strategy'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -613,6 +646,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/blog/$slug'
     | '/book/$slug'
+    | '/book/clarity'
+    | '/book/podcast'
+    | '/book/strategy'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -666,6 +702,9 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BookSlugRoute: typeof BookSlugRoute
+  BookClarityRoute: typeof BookClarityRoute
+  BookPodcastRoute: typeof BookPodcastRoute
+  BookStrategyRoute: typeof BookStrategyRoute
   CronSendBookingRemindersRoute: typeof CronSendBookingRemindersRoute
   ESlugRoute: typeof ESlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
@@ -797,6 +836,27 @@ declare module '@tanstack/react-router' {
       path: '/book/$slug'
       fullPath: '/book/$slug'
       preLoaderRoute: typeof BookSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book/clarity': {
+      id: '/book/clarity'
+      path: '/book/clarity'
+      fullPath: '/book/clarity'
+      preLoaderRoute: typeof BookClarityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book/podcast': {
+      id: '/book/podcast'
+      path: '/book/podcast'
+      fullPath: '/book/podcast'
+      preLoaderRoute: typeof BookPodcastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book/strategy': {
+      id: '/book/strategy'
+      path: '/book/strategy'
+      fullPath: '/book/strategy'
+      preLoaderRoute: typeof BookStrategyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cron/send-booking-reminders': {
@@ -1138,6 +1198,9 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
   BookSlugRoute: BookSlugRoute,
+  BookClarityRoute: BookClarityRoute,
+  BookPodcastRoute: BookPodcastRoute,
+  BookStrategyRoute: BookStrategyRoute,
   CronSendBookingRemindersRoute: CronSendBookingRemindersRoute,
   ESlugRoute: ESlugRoute,
   LearnSlugRoute: LearnSlugRoute,
