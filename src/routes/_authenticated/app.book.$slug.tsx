@@ -78,7 +78,7 @@ function BookService() {
     if (!chosen) return;
     setSaving(true);
     try {
-      await createFn({
+      const result = await createFn({
         data: {
           serviceSlug: service.slug,
           startsAt: chosen,
@@ -86,6 +86,10 @@ function BookService() {
           intake: answers,
         },
       });
+      if (result.checkoutUrl) {
+        window.location.href = result.checkoutUrl;
+        return;
+      }
       toast.success("Your session is booked");
       navigate({ to: "/app/book" });
     } catch (error) {
