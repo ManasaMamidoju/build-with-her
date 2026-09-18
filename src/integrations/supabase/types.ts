@@ -134,6 +134,81 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          cta_label: string;
+          cta_to: string;
+          description: string;
+          id: string;
+          interview_backlink_label: string | null;
+          interview_business_name: string | null;
+          interview_business_website: string | null;
+          interview_guest_name: string | null;
+          interview_instagram_url: string | null;
+          intro: string;
+          published_at: string;
+          read_minutes: number;
+          sections: Json;
+          slug: string;
+          status: string;
+          tags: string[];
+          takeaways: string[];
+          title: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          cta_label?: string;
+          cta_to?: string;
+          description: string;
+          id?: string;
+          interview_backlink_label?: string | null;
+          interview_business_name?: string | null;
+          interview_business_website?: string | null;
+          interview_guest_name?: string | null;
+          interview_instagram_url?: string | null;
+          intro?: string;
+          published_at?: string;
+          read_minutes?: number;
+          sections?: Json;
+          slug: string;
+          status?: string;
+          tags?: string[];
+          takeaways?: string[];
+          title: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          cta_label?: string;
+          cta_to?: string;
+          description?: string;
+          id?: string;
+          interview_backlink_label?: string | null;
+          interview_business_name?: string | null;
+          interview_business_website?: string | null;
+          interview_guest_name?: string | null;
+          interview_instagram_url?: string | null;
+          intro?: string;
+          published_at?: string;
+          read_minutes?: number;
+          sections?: Json;
+          slug?: string;
+          status?: string;
+          tags?: string[];
+          takeaways?: string[];
+          title?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
       bookings: {
         Row: {
           cancelled_at: string | null
