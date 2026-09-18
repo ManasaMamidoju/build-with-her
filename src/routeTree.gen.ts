@@ -33,6 +33,7 @@ import { Route as CronSendBookingRemindersRouteImport } from './routes/cron.send
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as PodcastIndexRouteImport } from './routes/podcast.index'
 import { Route as PodcastApplyRouteImport } from './routes/podcast.apply'
 import { Route as PodcastBookRouteImport } from './routes/podcast.book'
 import { Route as ScoreIndexRouteImport } from './routes/score.index'
@@ -183,6 +184,11 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
   id: '/learn/$slug',
   path: '/learn/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastIndexRoute = PodcastIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PodcastRoute,
 } as any)
 const PodcastApplyRoute = PodcastApplyRouteImport.update({
   id: '/apply',
@@ -380,6 +386,7 @@ export interface FileRoutesByFullPath {
   '/services/$slug': typeof ServicesSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
+  '/podcast/': typeof PodcastIndexRoute
   '/score/': typeof ScoreIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
@@ -416,7 +423,6 @@ export interface FileRoutesByTo {
   '/interviews': typeof InterviewsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/podcast': typeof PodcastRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -434,6 +440,7 @@ export interface FileRoutesByTo {
   '/services/$slug': typeof ServicesSlugRoute
   '/blog': typeof BlogIndexRoute
   '/learn': typeof LearnIndexRoute
+  '/podcast': typeof PodcastIndexRoute
   '/score': typeof ScoreIndexRoute
   '/services': typeof ServicesIndexRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
@@ -491,6 +498,7 @@ export interface FileRoutesById {
   '/services/$slug': typeof ServicesSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
+  '/podcast/': typeof PodcastIndexRoute
   '/score/': typeof ScoreIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
@@ -548,6 +556,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/blog/'
     | '/learn/'
+    | '/podcast/'
     | '/score/'
     | '/services/'
     | '/admin/blog'
@@ -584,7 +593,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/login'
     | '/mission'
-    | '/podcast'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -602,6 +610,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/blog'
     | '/learn'
+    | '/podcast'
     | '/score'
     | '/services'
     | '/admin/blog'
@@ -658,6 +667,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/blog/'
     | '/learn/'
+    | '/podcast/'
     | '/score/'
     | '/services/'
     | '/_authenticated/admin/blog'
@@ -886,6 +896,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/learn/$slug'
       preLoaderRoute: typeof LearnSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/podcast/': {
+      id: '/podcast/'
+      path: '/'
+      fullPath: '/podcast/'
+      preLoaderRoute: typeof PodcastIndexRouteImport
+      parentRoute: typeof PodcastRoute
     }
     '/podcast/apply': {
       id: '/podcast/apply'
@@ -1172,11 +1189,13 @@ const AuthenticatedRouteRouteWithChildren =
 interface PodcastRouteChildren {
   PodcastApplyRoute: typeof PodcastApplyRoute
   PodcastBookRoute: typeof PodcastBookRoute
+  PodcastIndexRoute: typeof PodcastIndexRoute
 }
 
 const PodcastRouteChildren: PodcastRouteChildren = {
   PodcastApplyRoute: PodcastApplyRoute,
   PodcastBookRoute: PodcastBookRoute,
+  PodcastIndexRoute: PodcastIndexRoute,
 }
 
 const PodcastRouteWithChildren =
