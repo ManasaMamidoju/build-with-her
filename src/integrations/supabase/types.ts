@@ -134,8 +134,84 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          cta_label: string
+          cta_to: string
+          description: string
+          id: string
+          interview_backlink_label: string | null
+          interview_business_name: string | null
+          interview_business_website: string | null
+          interview_guest_name: string | null
+          interview_instagram_url: string | null
+          intro: string
+          published_at: string
+          read_minutes: number
+          sections: Json
+          slug: string
+          status: string
+          tags: string[]
+          takeaways: string[]
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string
+          cta_to?: string
+          description: string
+          id?: string
+          interview_backlink_label?: string | null
+          interview_business_name?: string | null
+          interview_business_website?: string | null
+          interview_guest_name?: string | null
+          interview_instagram_url?: string | null
+          intro: string
+          published_at?: string
+          read_minutes?: number
+          sections?: Json
+          slug: string
+          status?: string
+          tags?: string[]
+          takeaways?: string[]
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string
+          cta_to?: string
+          description?: string
+          id?: string
+          interview_backlink_label?: string | null
+          interview_business_name?: string | null
+          interview_business_website?: string | null
+          interview_guest_name?: string | null
+          interview_instagram_url?: string | null
+          intro?: string
+          published_at?: string
+          read_minutes?: number
+          sections?: Json
+          slug?: string
+          status?: string
+          tags?: string[]
+          takeaways?: string[]
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
+          amount_cents: number | null
           cancelled_at: string | null
           created_at: string
           ends_at: string
@@ -144,14 +220,18 @@ export type Database = {
           intake: Json
           meet_link: string | null
           person_id: string | null
+          reminder_sent_at: string | null
           reschedule_count: number
           service_slug: string
           starts_at: string
           status: string
+          stripe_payment_status: string
+          stripe_session_id: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          amount_cents?: number | null
           cancelled_at?: string | null
           created_at?: string
           ends_at: string
@@ -160,14 +240,18 @@ export type Database = {
           intake?: Json
           meet_link?: string | null
           person_id?: string | null
+          reminder_sent_at?: string | null
           reschedule_count?: number
           service_slug: string
           starts_at: string
           status?: string
+          stripe_payment_status?: string
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          amount_cents?: number | null
           cancelled_at?: string | null
           created_at?: string
           ends_at?: string
@@ -176,10 +260,13 @@ export type Database = {
           intake?: Json
           meet_link?: string | null
           person_id?: string | null
+          reminder_sent_at?: string | null
           reschedule_count?: number
           service_slug?: string
           starts_at?: string
           status?: string
+          stripe_payment_status?: string
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -189,6 +276,105 @@ export type Database = {
             columns: ["person_id"]
             isOneToOne: false
             referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_pieces: {
+        Row: {
+          caption: string | null
+          created_at: string
+          event_id: string | null
+          hook: string | null
+          id: string
+          interview_id: string | null
+          kind: string
+          notes: string | null
+          person_id: string | null
+          platform: string | null
+          project_id: string | null
+          published_at: string | null
+          published_url: string | null
+          script: string | null
+          service_id: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string | null
+          hook?: string | null
+          id?: string
+          interview_id?: string | null
+          kind?: string
+          notes?: string | null
+          person_id?: string | null
+          platform?: string | null
+          project_id?: string | null
+          published_at?: string | null
+          published_url?: string | null
+          script?: string | null
+          service_id?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string | null
+          hook?: string | null
+          id?: string
+          interview_id?: string | null
+          kind?: string
+          notes?: string | null
+          person_id?: string | null
+          platform?: string | null
+          project_id?: string | null
+          published_at?: string | null
+          published_url?: string | null
+          script?: string | null
+          service_id?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_pieces_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
             referencedColumns: ["id"]
           },
         ]

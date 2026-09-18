@@ -60,6 +60,7 @@ import { Route as AuthenticatedAppBookIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppBookSlugRouteImport } from './routes/_authenticated/app.book.$slug'
 import { Route as AuthenticatedAppProjectsIndexRouteImport } from './routes/_authenticated/app.projects.index'
 import { Route as AuthenticatedAppProjectsIdRouteImport } from './routes/_authenticated/app.projects.$id'
+import { Route as WebhooksStripeRouteImport } from './routes/webhooks.stripe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -151,6 +152,11 @@ const CronSendBookingRemindersRoute =
     path: '/cron/send-booking-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const WebhooksStripeRoute = WebhooksStripeRouteImport.update({
+  id: '/webhooks/stripe',
+  path: '/webhooks/stripe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
   path: '/e/$slug',
@@ -385,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book/': typeof AuthenticatedAppBookIndexRoute
   '/app/projects/': typeof AuthenticatedAppProjectsIndexRoute
+  '/webhooks/stripe': typeof WebhooksStripeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -436,6 +443,7 @@ export interface FileRoutesByTo {
   '/admin/projects': typeof AuthenticatedAdminProjectsIndexRoute
   '/app/book': typeof AuthenticatedAppBookIndexRoute
   '/app/projects': typeof AuthenticatedAppProjectsIndexRoute
+  '/webhooks/stripe': typeof WebhooksStripeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -490,6 +498,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/projects/': typeof AuthenticatedAdminProjectsIndexRoute
   '/_authenticated/app/book/': typeof AuthenticatedAppBookIndexRoute
   '/_authenticated/app/projects/': typeof AuthenticatedAppProjectsIndexRoute
+  '/webhooks/stripe': typeof WebhooksStripeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -544,6 +553,7 @@ export interface FileRouteTypes {
     | '/admin/projects/'
     | '/app/book/'
     | '/app/projects/'
+    | '/webhooks/stripe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -595,6 +605,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/app/book'
     | '/app/projects'
+    | '/webhooks/stripe'
   id:
     | '__root__'
     | '/'
@@ -648,6 +659,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/projects/'
     | '/_authenticated/app/book/'
     | '/_authenticated/app/projects/'
+    | '/webhooks/stripe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -676,6 +688,7 @@ export interface RootRouteChildren {
   ScoreIndexRoute: typeof ScoreIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   ScoreRTokenRoute: typeof ScoreRTokenRoute
+  WebhooksStripeRoute: typeof WebhooksStripeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       path: '/e/$slug'
       fullPath: '/e/$slug'
       preLoaderRoute: typeof ESlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/webhooks/stripe': {
+      id: '/webhooks/stripe'
+      path: '/webhooks/stripe'
+      fullPath: '/webhooks/stripe'
+      preLoaderRoute: typeof WebhooksStripeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learn/': {
@@ -1148,6 +1168,7 @@ const rootRouteChildren: RootRouteChildren = {
   ScoreIndexRoute: ScoreIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   ScoreRTokenRoute: ScoreRTokenRoute,
+  WebhooksStripeRoute: WebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
