@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +10,12 @@ import { BOOKABLE, bookableBySlug, formatWhen } from "@/lib/booking-options";
 import { cancelBooking, getMyBookings } from "@/lib/booking.functions";
 import { getMyScores } from "@/lib/member.functions";
 
+const searchSchema = z.object({
+  paid: z.enum(["success", "cancelled"]).optional(),
+});
+
 export const Route = createFileRoute("/_authenticated/app/book/")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Book a session | Build With Her Media" },
@@ -20,10 +27,18 @@ export const Route = createFileRoute("/_authenticated/app/book/")({
 });
 
 function BookIndex() {
+  const { paid } = Route.useSearch();
   const listFn = useServerFn(getMyBookings);
   const cancelFn = useServerFn(cancelBooking);
   const scoresFn = useServerFn(getMyScores);
   const { data, refetch } = useQuery({ queryKey: ["my-bookings"], queryFn: () => listFn({}) });
+
+  useEffect(() => {
+    if (paid === "success") toast.success("Payment received. You are booked.");
+    if (paid === "cancelled") {
+      toast.info("Payment was cancelled. Your slot is held — pay from your booking to confirm it.");
+    }
+  }, [paid]);
   const { data: scores, isLoading: scoresLoading } = useQuery({
     queryKey: ["my-scores"],
     queryFn: () => scoresFn(),
