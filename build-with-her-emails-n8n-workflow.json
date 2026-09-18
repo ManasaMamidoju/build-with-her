@@ -14,18 +14,24 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [250, 300],
+      "position": [
+        250,
+        300
+      ],
       "webhookId": "build-with-her-emails"
     },
     {
       "parameters": {
-        "jsCode": "const crypto = require('crypto');\nconst item = items[0].json;\nconst signature = item.headers['x-bwh-signature'] || item.headers['X-BWH-Signature'];\nconst rawBody = typeof item.body === 'string' ? item.body : JSON.stringify(item.body);\nconst secret = process.env.N8N_EMAIL_WEBHOOK_SECRET || 'PASTE_N8N_EMAIL_WEBHOOK_SECRET_HERE';\nconst expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');\nif (signature !== expected) {\n  return [{ json: { valid: false, reason: 'signature mismatch' } }];\n}\nconst payload = JSON.parse(rawBody);\nreturn [{ json: { valid: true, ...payload } }];"
+        "jsCode": "// require('crypto') needs N8N_RUNNERS_ALLOWED_BUILT_IN_MODULES (or legacy\n// NODE_FUNCTION_ALLOW_BUILTIN) to include \"crypto\" on this n8n instance.\n// The caller (src/lib/n8n-email.server.ts) signs with real HMAC-SHA256, so\n// this can't be swapped for a plain string compare.\nconst crypto = require('crypto');\nconst item = $input.first().json;\nconst headers = item.headers || {};\nconst signature = headers['x-bwh-signature'] || headers['X-BWH-Signature'];\nconst rawBody = typeof item.body === 'string' ? item.body : JSON.stringify(item.body);\nconst secret = $env.N8N_EMAIL_WEBHOOK_SECRET;\n\nif (!secret || !signature) {\n  return [{ json: { valid: false, reason: 'missing secret or signature' } }];\n}\n\nconst expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');\nif (signature !== expected) {\n  return [{ json: { valid: false, reason: 'signature mismatch' } }];\n}\n\nlet payload;\ntry {\n  payload = JSON.parse(rawBody);\n} catch (e) {\n  return [{ json: { valid: false, reason: 'invalid JSON body' } }];\n}\n\nreturn [{ json: { valid: true, ...payload } }];"
       },
       "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
       "name": "Verify Signature",
-      "type": "n8n-nodes-base.function",
-      "typeVersion": 1,
-      "position": [450, 300]
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ]
     },
     {
       "parameters": {
@@ -42,7 +48,10 @@
       "name": "Signature Valid?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [600, 300]
+      "position": [
+        600,
+        300
+      ]
     },
     {
       "parameters": {
@@ -86,7 +95,10 @@
       "name": "Route by Event",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
-      "position": [800, 300]
+      "position": [
+        800,
+        300
+      ]
     },
     {
       "parameters": {
@@ -120,7 +132,10 @@
       "name": "Prepare Score Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 0]
+      "position": [
+        1000,
+        0
+      ]
     },
     {
       "parameters": {
@@ -154,7 +169,10 @@
       "name": "Prepare Waitlist Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 150]
+      "position": [
+        1000,
+        150
+      ]
     },
     {
       "parameters": {
@@ -188,7 +206,10 @@
       "name": "Prepare Booking Confirmation Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 300]
+      "position": [
+        1000,
+        300
+      ]
     },
     {
       "parameters": {
@@ -222,7 +243,10 @@
       "name": "Prepare Booking Reminder Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 450]
+      "position": [
+        1000,
+        450
+      ]
     },
     {
       "parameters": {
@@ -256,7 +280,10 @@
       "name": "Prepare Booking Admin Notify Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 600]
+      "position": [
+        1000,
+        600
+      ]
     },
     {
       "parameters": {
@@ -290,7 +317,10 @@
       "name": "Prepare Booking Reschedule Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 750]
+      "position": [
+        1000,
+        750
+      ]
     },
     {
       "parameters": {
@@ -324,7 +354,10 @@
       "name": "Prepare Booking Cancelled Email",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [1000, 900]
+      "position": [
+        1000,
+        900
+      ]
     },
     {
       "parameters": {
@@ -339,7 +372,11 @@
       "name": "Send Score Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 0]
+      "position": [
+        1200,
+        0
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -354,7 +391,11 @@
       "name": "Send Waitlist Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 150]
+      "position": [
+        1200,
+        150
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -369,7 +410,11 @@
       "name": "Send Booking Confirmation Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 300]
+      "position": [
+        1200,
+        300
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -384,7 +429,11 @@
       "name": "Send Booking Reminder Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 450]
+      "position": [
+        1200,
+        450
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -399,7 +448,11 @@
       "name": "Send Booking Admin Notify Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 600]
+      "position": [
+        1200,
+        600
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -414,7 +467,11 @@
       "name": "Send Booking Reschedule Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 750]
+      "position": [
+        1200,
+        750
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -429,7 +486,11 @@
       "name": "Send Booking Cancelled Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [1200, 900]
+      "position": [
+        1200,
+        900
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -440,7 +501,10 @@
       "name": "Respond Success",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1450, 450]
+      "position": [
+        1450,
+        450
+      ]
     },
     {
       "parameters": {
@@ -451,7 +515,38 @@
       "name": "Respond Forbidden",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [600, 500]
+      "position": [
+        600,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "statusCode": 400,
+        "body": "{ \"ok\": false, \"error\": \"unknown event type\" }"
+      },
+      "id": "d1e2f3a4-b5c6-4789-a012-3456789abcde",
+      "name": "Respond Unknown Event",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        1050
+      ]
+    },
+    {
+      "parameters": {
+        "statusCode": 502,
+        "body": "{ \"ok\": false, \"error\": \"email send failed\" }"
+      },
+      "id": "e2f3a4b5-c6d7-4890-b123-456789abcdef",
+      "name": "Respond Email Failed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1450,
+        1050
+      ]
     }
   ],
   "connections": {
@@ -548,7 +643,7 @@
         ],
         [
           {
-            "node": "Respond Success",
+            "node": "Respond Unknown Event",
             "type": "main",
             "index": 0
           }
@@ -640,6 +735,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -648,6 +750,13 @@
         [
           {
             "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
             "type": "main",
             "index": 0
           }
@@ -662,6 +771,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -670,6 +786,13 @@
         [
           {
             "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
             "type": "main",
             "index": 0
           }
@@ -684,6 +807,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -695,6 +825,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -703,6 +840,13 @@
         [
           {
             "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
             "type": "main",
             "index": 0
           }

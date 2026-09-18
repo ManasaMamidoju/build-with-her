@@ -16,7 +16,10 @@
       "name": "Every Sunday 8pm",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
-      "position": [0, 300],
+      "position": [
+        0,
+        300
+      ],
       "notes": "Runs every Sunday at 8pm to plan the coming week"
     },
     {
@@ -49,7 +52,10 @@
       "name": "Get Approved Interviews (up to 7)",
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2,
-      "position": [220, 300],
+      "position": [
+        220,
+        300
+      ],
       "notes": "Fetches interviews with Stage=Approved, sorted by priority. Gets up to 7 for the week."
     },
     {
@@ -60,7 +66,10 @@
       "name": "Assign Posting Dates",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 300],
+      "position": [
+        440,
+        300
+      ],
       "notes": "Assigns each interview to a day in the next 7 days"
     },
     {
@@ -87,7 +96,10 @@
       "name": "Update Notion: Set Date + Scheduled",
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2,
-      "position": [660, 300],
+      "position": [
+        660,
+        300
+      ],
       "notes": "Sets Post Date and changes Stage to Scheduled for each interview"
     },
     {
@@ -98,11 +110,14 @@
       "name": "Build Schedule Summary",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [880, 300]
+      "position": [
+        880,
+        300
+      ]
     },
     {
       "parameters": {
-        "url": "https://graph.facebook.com/v19.0/={{ $env.WHATSAPP_PHONE_ID }}/messages",
+        "url": "=https://graph.facebook.com/v19.0/{{ $env.WHATSAPP_PHONE_ID }}/messages",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -124,29 +139,76 @@
       "name": "Send Schedule Summary via WhatsApp",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1100, 300]
+      "position": [
+        1100,
+        300
+      ]
     }
   ],
   "connections": {
     "Every Sunday 8pm": {
-      "main": [[{ "node": "Get Approved Interviews (up to 7)", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Get Approved Interviews (up to 7)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Get Approved Interviews (up to 7)": {
-      "main": [[{ "node": "Assign Posting Dates", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Assign Posting Dates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Assign Posting Dates": {
-      "main": [[{ "node": "Update Notion: Set Date + Scheduled", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Update Notion: Set Date + Scheduled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Update Notion: Set Date + Scheduled": {
-      "main": [[{ "node": "Build Schedule Summary", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Build Schedule Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Build Schedule Summary": {
-      "main": [[{ "node": "Send Schedule Summary via WhatsApp", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Send Schedule Summary via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
-  "tags": ["interviews", "personal-brand", "scheduler"],
+  "tags": [
+    "interviews",
+    "personal-brand",
+    "scheduler"
+  ],
   "notes": "Every Sunday at 8pm: grabs up to 7 Approved interviews, assigns them to Mon-Sun, sets Stage=Scheduled in Notion, sends you a WhatsApp summary."
 }
