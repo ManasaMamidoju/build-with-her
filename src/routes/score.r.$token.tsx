@@ -1,13 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Check, Copy, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { supabase } from "@/integrations/supabase/client";
 import { AREAS, PETAL_THORN_LINES, type AreaKey } from "@/lib/score-rubric";
 import { getScoreByToken } from "@/lib/score.functions";
-import { rememberPostLoginRedirect } from "@/lib/post-login-redirect";
 import { serviceBySlug, type ServiceSlug } from "@/lib/services";
 
 export const Route = createFileRoute("/score/r/$token")({
@@ -231,12 +229,7 @@ function ResultPage() {
 
 type NextStepService = ReturnType<typeof serviceBySlug>;
 
-/**
- * The Strategy Consult only appears once she has an account, so we have
- * somewhere to attach that booking and follow up. Creating one sends her to
- * sign in and back to this exact page. Every other recommended service
- * (including the free Clarity Call) needs no account.
- */
+/** Every recommended service, including Clarity Call and Strategy Consult, books straight through with no account needed. */
 function NextStepSection({
   primaryService,
   secondaryService,
@@ -246,49 +239,15 @@ function NextStepSection({
   secondaryService: NextStepService;
   stageNextStep: string;
 }) {
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (active) setSignedIn(Boolean(data.session));
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (active) setSignedIn(Boolean(session));
-    });
-    return () => {
-      active = false;
-      sub.subscription.unsubscribe();
-    };
-  }, []);
-
-  function createAccount() {
-    rememberPostLoginRedirect(window.location.pathname);
-    window.location.href = "/login";
-  }
-
-  const gate = (service: NextStepService) => service?.slug === "strategy-consult" && !signedIn;
-
   return (
     <section className="mt-12 rounded-2xl bg-secondary p-8">
       <h2 className="text-2xl">Your next step</h2>
       {primaryService ? (
         <>
           <p className="mt-3 text-base text-muted-foreground">{stageNextStep}</p>
-          {gate(primaryService) ? (
-            <Button
-              size="lg"
-              className="mt-7 h-12 px-7 text-base"
-              onClick={createAccount}
-              disabled={signedIn === null}
-            >
-              Create your account
-            </Button>
-          ) : (
-            <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
-              <Link {...bookingHref(primaryService.slug)}>{primaryService.ctaLabel}</Link>
-            </Button>
-          )}
+          <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
+            <Link {...bookingHref(primaryService.slug)}>{primaryService.ctaLabel}</Link>
+          </Button>
         </>
       ) : (
         <>
@@ -304,39 +263,12 @@ function NextStepSection({
       )}
       {secondaryService ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          {gate(secondaryService) ? (
-            <>
-              Want {secondaryService.name.toLowerCase()} too?{" "}
-              <button
-                type="button"
-                onClick={createAccount}
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                Create a free account
-              </button>{" "}
-              to save this score and unlock it.
-            </>
-          ) : (
-            <Link
-              {...bookingHref(secondaryService.slug)}
-              className="text-primary underline-offset-4 hover:underline"
-            >
-              Or {secondaryService.name.toLowerCase()}
-            </Link>
-          )}
-        </p>
-      ) : null}
-      {primaryService?.slug !== "clarity-call" && secondaryService?.slug !== "clarity-call" ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Prefer to just talk it through first?{" "}
           <Link
-            to="/book/$slug"
-            params={{ slug: "clarity-call" }}
+            {...bookingHref(secondaryService.slug)}
             className="text-primary underline-offset-4 hover:underline"
           >
-            Book a free Clarity Call
+            Or {secondaryService.name.toLowerCase()}
           </Link>
-          . No account needed.
         </p>
       ) : null}
     </section>
