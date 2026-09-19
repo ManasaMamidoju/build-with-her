@@ -1,13 +1,16 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { supabase } from "@/integrations/supabase/client";
-import { bookableBySlug, podcastBookableBySlug } from "@/lib/booking-options";
+import { podcastBookableBySlug } from "@/lib/booking-options";
+import { calendlyLinkFor } from "@/lib/calendly";
 import { rememberPostLoginRedirect } from "@/lib/post-login-redirect";
 
 /**
  * A short, shareable link straight into booking one specific thing — for a
  * bio link, an email, or a QR code. Podcast slugs skip straight to the
- * public calendar; member services go through sign-in first if needed.
+ * public calendar. Clarity Call and the Strategy Consult run on Calendly:
+ * the Clarity Call is open to anyone, the Strategy Consult still asks her
+ * to sign in first, so an account exists to attach it to.
  */
 export const Route = createFileRoute("/book/$slug")({
   ssr: false,
@@ -20,17 +23,19 @@ export const Route = createFileRoute("/book/$slug")({
       });
     }
 
-    const service = bookableBySlug(params.slug);
-    if (!service) {
+    const calendlyUrl = calendlyLinkFor(params.slug);
+    if (!calendlyUrl) {
       throw redirect({ to: "/services" });
     }
 
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) {
-      rememberPostLoginRedirect(`/app/book/${service.slug}`);
-      throw redirect({ to: "/login" });
+    if (params.slug === "strategy-consult") {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        rememberPostLoginRedirect(`/book/${params.slug}`);
+        throw redirect({ to: "/login" });
+      }
     }
 
-    throw redirect({ to: "/app/book/$slug", params: { slug: service.slug } });
+    throw redirect({ href: calendlyUrl });
   },
 });

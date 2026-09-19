@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { ImagePlaceholder } from "@/components/site/ImagePlaceholder";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
+import { TOTAL_QUESTION_COUNT } from "@/lib/score-rubric";
 import { canonical, SITE } from "@/lib/site";
 
 const faqs = [
@@ -34,6 +35,26 @@ const faqs = [
     q: "Do you work with women outside Miami?",
     a: "Yes. Filming happens in Miami. Everything else happens wherever you are.",
   },
+  {
+    q: "What do the stages mean?",
+    a: "Every business is somewhere between Seed and Garden. Seed means clients cannot find you yet. Garden means the work keeps coming back on its own. Your stage tells you what to fix next, and your petals and thorns show why.",
+  },
+  {
+    q: "What are thorns?",
+    a: 'A thorn is an area where clients are falling out. Most businesses have one or two. A result marked "with thorns" means the business only works when you are in it, which is a different fix.',
+  },
+  {
+    q: "Can my stage change?",
+    a: "Yes. Retake the score every 90 days. Most women move a stage within one build.",
+  },
+];
+
+const stages = [
+  { name: "Seed", tagline: "Everything you need is there. Nobody can see it yet." },
+  { name: "Sprout", tagline: "You have broken ground. Now you need a shape." },
+  { name: "Bud", tagline: "Almost open. Most clients leave before it does." },
+  { name: "Bloom", tagline: "You are in full view. Now make it last." },
+  { name: "Garden", tagline: "Your work keeps coming back to you." },
 ];
 
 const doors = [
@@ -62,18 +83,18 @@ const doors = [
 const steps = [
   {
     n: "01",
-    title: "Answer 40 quick questions",
+    title: `Answer ${TOTAL_QUESTION_COUNT} quick questions`,
     body: "About your site, your Google profile, your socials, your booking and your follow up. Skip what does not apply.",
   },
   {
     n: "02",
-    title: "See your score, area by area",
-    body: "One number, then five areas: Source, Clarity, Attract, Land, Elevate. You see exactly where clients fall out.",
+    title: "Find your stage",
+    body: "Seed, Sprout, Bud, Bloom or Garden. One word for where your business is, and the five areas behind it, so you see exactly where clients fall out.",
   },
   {
     n: "03",
     title: "Get the one fix that pays first",
-    body: "Not a list of forty things. The single change that brings money back fastest, and a call if you want help doing it.",
+    body: "Your petals show what is working. Your thorns show what to fix. We give you the single change that brings money back fastest, and a call if you want help doing it.",
   },
 ];
 
@@ -119,10 +140,10 @@ function Home() {
               </p>
             </div>
           </div>
-          <ImagePlaceholder
-            label="Manasa's portrait, holding a rose"
-            tone="charcoal"
-            className="aspect-[4/5] w-full max-w-sm justify-self-center lg:justify-self-end"
+          <img
+            src="/brand/manasa-portrait.jpg"
+            alt="Manasa, holding a rose"
+            className="aspect-[4/5] w-full max-w-sm justify-self-center rounded-2xl object-cover lg:justify-self-end"
           />
         </div>
       </section>
@@ -145,6 +166,34 @@ function Home() {
                 {door.cta}
               </Link>
             </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="container-editorial py-16 md:py-24">
+        <h2>The five stages</h2>
+        <p className="mt-3 max-w-xl text-lg text-muted-foreground">
+          Every business is somewhere between Seed and Garden.
+        </p>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+          {stages.map((stage) => (
+            <div
+              key={stage.name}
+              className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card"
+            >
+              <ImagePlaceholder
+                label={`${stage.name} illustration`}
+                className="aspect-square w-full"
+              />
+              <h3 className="mt-4 text-xl">{stage.name}</h3>
+              <p className="mt-2 flex-1 text-sm text-muted-foreground">{stage.tagline}</p>
+              <Link
+                to="/score/quiz"
+                className="mt-4 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Find your stage
+              </Link>
+            </div>
           ))}
         </div>
       </section>

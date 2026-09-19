@@ -1,7 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { AREA_ORDER, AREA_POINTS, bandFor, QUESTIONS, type AreaKey } from "@/lib/score-rubric";
+import {
+  AREA_ORDER,
+  AREA_POINTS,
+  bandFor,
+  petalStateFor,
+  QUESTIONS,
+  THORN_QUESTIONS,
+  WITH_THORNS_THRESHOLD,
+  type AreaKey,
+} from "@/lib/score-rubric";
 import { SITE } from "@/lib/site";
 
 const handle = z.string().trim().max(160).optional().or(z.literal(""));
@@ -32,6 +41,7 @@ const detailsSchema = z.object({
 
 const submitSchema = z.object({
   answers: z.record(z.string().max(60), z.string().max(60)),
+  thornAnswers: z.record(z.string().max(60), z.string().max(60)).optional().default({}),
   details: detailsSchema,
 });
 
@@ -41,7 +51,7 @@ function makeToken() {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function score(answers: Record<string, string>) {
+function score(answers: Record<string, string>, thornAnswers: Record<string, string>) {
   const areaEarned = AREA_ORDER.reduce(
     (acc, key) => {
       acc[key] = 0;
@@ -84,7 +94,24 @@ function score(answers: Record<string, string>) {
     .slice(0, 3)
     .map((gap) => ({ area: gap.area, fix: gap.fix }));
 
-  return { areaScores, total, topFixes, band: bandFor(total) };
+  const petals = areaScores
+    .filter((a) => petalStateFor(a.earned, a.outOf) === "petal")
+    .map((a) => a.area);
+  const thorns = areaScores
+    .filter((a) => petalStateFor(a.earned, a.outOf) === "thorn")
+    .map((a) => a.area);
+
+  let thornScore = 0;
+  for (const question of THORN_QUESTIONS) {
+    const answer = thornAnswers[question.id];
+    const choice = question.choices.find((c) => c.value === answer);
+    thornScore += choice ? Math.round(question.points * choice.credit) : 0;
+  }
+  const withThorns = thornScore >= WITH_THORNS_THRESHOLD;
+
+  const band = bandFor(total);
+
+  return { areaScores, total, topFixes, band, petals, thorns, thornScore, withThorns };
 }
 
 export const submitScore = createServerFn({ method: "POST" })
@@ -98,8 +125,15 @@ export const submitScore = createServerFn({ method: "POST" })
       maxInWindow: 5,
       message: "You have taken this a few times just now. Come back in an hour.",
     });
-    const result = score(data.answers);
+    const result = score(data.answers, data.thornAnswers);
     const token = makeToken();
+
+    const { data: bandRow } = await supabaseAdmin
+      .from("band_rules")
+      .select("stage_name")
+      .eq("band", result.band.name)
+      .maybeSingle();
+    const stageName = bandRow?.stage_name ?? result.band.name;
 
     const email = data.details.email.toLowerCase();
     const { data: personId, error: personError } = await supabaseAdmin.rpc(
@@ -134,12 +168,17 @@ export const submitScore = createServerFn({ method: "POST" })
         consent_sms: data.details.consentSms ?? false,
         consent_community: data.details.consentCommunity ?? false,
         consent_terms_at: new Date().toISOString(),
-        answers: data.answers,
+        answers: { ...data.answers, ...data.thornAnswers },
         area_scores: result.areaScores,
         total_score: result.total,
         band: result.band.name,
         top_fixes: result.topFixes,
         person_id: personId,
+        thorn_score: result.thornScore,
+        with_thorns: result.withThorns,
+        stage: stageName,
+        petals: result.petals,
+        thorns: result.thorns,
       })
       .select("id")
       .single();
@@ -154,13 +193,19 @@ export const submitScore = createServerFn({ method: "POST" })
       person_id: personId,
       kind: "score_submit",
       source: data.details.source || null,
-      detail: { token, total: result.total, band: result.band.name },
+      detail: { token, total: result.total, band: result.band.name, stage: stageName },
     });
     if (touchError) {
       console.error("touchpoint write failed", touchError.message);
     }
 
     if (submission) {
+      const { data: bandDetail } = await supabaseAdmin
+        .from("band_rules")
+        .select("stage_tagline")
+        .eq("band", result.band.name)
+        .maybeSingle();
+
       const { triggerN8nEmail } = await import("@/lib/n8n-email.server");
       await triggerN8nEmail({
         event: "score_result",
@@ -170,6 +215,8 @@ export const submitScore = createServerFn({ method: "POST" })
           total: result.total,
           band: result.band.name,
           bandLine: result.band.line,
+          stage: stageName + (result.withThorns ? " with thorns" : ""),
+          stageTagline: bandDetail?.stage_tagline ?? result.band.line,
           resultUrl: `${SITE.url}/score/r/${token}`,
         },
       });
@@ -184,7 +231,18 @@ export type ScoreResult = {
   total: number;
   band: string;
   bandLine: string;
+  stage: string;
+  stageTagline: string;
+  stageWorking: string;
+  stageMissing: string;
+  stageNextStep: string;
+  withThorns: boolean;
+  thornScore: number;
+  primaryServiceSlug: string | null;
+  secondaryServiceSlug: string | null;
   areaScores: { area: AreaKey; earned: number; outOf: number }[];
+  petals: AreaKey[];
+  thorns: AreaKey[];
   topFixes: { area: AreaKey; fix: string }[];
   createdAt: string;
 };
@@ -195,7 +253,9 @@ export const getScoreByToken = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
       .from("score_submissions")
-      .select("full_name, business_name, total_score, band, area_scores, top_fixes, created_at")
+      .select(
+        "full_name, business_name, total_score, band, area_scores, top_fixes, created_at, stage, petals, thorns, thorn_score, with_thorns",
+      )
       .eq("token", data.token)
       .maybeSingle();
 
@@ -206,6 +266,15 @@ export const getScoreByToken = createServerFn({ method: "GET" })
     if (!row) return null;
 
     const band = bandFor(row.total_score);
+    const { data: bandRow } = await supabaseAdmin
+      .from("band_rules")
+      .select(
+        "stage_name, stage_tagline, stage_working, stage_missing, stage_next_step, primary_service_slug, secondary_service_slug",
+      )
+      .eq("band", row.band ?? band.name)
+      .maybeSingle();
+
+    const withThorns = row.with_thorns ?? false;
 
     return {
       fullName: row.full_name,
@@ -213,7 +282,21 @@ export const getScoreByToken = createServerFn({ method: "GET" })
       total: row.total_score,
       band: row.band ?? band.name,
       bandLine: band.line,
+      stage: row.stage ?? bandRow?.stage_name ?? band.name,
+      stageTagline: bandRow?.stage_tagline ?? band.line,
+      stageWorking: bandRow?.stage_working ?? "",
+      stageMissing: bandRow?.stage_missing ?? "",
+      stageNextStep: bandRow?.stage_next_step ?? "",
+      withThorns,
+      thornScore: row.thorn_score ?? 0,
+      // The with-thorns flag always points to the build, whatever the stage.
+      primaryServiceSlug: withThorns ? "automation-build" : (bandRow?.primary_service_slug ?? null),
+      secondaryServiceSlug: withThorns
+        ? "strategy-consult"
+        : (bandRow?.secondary_service_slug ?? null),
       areaScores: (row.area_scores as ScoreResult["areaScores"]) ?? [],
+      petals: (row.petals as AreaKey[]) ?? [],
+      thorns: (row.thorns as AreaKey[]) ?? [],
       topFixes: (row.top_fixes as ScoreResult["topFixes"]) ?? [],
       createdAt: row.created_at,
     };

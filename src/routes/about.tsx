@@ -61,7 +61,11 @@ function About() {
         </div>
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-          <ImagePlaceholder label="Manasa's portrait" className="aspect-[4/5] w-full max-w-sm" />
+          <img
+            src="/brand/manasa-portrait.jpg"
+            alt="Manasa"
+            className="aspect-[4/5] w-full max-w-sm rounded-2xl object-cover"
+          />
 
           <div>
             <h1 className="max-w-xl">

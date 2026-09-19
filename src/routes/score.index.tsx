@@ -2,27 +2,28 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { QUESTIONS } from "@/lib/score-rubric";
+import { TOTAL_QUESTION_COUNT } from "@/lib/score-rubric";
 import { canonical, SITE } from "@/lib/site";
 
 const pills = ["Source", "Clarity", "Attract", "Land", "Elevate"];
 
 const whatYouGet = [
+  "Your stage: Seed, Sprout, Bud, Bloom or Garden",
   "Your score out of 100, with a plain sentence on what it means",
-  "Each of the five areas scored, so you see the gap",
+  "Your petals (what is working) and your thorns (what to fix)",
   "The one fix that pays back first, and a free call if you want help",
 ];
 
 export const Route = createFileRoute("/score/")({
   head: () => ({
     meta: [
-      { title: "Findability Score | Build With Her Media" },
+      { title: "Find out what stage your business is in | Build With Her Media" },
       {
         name: "description",
         content:
-          "A few quick questions about how a new client finds you, understands you, trusts you, books you, and comes back. Three minutes, one number, five areas.",
+          "A few quick questions about how a new client finds you, understands you, trusts you, books you, and comes back. Three minutes. Your stage, your score, and the five areas behind it.",
       },
-      { property: "og:title", content: "Find out where clients lose you" },
+      { property: "og:title", content: "Find out what stage your business is in" },
       { property: "og:description", content: SITE.description },
     ],
     links: [{ rel: "canonical", href: canonical("/score") }],
@@ -38,11 +39,11 @@ function ScoreLanding() {
           <RoseMark className="h-7 w-7 text-primary" />
           <p className="eyebrow text-primary">Findability Score</p>
         </div>
-        <h1 className="mt-4">Find out where clients lose you.</h1>
+        <h1 className="mt-4">Find out what stage your business is in.</h1>
         <p className="prose-editorial mt-5 text-lg text-muted-foreground">
-          {QUESTIONS.length} quick questions about how a new client finds you, understands you,
-          trusts you, books you, and comes back. Three minutes. You get one number and the five
-          areas behind it.
+          {TOTAL_QUESTION_COUNT} quick questions about how a new client finds you, understands you,
+          trusts you, books you, and comes back. Three minutes. You get your stage, your score, and
+          the five areas behind it.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-2">

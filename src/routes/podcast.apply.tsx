@@ -65,6 +65,7 @@ function Apply() {
           city: fields["city"] ?? "",
           format,
           source: getCapturedSource()?.src ?? "",
+          stage: fields["stage"] ?? "",
           answers,
         },
       }),
@@ -94,11 +95,11 @@ function Apply() {
       <p className="eyebrow text-primary">Be a guest</p>
       <h1 className="mt-3 text-4xl">Apply to be on the podcast</h1>
       <p className="prose-editorial mt-4 text-lg text-muted-foreground">
-        Six short questions. We reply within five working days, and we film in Miami.
+        A few short sections. We reply within five working days, and we film in Miami.
       </p>
 
       <form
-        className="mt-10 space-y-6"
+        className="mt-10 space-y-8"
         onSubmit={(event) => {
           event.preventDefault();
           mutation.mutate();
@@ -138,52 +139,91 @@ function Apply() {
           </div>
         </fieldset>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="fullName" label="Your name" required fields={fields} setFields={setFields} />
-          <Field
-            id="email"
-            label="Email"
-            type="email"
-            required
-            fields={fields}
-            setFields={setFields}
-          />
-          <Field id="businessName" label="Business name" fields={fields} setFields={setFields} />
-          <Field id="phone" label="Phone (optional)" fields={fields} setFields={setFields} />
-          <Field id="instagram" label="Instagram" fields={fields} setFields={setFields} />
-          <Field id="website" label="Website" fields={fields} setFields={setFields} />
-          <Field id="city" label="City" fields={fields} setFields={setFields} />
+        <div>
+          <h2 className="text-lg font-medium">About you</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <Field id="fullName" label="Your name" required fields={fields} setFields={setFields} />
+            <Field
+              id="email"
+              label="Email"
+              type="email"
+              required
+              fields={fields}
+              setFields={setFields}
+            />
+            <Field id="phone" label="Phone (optional)" fields={fields} setFields={setFields} />
+            <Field id="city" label="City" fields={fields} setFields={setFields} />
+          </div>
         </div>
 
-        {QUESTIONS.map((question) => (
-          <div key={question.id}>
-            <Label htmlFor={question.id}>{question.label}</Label>
-            {question.helper ? (
-              <p className="mt-1 text-sm text-muted-foreground">{question.helper}</p>
-            ) : null}
-            <Textarea
-              id={question.id}
-              className="mt-2"
-              rows={3}
-              value={answers[question.id] ?? ""}
-              onChange={(event) =>
-                setAnswers((prev) => ({ ...prev, [question.id]: event.target.value }))
-              }
-            />
+        <div>
+          <h2 className="text-lg font-medium">Your business</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <Field id="businessName" label="Business name" fields={fields} setFields={setFields} />
+            <Field id="instagram" label="Instagram" fields={fields} setFields={setFields} />
+            <Field id="website" label="Website" fields={fields} setFields={setFields} />
           </div>
-        ))}
+          <div className="mt-4">
+            <Label htmlFor="stage">Your stage (take the score first)</Label>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Not sure yet?{" "}
+              <Link to="/score/quiz" className="text-primary underline">
+                Take the Findability Score
+              </Link>{" "}
+              and come back to fill this in.
+            </p>
+            <select
+              id="stage"
+              value={fields["stage"] ?? ""}
+              onChange={(event) => setFields((prev) => ({ ...prev, stage: event.target.value }))}
+              className="mt-2 h-12 w-full rounded-md border border-border bg-card px-3 text-sm sm:max-w-xs"
+            >
+              <option value="">I have not taken it yet</option>
+              <option value="Seed">Seed</option>
+              <option value="Sprout">Sprout</option>
+              <option value="Bud">Bud</option>
+              <option value="Bloom">Bloom</option>
+              <option value="Garden">Garden</option>
+            </select>
+          </div>
+        </div>
 
-        <Button
-          type="submit"
-          size="lg"
-          className="h-12 px-7 text-base"
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? "Sending" : "Send my application"}
-        </Button>
-        <p className="text-sm text-muted-foreground">
-          Payment happens after we approve you and before we film. Nothing is charged here.
-        </p>
+        <div>
+          <h2 className="text-lg font-medium">Your story</h2>
+          <div className="mt-4 space-y-6">
+            {QUESTIONS.map((question) => (
+              <div key={question.id}>
+                <Label htmlFor={question.id}>{question.label}</Label>
+                {question.helper ? (
+                  <p className="mt-1 text-sm text-muted-foreground">{question.helper}</p>
+                ) : null}
+                <Textarea
+                  id={question.id}
+                  className="mt-2"
+                  rows={3}
+                  value={answers[question.id] ?? ""}
+                  onChange={(event) =>
+                    setAnswers((prev) => ({ ...prev, [question.id]: event.target.value }))
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Button
+            type="submit"
+            size="lg"
+            className="h-12 px-7 text-base"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? "Sending" : "Send my application"}
+          </Button>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Payment happens after we approve you and before we film. Nothing is charged here.
+          </p>
+        </div>
       </form>
     </main>
   );

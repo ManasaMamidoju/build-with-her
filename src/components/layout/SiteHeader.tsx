@@ -6,7 +6,6 @@ import { Menu, X } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { RoseMark } from "@/components/brand/RoseMark";
 import { amIAdmin } from "@/lib/admin.functions";
 
 const links = [
@@ -55,7 +54,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="container-editorial flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-          <RoseMark className="h-7 w-7 text-primary" />
+          <img src="/brand/logo.png" alt="" className="h-8 w-8" />
           <span className="font-display text-lg font-semibold tracking-tight">
             Build With Her Media
           </span>

@@ -27,8 +27,11 @@ const applySchema = z.object({
   city: z.string().trim().max(120).optional().or(z.literal("")),
   format: z.enum(["street", "long"]),
   source: z.string().trim().max(80).optional().or(z.literal("")),
+  stage: z.string().trim().max(40).optional().or(z.literal("")),
   answers: z.record(z.string(), z.string().max(2000)),
 });
+
+const FEATURED_STAGES = new Set(["Bloom", "Garden"]);
 
 export const applyForPodcast = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => applySchema.parse(data))
@@ -54,6 +57,8 @@ export const applyForPodcast = createServerFn({ method: "POST" })
       city: data.city || null,
       format: data.format,
       source: data.source || null,
+      stage: data.stage || null,
+      suggested_featured: FEATURED_STAGES.has(data.stage ?? ""),
       answers: data.answers,
     });
 

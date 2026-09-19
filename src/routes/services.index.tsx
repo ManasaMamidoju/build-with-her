@@ -65,6 +65,9 @@ function ServicesPage() {
         Every offer below fixes a specific gap in your Findability Score. Take the score first and
         the right one is highlighted for you.
       </p>
+      <p className="prose-editorial mt-2 text-lg text-muted-foreground">
+        Take the score, find your stage, and the right service is marked for you.
+      </p>
 
       <div className="mt-10">
         <BandFirstStep />
@@ -104,6 +107,10 @@ function ServicesPage() {
                   <p className="mt-4 text-sm">
                     <span className="font-medium">Best for:</span>{" "}
                     <span className="text-muted-foreground">{service.bestFor}</span>
+                  </p>
+                  <p className="mt-1 text-sm">
+                    <span className="font-medium">Stages:</span>{" "}
+                    <span className="text-muted-foreground">{service.stages.join(", ")}</span>
                   </p>
                   <ul className="mt-5 grid gap-2 sm:grid-cols-2">
                     {service.includes.map((item) => (
