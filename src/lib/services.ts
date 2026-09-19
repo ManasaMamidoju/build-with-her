@@ -53,7 +53,7 @@ export const SERVICES: Service[] = [
       },
     ],
     ctaLabel: "Book your Clarity Call",
-    ctaNote: "Booking opens shortly. Take the score first and we will hold your place.",
+    ctaNote: "Take the score first, then book straight from your results page.",
   },
   {
     slug: "strategy-consult",
@@ -84,7 +84,7 @@ export const SERVICES: Service[] = [
       },
     ],
     ctaLabel: "Book your strategy consult",
-    ctaNote: "Payment and booking open shortly. Take the score and we will invite you first.",
+    ctaNote: "Take the score, create an account to save it, and this unlocks on your results page.",
   },
   {
     slug: "automation-build",

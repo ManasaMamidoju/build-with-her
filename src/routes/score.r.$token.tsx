@@ -1,13 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Copy, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
+import { supabase } from "@/integrations/supabase/client";
 import { AREAS, type AreaKey } from "@/lib/score-rubric";
 import { OFFER_KINDS, offersFor } from "@/lib/offers";
 import { getScoreByToken } from "@/lib/score.functions";
+import { rememberPostLoginRedirect } from "@/lib/post-login-redirect";
 
 export const Route = createFileRoute("/score/r/$token")({
   loader: async ({ params }) => {
@@ -154,26 +156,13 @@ function ResultPage() {
         </div>
       </section>
 
-      <section className="mt-12 rounded-2xl bg-secondary p-8">
-        <h2 className="text-2xl">Your next step</h2>
-        <p className="mt-3 text-base text-muted-foreground">
-          Bring this score to a free clarity call. Twenty minutes, no pitch deck, and you leave
-          knowing which of these three to do this month and which to have built for you.
-        </p>
-        <p className="mt-4 text-sm text-muted-foreground">
-          Booking opens shortly. Save your link below and we will come to you with times.
-        </p>
-        <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
-          <Link to="/services/$slug" params={{ slug: "clarity-call" }}>
-            See what the call covers
-          </Link>
-        </Button>
-        <p className="mt-4 text-sm text-muted-foreground">
-          <Link to="/services" className="hover:text-primary">
-            Or look at every way to work with us
-          </Link>
-        </p>
-      </section>
+      <NextStepSection />
+
+      <p className="mt-4 text-sm text-muted-foreground">
+        <Link to="/services" className="hover:text-primary">
+          Or look at every way to work with us
+        </Link>
+      </p>
 
       <section className="mt-10 rounded-2xl border border-border p-6">
         <div className="flex items-start gap-3">
@@ -199,5 +188,81 @@ function ResultPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+/**
+ * The Clarity Call is free and open to anyone — straight to Calendly, no
+ * account needed. The Strategy Consult only appears once she has an
+ * account, so we have somewhere to attach that booking and follow up.
+ * Creating one sends her to sign in and back to this exact page.
+ */
+function NextStepSection() {
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) setSignedIn(Boolean(data.session));
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setSignedIn(Boolean(session));
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  function createAccount() {
+    rememberPostLoginRedirect(window.location.pathname);
+    window.location.href = "/login";
+  }
+
+  return (
+    <section className="mt-12 rounded-2xl bg-secondary p-8">
+      <h2 className="text-2xl">Your next step</h2>
+      <p className="mt-3 text-base text-muted-foreground">
+        Bring this score to a free clarity call. Thirty minutes, no pitch deck, and you leave
+        knowing which of these three to do this month and which to have built for you.
+      </p>
+      <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
+        <Link to="/book/$slug" params={{ slug: "clarity-call" }}>
+          Book your free Clarity Call
+        </Link>
+      </Button>
+
+      <div className="mt-8 border-t border-border pt-8">
+        {signedIn ? (
+          <>
+            <h3 className="text-lg">Ready to go deeper?</h3>
+            <p className="mt-2 text-base text-muted-foreground">
+              Two hours on your offer, pricing, pages and follow up, ending with a build plan.
+            </p>
+            <Button asChild size="lg" variant="outline" className="mt-5 h-12 px-7 text-base">
+              <Link to="/book/$slug" params={{ slug: "strategy-consult" }}>
+                Book your 2-Hour Strategy Consult
+              </Link>
+            </Button>
+          </>
+        ) : (
+          <>
+            <h3 className="text-lg">Want the 2-Hour Strategy Consult too?</h3>
+            <p className="mt-2 text-base text-muted-foreground">
+              Create a free account to save this score, and the Strategy Consult unlocks right here.
+            </p>
+            <Button
+              size="lg"
+              variant="outline"
+              className="mt-5 h-12 px-7 text-base"
+              onClick={createAccount}
+              disabled={signedIn === null}
+            >
+              Create your account
+            </Button>
+          </>
+        )}
+      </div>
+    </section>
   );
 }
