@@ -128,7 +128,30 @@ function PodcastPipeline() {
 
             {openId === row.id ? (
               <div className="mt-5 space-y-4 border-t border-border pt-5">
-                <dl className="space-y-3">
+                <dl className="grid gap-3 sm:grid-cols-2">
+                  {[
+                    ["Decision maker", row.decision_maker ? "Yes" : "No"],
+                    ["Monthly revenue", row.monthly_revenue || "—"],
+                    ["High-ticket offer", row.has_high_ticket_offer ? "Yes" : "No"],
+                    ["Offer to present", row.has_offer || "—"],
+                    ["Social media monetized", row.social_media_optimized || "—"],
+                    ["YouTube channel", row.youtube_channel || "—"],
+                    ["Social tags", row.social_tags || "—"],
+                    ["Tour focus", row.tour_focus || "—"],
+                    ["Wants wider tour", row.wants_podcast_tour || "—"],
+                    ["Open to VIP package", row.open_to_vip_investment || "—"],
+                    ["Will promote episode", row.will_promote ? "Yes" : "No"],
+                    ["OK with thought-provoking topics", row.professional_tone_ok ? "Yes" : "No"],
+                    ["Wants free community", row.wants_community ? "Yes" : "No"],
+                    ["Agreed to terms", row.agreed_to_terms ? "Yes" : "No"],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <dt className="text-sm text-muted-foreground">{label}</dt>
+                      <dd className="text-base">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <dl className="space-y-3 border-t border-border pt-4">
                   {Object.entries(row.answers ?? {}).map(([key, value]) => (
                     <div key={key}>
                       <dt className="text-sm text-muted-foreground">{key.replace(/_/g, " ")}</dt>
