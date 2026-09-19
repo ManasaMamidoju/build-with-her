@@ -5,7 +5,14 @@ type EmailAutomation =
       event: "score_result";
       idempotencyKey: string;
       recipient: { email: string; fullName: string };
-      data: { total: number; band: string; bandLine: string; resultUrl: string };
+      data: {
+        total: number;
+        band: string;
+        bandLine: string;
+        stage: string;
+        stageTagline: string;
+        resultUrl: string;
+      };
     }
   | {
       event: "waitlist_confirm";

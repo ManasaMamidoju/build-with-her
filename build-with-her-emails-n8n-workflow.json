@@ -114,15 +114,15 @@
             },
             {
               "name": "subject",
-              "value": "Your Findability Score is {{ $json.data.total }} — here is what it means"
+              "value": "You are a {{ $json.data.stage }}"
             },
             {
               "name": "text",
-              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nYour Findability Score is {{ $json.data.total }} out of 100.\n\nThat puts you in the {{ $json.data.band }} band.\n\n{{ $json.data.bandLine }}\n\nView your full result and the three fixes to do first here:\n{{ $json.data.resultUrl }}\n\nManasa\nBuild With Her Media"
+              "value": "Hi {{ $json.recipient.fullName.split(' ')[0] }},\n\nYou are a {{ $json.data.stage }}.\n\n{{ $json.data.stageTagline }}\n\nYour Findability Score is {{ $json.data.total }} out of 100.\n\nView your full result, your petals and your thorns here:\n{{ $json.data.resultUrl }}\n\nManasa\nBuild With Her Media"
             },
             {
               "name": "html",
-              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>Your Findability Score is <strong>{{ $json.data.total }} out of 100</strong>.</p><p>That puts you in the <strong>{{ $json.data.band }}</strong> band.</p><p>{{ $json.data.bandLine }}</p><p><a href=\"{{ $json.data.resultUrl }}\">View your full result and the three fixes to do first</a></p><p>Manasa<br>Build With Her Media</p>"
+              "value": "<p>Hi {{ $json.recipient.fullName.split(' ')[0] }},</p><p>You are a <strong>{{ $json.data.stage }}</strong>.</p><p>{{ $json.data.stageTagline }}</p><p>Your Findability Score is {{ $json.data.total }} out of 100.</p><p><a href=\"{{ $json.data.resultUrl }}\">View your full result, your petals and your thorns</a></p><p>Manasa<br>Build With Her Media</p>"
             }
           ]
         },

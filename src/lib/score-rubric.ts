@@ -1,4 +1,5 @@
 export type AreaKey = "source" | "clarity" | "attract" | "land" | "elevate";
+export type PetalState = "petal" | "thorn" | "growing";
 
 export type Choice = {
   value: string;
@@ -33,8 +34,8 @@ export const AREAS: Record<
     key: "clarity",
     title: "How clear your offer is",
     short: "Clarity",
-    blurb: "Whether she understands in seconds what you do, for whom, what it costs, and why you.",
-    points: 20,
+    blurb: "Whether they understand in seconds what you do, for whom, what it costs, and why you.",
+    points: 18,
   },
   attract: {
     key: "attract",
@@ -49,7 +50,7 @@ export const AREAS: Record<
     title: "How they book you",
     short: "How they book",
     blurb: "Whether an interested buyer can book, pay and turn up without waiting on you.",
-    points: 15,
+    points: 17,
   },
   elevate: {
     key: "elevate",
@@ -61,6 +62,33 @@ export const AREAS: Record<
 };
 
 export const AREA_ORDER: AreaKey[] = ["source", "clarity", "attract", "land", "elevate"];
+
+/**
+ * Per-area copy for the result page: one line each for a Petal (70%+), a
+ * Thorn (below 50%), everything between is "growing" and gets no line.
+ */
+export const PETAL_THORN_LINES: Record<AreaKey, { petal: string; thorn: string }> = {
+  source: {
+    petal: "Clients can find you where they look.",
+    thorn: "Clients searching for what you sell do not find you.",
+  },
+  clarity: {
+    petal: "A stranger knows what you do in one read.",
+    thorn: "A stranger cannot tell what you do or who it is for.",
+  },
+  attract: {
+    petal: "Your proof does the convincing for you.",
+    thorn: "You have the work, but almost nobody sees it.",
+  },
+  land: {
+    petal: "Clients can book and pay without waiting on you.",
+    thorn: "People reach out and slip away before they book.",
+  },
+  elevate: {
+    petal: "Clients come back and send people to you.",
+    thorn: "Every month starts from zero. Nobody comes back or refers.",
+  },
+};
 
 export const QUESTIONS: Question[] = [
   // Where you show up, 25 points
@@ -82,16 +110,26 @@ export const QUESTIONS: Question[] = [
   {
     id: "own_site",
     area: "source",
-    question: "Where does a buyer actually land when she looks you up?",
+    question:
+      "Where does a buyer actually land when they look you up, and does it work on a phone?",
     points: 4,
     choices: [
-      { value: "site", label: "My own website on my own domain", credit: 1 },
-      { value: "onepage", label: "A one page site or landing page I control", credit: 0.7 },
-      { value: "linkpage", label: "A link page like Linktree", credit: 0.35 },
-      { value: "social", label: "My social profile only", credit: 0.2 },
-      { value: "none", label: "Nowhere I would want her to land", credit: 0 },
+      {
+        value: "site_mobile",
+        label: "My own website on my own domain, and it works well on a phone",
+        credit: 1,
+      },
+      {
+        value: "site",
+        label: "My own website on my own domain, but it is clunky on a phone",
+        credit: 0.8,
+      },
+      { value: "onepage", label: "A one page site or landing page I control", credit: 0.6 },
+      { value: "linkpage", label: "A link page like Linktree", credit: 0.3 },
+      { value: "social", label: "My social profile only", credit: 0.15 },
+      { value: "none", label: "Nowhere I would want them to land", credit: 0 },
     ],
-    fix: "Put up a real site on your own domain so you own the place buyers land.",
+    fix: "Put up a real site on your own domain that works well on a phone, so you own the place buyers land.",
   },
   {
     id: "search_name",
@@ -118,7 +156,7 @@ export const QUESTIONS: Question[] = [
       { value: "never", label: "No, never", credit: 0 },
       { value: "unsure", label: "I have not looked", credit: 0 },
     ],
-    fix: "Write one page for the exact thing you sell in the exact place you sell it, in her words not yours.",
+    fix: "Write one page for the exact thing you sell in the exact place you sell it, in their words not yours.",
   },
   {
     id: "listings",
@@ -136,7 +174,7 @@ export const QUESTIONS: Question[] = [
   {
     id: "ai_answer",
     area: "source",
-    question: "If she asks an AI assistant for someone who does what you do, are you named?",
+    question: "If they ask an AI assistant for someone who does what you do, are you named?",
     helper: "ChatGPT, Gemini, Perplexity, or the AI answer at the top of a search.",
     points: 3,
     choices: [
@@ -163,19 +201,28 @@ export const QUESTIONS: Question[] = [
     fix: "Pick the one place your buyer already spends time, get active there weekly, and link it back to your site.",
   },
 
-  // How clear your offer is, 20 points
+  // How clear your offer is, 18 points
   {
     id: "one_line",
     area: "clarity",
-    question: "Can a stranger tell what you do from the first line she reads?",
+    question: "Can a stranger tell what you do, who it is for, and why you, in one breath?",
     points: 4,
     choices: [
-      { value: "yes", label: "Yes, it names what I do, for whom, and where", credit: 1 },
-      { value: "partly", label: "It names what I do but not who it is for", credit: 0.6 },
-      { value: "vague", label: "It is close but vague", credit: 0.3 },
+      { value: "yes", label: "Yes, it names what I do, for whom, and why me", credit: 1 },
+      {
+        value: "who_missing",
+        label: "It names what I do and why me, but not who it is for",
+        credit: 0.65,
+      },
+      {
+        value: "why_missing",
+        label: "It names what I do and who it is for, but not why me",
+        credit: 0.5,
+      },
+      { value: "vague", label: "It is close but vague", credit: 0.25 },
       { value: "slogan", label: "It is a slogan or a tagline", credit: 0 },
     ],
-    fix: "Rewrite your first line as what you do, for whom, and where. No slogans.",
+    fix: "Rewrite your first line as what you do, for whom, and why you, in one breath. No slogans.",
   },
   {
     id: "who_for",
@@ -193,15 +240,15 @@ export const QUESTIONS: Question[] = [
   {
     id: "pricing",
     area: "clarity",
-    question: "Can she work out what it costs without asking you?",
+    question: "Can they work out what it costs without asking you?",
     points: 4,
     choices: [
       { value: "prices", label: "Full prices or packages are published", credit: 1 },
       { value: "starting", label: "A starting price or a range", credit: 0.75 },
       { value: "hint", label: "A vague hint like affordable or premium", credit: 0.25 },
-      { value: "ask", label: "She has to ask", credit: 0 },
+      { value: "ask", label: "They have to ask", credit: 0 },
     ],
-    fix: "Publish a starting price or a range so she can decide before she contacts you.",
+    fix: "Publish a starting price or a range so they can decide before they contact you.",
   },
   {
     id: "proof",
@@ -229,19 +276,6 @@ export const QUESTIONS: Question[] = [
     ],
     fix: "Write one sentence on why you, using something only you can say, and put it near the top.",
   },
-  {
-    id: "mobile",
-    area: "clarity",
-    question: "Have you looked at your own page on your phone lately?",
-    points: 2,
-    choices: [
-      { value: "good", label: "Yes, it loads fast and reads well", credit: 1 },
-      { value: "ok", label: "It works but it is slow or fiddly", credit: 0.5 },
-      { value: "bad", label: "It is a mess on a phone", credit: 0 },
-      { value: "never", label: "I have never checked", credit: 0.1 },
-    ],
-    fix: "Open your own page on your phone, time how long it takes to load, and fix whatever you would not tolerate.",
-  },
 
   // What pulls people in, 25 points
   {
@@ -261,7 +295,7 @@ export const QUESTIONS: Question[] = [
     id: "reviews_count",
     area: "attract",
     question: "How many public reviews do you have?",
-    points: 5,
+    points: 4,
     choices: [
       { value: "lots", label: "More than 50", credit: 1 },
       { value: "many", label: "Between 25 and 50", credit: 0.85 },
@@ -296,13 +330,13 @@ export const QUESTIONS: Question[] = [
       { value: "luck", label: "Occasionally, by luck", credit: 0.35 },
       { value: "no", label: "No", credit: 0 },
     ],
-    fix: "Name five businesses that already serve your buyer and set up one clear way for them to send her to you.",
+    fix: "Name five businesses that already serve your buyer and set up one clear way for them to send them to you.",
   },
   {
     id: "video",
     area: "attract",
     question: "Is there video or audio of you talking about your work?",
-    points: 4,
+    points: 3,
     choices: [
       { value: "library", label: "Yes, a body of it that keeps getting found", credit: 1 },
       { value: "some", label: "A few pieces, easy to find", credit: 0.7 },
@@ -312,45 +346,69 @@ export const QUESTIONS: Question[] = [
     fix: "Record one honest ten minute conversation about your work and put it where a buyer will find it.",
   },
   {
-    id: "press",
+    id: "faqs",
     area: "attract",
-    question: "Has anyone else featured you?",
-    helper: "A podcast, a local paper, a roundup, another woman's newsletter.",
+    question: "Does your site answer the questions clients ask before they book?",
     points: 3,
     choices: [
-      { value: "several", label: "Several times, and I link to them", credit: 1 },
-      { value: "once", label: "Once or twice", credit: 0.6 },
-      { value: "asked", label: "I have been asked but never followed up", credit: 0.25 },
-      { value: "no", label: "Never", credit: 0 },
+      { value: "yes", label: "Yes, there is a page or section that answers them", credit: 1 },
+      { value: "scattered", label: "A few answers are scattered around", credit: 0.33 },
+      { value: "no", label: "No, they ask me in DMs or on the phone", credit: 0 },
     ],
-    fix: "Pitch yourself to three podcasts or newsletters your buyer already reads, with one specific story to tell.",
+    fix: "Write down the five questions clients ask every week and put the answers on your page.",
   },
   {
-    id: "story",
+    id: "local",
     area: "attract",
-    question: "Do people know your story, not just your service?",
+    question: "How do people in your area meet you outside of social media?",
     points: 2,
     choices: [
-      { value: "yes", label: "Yes, it is told properly somewhere", credit: 1 },
-      { value: "short", label: "A short about me paragraph", credit: 0.5 },
-      { value: "no", label: "No, I keep myself out of it", credit: 0 },
+      {
+        value: "regular",
+        label: "Events, partners, or other local businesses send people my way regularly",
+        credit: 1,
+      },
+      { value: "occasional", label: "I do the occasional event or collab", credit: 0.65 },
+      { value: "thought_about", label: "I have thought about it and not done it", credit: 0.3 },
+      {
+        value: "none",
+        label: "I do not. Clients come from online or word of mouth only",
+        credit: 0,
+      },
     ],
-    fix: "Tell your own story once, properly, on a page of its own, and link to it from everywhere.",
+    fix: "Pick one local partner or event and show up once this month.",
+  },
+  {
+    id: "content_mix",
+    area: "attract",
+    question: "What do you post most?",
+    points: 2,
+    choices: [
+      {
+        value: "mix",
+        label: "A mix: tips, client results, my story, and what is trending",
+        credit: 1,
+      },
+      { value: "work", label: "Mostly my work and client results", credit: 0.65 },
+      { value: "promo", label: "Mostly promotions and availability", credit: 0.3 },
+      { value: "whatever", label: "Whatever comes to mind, when I remember", credit: 0 },
+    ],
+    fix: "Add client results and your own story into the mix, not just promotions.",
   },
 
-  // How they book you, 15 points
+  // How they book you, 17 points
   {
     id: "booking",
     area: "land",
-    question: "Can she book or buy without a back and forth message?",
+    question: "Can they book or buy without a back and forth message?",
     points: 4,
     choices: [
-      { value: "self", label: "Yes, she picks a time and books herself", credit: 1 },
-      { value: "form", label: "She fills a form and I confirm", credit: 0.5 },
-      { value: "message", label: "She has to message me first", credit: 0.25 },
+      { value: "self", label: "Yes, they pick a time and book themselves", credit: 1 },
+      { value: "form", label: "They fill a form and I confirm", credit: 0.5 },
+      { value: "message", label: "They have to message me first", credit: 0.25 },
       { value: "manual", label: "It is all phone calls and messages", credit: 0 },
     ],
-    fix: "Put real booking on your site so she can pick a time without waiting on your reply.",
+    fix: "Put real booking on your site so they can pick a time without waiting on your reply.",
   },
   {
     id: "response",
@@ -368,7 +426,7 @@ export const QUESTIONS: Question[] = [
   {
     id: "payment",
     area: "land",
-    question: "How does she pay you?",
+    question: "How do they pay you?",
     points: 3,
     choices: [
       { value: "online", label: "Card or payment link, online, up front", credit: 1 },
@@ -385,7 +443,7 @@ export const QUESTIONS: Question[] = [
     points: 3,
     choices: [
       { value: "reminders", label: "Automatic confirmation and reminders", credit: 1 },
-      { value: "manual", label: "I message her myself if I remember", credit: 0.5 },
+      { value: "manual", label: "I message them myself if I remember", credit: 0.5 },
       { value: "nothing", label: "Nothing, and people forget", credit: 0 },
     ],
     fix: "Turn on automatic confirmations and a reminder the day before so fewer people forget you.",
@@ -393,7 +451,7 @@ export const QUESTIONS: Question[] = [
   {
     id: "objections",
     area: "land",
-    question: "Are the questions she always asks answered before she asks?",
+    question: "Are the questions they always ask answered before they ask?",
     points: 2,
     choices: [
       { value: "yes", label: "Yes, in a questions section on the page", credit: 1 },
@@ -401,6 +459,18 @@ export const QUESTIONS: Question[] = [
       { value: "no", label: "No, I answer each one by hand", credit: 0 },
     ],
     fix: "Write down the five questions you answer every week and put the answers on your page.",
+  },
+  {
+    id: "leads_live",
+    area: "land",
+    question: "Where do your leads live?",
+    points: 2,
+    choices: [
+      { value: "crm", label: "A CRM or booking tool that tracks every inquiry", credit: 1 },
+      { value: "spreadsheet", label: "A spreadsheet or notes I update by hand", credit: 0.5 },
+      { value: "inbox", label: "My DMs, my inbox, or my head", credit: 0 },
+    ],
+    fix: "Move every inquiry into one place you actually check, even if it starts as a simple spreadsheet.",
   },
 
   // What keeps you growing, 15 points
@@ -427,7 +497,7 @@ export const QUESTIONS: Question[] = [
       { value: "scattered", label: "Names scattered across my phone and inbox", credit: 0.2 },
       { value: "none", label: "No list", credit: 0 },
     ],
-    fix: "Start collecting emails on your site this week, with one simple reason for her to sign up.",
+    fix: "Start collecting emails on your site this week, with one simple reason for them to sign up.",
   },
   {
     id: "repeat",
@@ -442,57 +512,121 @@ export const QUESTIONS: Question[] = [
     fix: "Create one clear next thing for a past client to buy, and tell your list about it.",
   },
   {
-    id: "numbers",
+    id: "aftercare",
     area: "elevate",
-    question: "Do you know where last month's clients came from?",
-    points: 2,
+    question: "After a client's appointment or project, do they hear from you?",
+    points: 3,
     choices: [
-      { value: "tracked", label: "Yes, I track every one", credit: 1 },
-      { value: "roughly", label: "Roughly, from memory", credit: 0.45 },
-      { value: "no", label: "No idea", credit: 0 },
+      {
+        value: "auto",
+        label: "Yes, automatically: aftercare, a check-in, and a prompt to rebook",
+        credit: 1,
+      },
+      { value: "manual", label: "I send something myself when I remember", credit: 0.33 },
+      { value: "no", label: "No, unless they reach out", credit: 0 },
     ],
-    fix: "Ask every new client how she found you and write it down, so next month you know what works.",
+    fix: "Set up one automatic message after every job: a check-in, and a prompt to rebook.",
   },
+  {
+    id: "referral_reason",
+    area: "elevate",
+    question: "Do clients have a reason to send you people?",
+    points: 3,
+    choices: [
+      { value: "reminded", label: "Yes, a referral perk, and I remind them about it", credit: 1 },
+      { value: "unmentioned", label: "I have a perk but rarely mention it", credit: 0.33 },
+      { value: "no", label: "No, I rely on them thinking of me", credit: 0 },
+    ],
+    fix: "Set up one referral perk and mention it every time a client thanks you.",
+  },
+];
+
+/**
+ * "One more thing": five owner-dependency questions, scored separately from
+ * the 100-point total. help/time/numbers moved here from Elevate; week_off
+ * and unused_tools are new. 10 or more of 15 sets the "with thorns" flag.
+ */
+export const THORN_QUESTIONS: Question[] = [
   {
     id: "help",
     area: "elevate",
     question: "Who else touches the marketing side of the business?",
-    points: 2,
+    points: 3,
     choices: [
-      { value: "team", label: "I have help I trust", credit: 1 },
-      { value: "occasional", label: "I hire help now and then", credit: 0.6 },
-      { value: "alone", label: "All me, in the gaps", credit: 0.2 },
-      { value: "nobody", label: "Nobody, it mostly does not happen", credit: 0 },
+      { value: "team", label: "I have help I trust", credit: 0 },
+      { value: "occasional", label: "I hire help now and then", credit: 0.33 },
+      { value: "alone", label: "All me, in the gaps", credit: 0.67 },
+      { value: "nobody", label: "Nobody, it mostly does not happen", credit: 1 },
     ],
     fix: "Hand off the one marketing job you keep postponing, even if it is only a few hours a month.",
   },
   {
     id: "time",
     area: "elevate",
-    question: "How many hours a week can you honestly give this?",
-    points: 2,
+    question: "How many hours a week does this need directly from you?",
+    points: 3,
     choices: [
-      { value: "five", label: "Five or more", credit: 1 },
-      { value: "two", label: "Two to four", credit: 0.7 },
-      { value: "one", label: "About an hour", credit: 0.4 },
-      { value: "none", label: "None, I need it done for me", credit: 0.2 },
+      { value: "none", label: "None, it runs without my hours in it", credit: 0 },
+      { value: "one", label: "About an hour", credit: 0.33 },
+      { value: "two", label: "Two to four", credit: 0.67 },
+      { value: "five", label: "Five or more, it does not move without me", credit: 1 },
     ],
-    fix: "Block one repeating hour a week for this work and protect it like a client appointment.",
+    fix: "Find the one task eating your hours and hand it to a tool or a person.",
+  },
+  {
+    id: "numbers",
+    area: "elevate",
+    question: "Do you know where last month's clients came from?",
+    points: 3,
+    choices: [
+      { value: "tracked", label: "Yes, I track every one", credit: 0 },
+      { value: "roughly", label: "Roughly, from memory", credit: 0.33 },
+      { value: "no", label: "No idea", credit: 1 },
+    ],
+    fix: "Ask every new client how they found you and write it down, so next month you know what works.",
+  },
+  {
+    id: "week_off",
+    area: "elevate",
+    question: "If you took a week off with no phone, what happens?",
+    points: 3,
+    choices: [
+      { value: "runs", label: "Everything runs: bookings, confirmations, follow ups", credit: 0 },
+      { value: "some", label: "Some of it runs, some waits for me", credit: 0.33 },
+      { value: "mostly_waits", label: "It mostly waits for me", credit: 0.67 },
+      { value: "stops", label: "It stops", credit: 1 },
+    ],
+    fix: "Pick one thing that stopped and set it up to run without you before you next try this.",
+  },
+  {
+    id: "unused_tools",
+    area: "elevate",
+    question: "Have you set up a tool or system that you or your team stopped using?",
+    points: 3,
+    choices: [
+      { value: "none", label: "No. What I set up, we use", credit: 0 },
+      { value: "one_two", label: "One or two", credit: 0.67 },
+      { value: "many", label: "More than I want to admit", credit: 1 },
+    ],
+    fix: "Pick the tool everyone quietly stopped using and either fix why, or cancel it.",
   },
 ];
+
+export const WITH_THORNS_THRESHOLD = 10;
+export const THORN_MAX = 15;
 
 export const BANDS = [
   {
     min: 0,
     max: 39,
     name: "Undiscoverable",
-    line: "A buyer looking for exactly what you sell will not find you yet.",
+    line: "Clients looking for exactly what you sell will not find you yet.",
   },
   {
     min: 40,
     max: 54,
     name: "Invisible with a pulse",
-    line: "You exist online, but almost nothing is working to bring you buyers.",
+    line: "You exist online, but almost nothing is working to bring you clients.",
   },
   {
     min: 55,
@@ -525,3 +659,14 @@ export const AREA_POINTS: Record<AreaKey, number> = AREA_ORDER.reduce(
   },
   {} as Record<AreaKey, number>,
 );
+
+/** What she actually answers: the 5 areas plus the thorn section. */
+export const TOTAL_QUESTION_COUNT = QUESTIONS.length + THORN_QUESTIONS.length;
+
+export function petalStateFor(earned: number, outOf: number): PetalState {
+  if (outOf <= 0) return "growing";
+  const pct = earned / outOf;
+  if (pct >= 0.7) return "petal";
+  if (pct < 0.5) return "thorn";
+  return "growing";
+}

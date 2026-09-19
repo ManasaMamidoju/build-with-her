@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { ImagePlaceholder } from "@/components/site/ImagePlaceholder";
 import { PriceTag } from "@/components/services/PriceTag";
@@ -24,9 +27,16 @@ const FAQS = [
   },
   {
     q: "Do I need to prepare?",
-    a: "We send the questions ahead and talk them through before filming, so nothing is a surprise.",
+    a: "We send you a brief on the topics we will cover and talk it through before filming, not the exact questions, so your answers stay natural instead of rehearsed.",
   },
 ];
+
+type Platform = "all" | "instagram" | "youtube";
+type SortKey = "name" | "recent";
+
+function isYoutubeLink(link: string | null | undefined) {
+  return Boolean(link && /youtu\.?be/i.test(link));
+}
 
 export const Route = createFileRoute("/podcast/")({
   loader: () => listPublicInterviews(),
@@ -52,8 +62,43 @@ export const Route = createFileRoute("/podcast/")({
 });
 
 function Podcast() {
-  const interviews = Route.useLoaderData();
+  const allInterviews = Route.useLoaderData();
   const formats = SERVICES.filter((service) => service.slug.startsWith("podcast-"));
+
+  const [search, setSearch] = useState("");
+  const [platform, setPlatform] = useState<Platform>("all");
+  const [sort, setSort] = useState<SortKey>("recent");
+
+  // Only guests actually posted somewhere a client can watch: Instagram, or a
+  // video link (YouTube for long form, or another host for the rest).
+  const posted = useMemo(
+    () => allInterviews.filter((i) => Boolean(i.instagram) || Boolean(i.final_video_link)),
+    [allInterviews],
+  );
+
+  const interviews = useMemo(() => {
+    let rows = posted;
+    if (platform === "instagram") rows = rows.filter((i) => Boolean(i.instagram));
+    if (platform === "youtube") rows = rows.filter((i) => isYoutubeLink(i.final_video_link));
+
+    const term = search.trim().toLowerCase();
+    if (term) {
+      rows = rows.filter(
+        (i) =>
+          i.full_name?.toLowerCase().includes(term) ||
+          i.business_name?.toLowerCase().includes(term) ||
+          i.event_name?.toLowerCase().includes(term),
+      );
+    }
+
+    rows = [...rows];
+    if (sort === "name") {
+      rows.sort((a, b) => (a.full_name ?? "").localeCompare(b.full_name ?? ""));
+    } else {
+      rows.sort((a, b) => (b.interview_date ?? "").localeCompare(a.interview_date ?? ""));
+    }
+    return rows;
+  }, [posted, platform, search, sort]);
 
   return (
     <main>
@@ -83,8 +128,14 @@ function Podcast() {
 
       <div className="container-editorial max-w-4xl py-12 md:py-16">
         <section>
-          <h2 className="text-2xl">Episodes</h2>
-          {interviews.length === 0 ? (
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="text-2xl">Episodes</h2>
+            <p className="text-sm text-muted-foreground">
+              {posted.length} guest{posted.length === 1 ? "" : "s"} posted so far
+            </p>
+          </div>
+
+          {posted.length === 0 ? (
             <div className="mt-5 rounded-2xl border border-border bg-blush p-8">
               <RoseMark className="h-6 w-6 text-primary" />
               <h3 className="mt-4 text-xl">Filming starts this autumn</h3>
@@ -97,56 +148,104 @@ function Podcast() {
               </Link>
             </div>
           ) : (
-            <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {interviews.map((interview) => (
-                <article
-                  key={interview.slug}
-                  className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-card"
+            <>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <div className="relative flex-1 min-w-[200px]">
+                  <Search
+                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search guests or businesses"
+                    className="h-11 pl-9"
+                    aria-label="Search episodes"
+                  />
+                </div>
+                <select
+                  value={platform}
+                  onChange={(e) => setPlatform(e.target.value as Platform)}
+                  className="h-11 rounded-md border border-border bg-card px-3 text-sm"
+                  aria-label="Filter by platform"
                 >
-                  <Script
-                    data={{
-                      "@context": "https://schema.org",
-                      "@type": "Person",
-                      name: interview.full_name,
-                      ...(interview.business_name
-                        ? {
-                            affiliation: { "@type": "Organization", name: interview.business_name },
-                          }
-                        : {}),
-                    }}
-                  />
-                  <ImagePlaceholder
-                    label={interview.full_name ?? "Guest"}
-                    className="aspect-video w-full"
-                  />
-                  {interview.event_name ? (
-                    <p className="eyebrow mt-4 text-muted-foreground">{interview.event_name}</p>
-                  ) : null}
-                  <h3 className="mt-2 text-xl">{interview.full_name}</h3>
-                  {interview.business_name ? (
-                    <p className="mt-1 text-base text-muted-foreground">
-                      {interview.business_name}
-                    </p>
-                  ) : null}
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    {interview.final_video_link ? (
-                      <Button asChild size="sm">
-                        <a href={interview.final_video_link} target="_blank" rel="noreferrer">
-                          Watch her interview
-                        </a>
-                      </Button>
-                    ) : null}
-                    {interview.instagram ? (
-                      <Button asChild size="sm" variant="ghost">
-                        <a href={interview.instagram} target="_blank" rel="noreferrer">
-                          Follow her
-                        </a>
-                      </Button>
-                    ) : null}
-                  </div>
-                </article>
-              ))}
-            </div>
+                  <option value="all">All platforms</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="youtube">YouTube (long form)</option>
+                </select>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  className="h-11 rounded-md border border-border bg-card px-3 text-sm"
+                  aria-label="Sort episodes"
+                >
+                  <option value="recent">Newest first</option>
+                  <option value="name">By name</option>
+                </select>
+              </div>
+
+              {interviews.length === 0 ? (
+                <p className="mt-8 rounded-2xl border border-border p-6 text-base text-muted-foreground">
+                  No guests match that search.
+                </p>
+              ) : (
+                <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {interviews.map((interview) => (
+                    <article
+                      key={interview.slug}
+                      className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-card"
+                    >
+                      <Script
+                        data={{
+                          "@context": "https://schema.org",
+                          "@type": "Person",
+                          name: interview.full_name,
+                          ...(interview.business_name
+                            ? {
+                                affiliation: {
+                                  "@type": "Organization",
+                                  name: interview.business_name,
+                                },
+                              }
+                            : {}),
+                        }}
+                      />
+                      <ImagePlaceholder
+                        label={interview.full_name ?? "Guest"}
+                        className="aspect-video w-full"
+                      />
+                      {interview.event_name ? (
+                        <p className="eyebrow mt-4 text-muted-foreground">{interview.event_name}</p>
+                      ) : null}
+                      <h3 className="mt-2 text-xl">{interview.full_name}</h3>
+                      {interview.business_name ? (
+                        <p className="mt-1 text-base text-muted-foreground">
+                          {interview.business_name}
+                        </p>
+                      ) : null}
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        {interview.final_video_link ? (
+                          <Button asChild size="sm">
+                            <a href={interview.final_video_link} target="_blank" rel="noreferrer">
+                              {isYoutubeLink(interview.final_video_link)
+                                ? "Watch on YouTube"
+                                : "Watch her interview"}
+                            </a>
+                          </Button>
+                        ) : null}
+                        {interview.instagram ? (
+                          <Button asChild size="sm" variant="ghost">
+                            <a href={interview.instagram} target="_blank" rel="noreferrer">
+                              Follow on Instagram
+                            </a>
+                          </Button>
+                        ) : null}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </section>
 

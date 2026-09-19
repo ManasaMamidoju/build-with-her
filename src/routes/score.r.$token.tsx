@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 import { Check, Copy, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { supabase } from "@/integrations/supabase/client";
-import { AREAS, type AreaKey } from "@/lib/score-rubric";
-import { OFFER_KINDS, offersFor } from "@/lib/offers";
+import { AREAS, PETAL_THORN_LINES, type AreaKey } from "@/lib/score-rubric";
 import { getScoreByToken } from "@/lib/score.functions";
 import { rememberPostLoginRedirect } from "@/lib/post-login-redirect";
+import { serviceBySlug, type ServiceSlug } from "@/lib/services";
 
 export const Route = createFileRoute("/score/r/$token")({
   loader: async ({ params }) => {
@@ -19,10 +18,10 @@ export const Route = createFileRoute("/score/r/$token")({
   },
   head: () => ({
     meta: [
-      { title: "Your Findability Score | Build With Her Media" },
+      { title: "What stage is your business in? | Build With Her Media" },
       {
         name: "description",
-        content: "Your score, your five areas, and the three fixes to do first.",
+        content: "Your stage, your score, your petals and thorns, and the fix that pays first.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -41,6 +40,14 @@ export const Route = createFileRoute("/score/r/$token")({
   ),
 });
 
+const RETAKE_DAYS = 90;
+
+function bookingHref(slug: ServiceSlug) {
+  return slug === "clarity-call" || slug === "strategy-consult"
+    ? { to: "/book/$slug" as const, params: { slug } }
+    : { to: "/services/$slug" as const, params: { slug } };
+}
+
 function ResultPage() {
   const result = Route.useLoaderData();
   const [copied, setCopied] = useState(false);
@@ -56,122 +63,132 @@ function ResultPage() {
   }
 
   const firstName = result.fullName.split(" ")[0] ?? result.fullName;
-  const matchedOffers = offersFor(result.total, result.areaScores, 5);
+  const growing = (Object.keys(AREAS) as AreaKey[]).filter(
+    (area) => !result.petals.includes(area) && !result.thorns.includes(area),
+  );
+  const retakeDate = new Date(result.createdAt);
+  retakeDate.setDate(retakeDate.getDate() + RETAKE_DAYS);
+  const retakeLabel = retakeDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const primaryService = result.primaryServiceSlug
+    ? serviceBySlug(result.primaryServiceSlug)
+    : undefined;
+  const secondaryService = result.secondaryServiceSlug
+    ? serviceBySlug(result.secondaryServiceSlug)
+    : undefined;
 
   return (
     <main className="container-editorial max-w-3xl py-12 md:py-16">
       <div className="flex items-center gap-3">
         <RoseMark className="h-7 w-7 text-primary" />
-        <p className="eyebrow text-primary">Your Findability Score</p>
+        <p className="eyebrow text-primary">Your stage</p>
       </div>
 
+      {/* 1-3: stage name, score, tagline */}
       <section className="mt-6 rounded-2xl border border-border bg-card p-8 shadow-card">
         <p className="text-base text-muted-foreground">
           {firstName}
           {result.businessName ? `, ${result.businessName}` : ""}
         </p>
-        <p className="numeric mt-2 font-display text-7xl leading-none text-primary">
+        <h1 className="mt-2 text-4xl">
+          You are a {result.stage}
+          {result.withThorns ? " with thorns" : ""}.
+        </h1>
+        <p className="numeric mt-4 text-2xl text-muted-foreground">
           {result.total}
-          <span className="text-2xl text-muted-foreground"> / 100</span>
+          <span className="text-base"> / 100</span>
         </p>
-        <h1 className="mt-4 text-3xl">{result.band}</h1>
-        <p className="mt-3 text-lg text-muted-foreground">{result.bandLine}</p>
+        <p className="mt-4 text-lg text-muted-foreground">{result.stageTagline}</p>
       </section>
 
+      {/* 4-6: petals, thorns, growing */}
       <section className="mt-10">
-        <h2 className="text-2xl">Your five areas</h2>
-        <div className="mt-6 space-y-5">
-          {result.areaScores.map((row) => {
-            const area = AREAS[row.area as AreaKey];
-            const pct = row.outOf ? Math.round((row.earned / row.outOf) * 100) : 0;
-            return (
-              <div key={row.area}>
-                <div className="flex items-baseline justify-between">
-                  <p className="text-base font-medium">{area?.title ?? row.area}</p>
-                  <p className="numeric text-sm text-muted-foreground">
-                    {row.earned} of {row.outOf}
-                  </p>
+        {result.petals.length ? (
+          <div>
+            <h2 className="text-xl">Your petals</h2>
+            <p className="mt-1 text-sm text-muted-foreground">What is working.</p>
+            <div className="mt-4 space-y-3">
+              {result.petals.map((area) => (
+                <div
+                  key={area}
+                  className="rounded-2xl border border-border bg-blush p-5 text-crimson-dark"
+                >
+                  <p className="text-sm font-medium">{AREAS[area].short}</p>
+                  <p className="mt-1 text-base">{PETAL_THORN_LINES[area].petal}</p>
                 </div>
-                <Progress value={pct} className="mt-2 h-2" />
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="mt-12">
-        <h2 className="text-2xl">The three fixes to do first</h2>
-        <p className="mt-3 text-base text-muted-foreground">
-          These are the places where you are losing the most, in order.
-        </p>
-        <ol className="mt-6 space-y-4">
-          {result.topFixes.map((fix, index) => (
-            <li
-              key={`${fix.area}-${index}`}
-              className="rounded-2xl border border-border bg-card p-6 shadow-card"
-            >
-              <p className="eyebrow text-muted-foreground">
-                {AREAS[fix.area as AreaKey]?.short ?? fix.area}
-              </p>
-              <p className="mt-2 text-lg">
-                <span className="numeric mr-2 text-primary">{index + 1}.</span>
-                {fix.fix}
-              </p>
-            </li>
-          ))}
-          {result.topFixes.length === 0 ? (
-            <li className="rounded-2xl border border-border bg-card p-6 text-base text-muted-foreground">
-              Nothing is badly broken. The next move is scale and story, not repair.
-            </li>
-          ) : null}
-        </ol>
-      </section>
-
-      <section className="mt-12">
-        <h2 className="text-2xl">What could work for you next</h2>
-        <p className="mt-3 text-base text-muted-foreground">
-          Picked for your score and your weakest areas. Some you can do yourself for free, some we
-          build with you.
-        </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {matchedOffers.map((offer) => (
-            <div
-              key={offer.id}
-              className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card"
-            >
-              <p className="eyebrow text-primary">{OFFER_KINDS[offer.kind].label}</p>
-              <h3 className="mt-2 text-xl">{offer.title}</h3>
-              <p className="mt-2 flex-1 text-base text-muted-foreground">{offer.blurb}</p>
-              {offer.href ? (
-                <Button asChild variant="outline" className="mt-5 self-start">
-                  <a href={offer.href}>{offer.ctaLabel}</a>
-                </Button>
-              ) : (
-                <p className="mt-5 text-sm text-muted-foreground">
-                  {offer.note ?? "We go through this on your clarity call."}
-                </p>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : null}
+
+        {result.thorns.length ? (
+          <div className="mt-8">
+            <h2 className="text-xl">Your thorns</h2>
+            <p className="mt-1 text-sm text-muted-foreground">What to fix.</p>
+            <div className="mt-4 space-y-3">
+              {result.thorns.map((area) => (
+                <div
+                  key={area}
+                  className="rounded-2xl border border-border bg-card p-5 shadow-card"
+                >
+                  <p className="text-sm font-medium text-muted-foreground">{AREAS[area].short}</p>
+                  <p className="mt-1 text-base">{PETAL_THORN_LINES[area].thorn}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {growing.length ? (
+          <div className="mt-8">
+            <h2 className="text-xl">Growing</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Not a petal yet, not a thorn: {growing.map((area) => AREAS[area].short).join(", ")}.
+            </p>
+          </div>
+        ) : null}
       </section>
 
-      <NextStepSection />
+      {/* 7: the one fix that pays first */}
+      {result.topFixes.length ? (
+        <section className="mt-12">
+          <h2 className="text-2xl">The one fix that pays first</h2>
+          <div className="mt-5 rounded-2xl border border-border bg-card p-6 shadow-card">
+            <p className="eyebrow text-muted-foreground">{AREAS[result.topFixes[0]!.area].short}</p>
+            <p className="mt-2 text-lg">{result.topFixes[0]!.fix}</p>
+          </div>
+        </section>
+      ) : null}
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        <Link to="/services" className="hover:text-primary">
-          Or look at every way to work with us
-        </Link>
-      </p>
+      {/* 8: with-thorns block */}
+      {result.withThorns ? (
+        <section className="mt-10 rounded-2xl border border-dashed border-primary bg-blush p-6">
+          <h2 className="text-xl text-crimson-dark">With thorns</h2>
+          <p className="mt-2 text-base text-crimson-dark/90">
+            Your business works, but it only works when you are in it. A week away and things stop.
+            That is what we fix in a full build.
+          </p>
+        </section>
+      ) : null}
 
+      <NextStepSection
+        primaryService={primaryService}
+        secondaryService={secondaryService}
+        stageNextStep={result.stageNextStep}
+      />
+
+      {/* 10: share, 11: community */}
       <section className="mt-10 rounded-2xl border border-border p-6">
         <div className="flex items-start gap-3">
           <Mail className="mt-1 h-5 w-5 text-primary" aria-hidden="true" />
-          <div>
-            <p className="text-base font-medium">Keep this link</p>
+          <div className="flex-1">
+            <p className="text-base font-medium">Send this to a woman who needs it</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              This page is yours. It holds your score, your fixes and, soon, the offers that match
-              your band. Emailing it to you turns on once our email sending is live, so save it now.
+              Every stage started somewhere. This link is yours to keep, and to pass on.
             </p>
             <Button variant="outline" onClick={copyLink} className="mt-4">
               {copied ? (
@@ -187,17 +204,48 @@ function ResultPage() {
           </div>
         </div>
       </section>
+
+      <section className="mt-8 rounded-2xl bg-blush p-6 text-center">
+        <p className="text-base text-crimson-dark">
+          Retake this in 90 days. We will hold {retakeLabel} for you.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-card text-center">
+        <p className="text-base text-muted-foreground">
+          Free, and the fastest way to get an answer from someone who has done it.
+        </p>
+        <Button asChild size="lg" variant="outline" className="mt-5 h-11 px-6">
+          <Link to="/community">Join the community</Link>
+        </Button>
+      </section>
+
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        <Link to="/services" className="hover:text-primary">
+          Or look at every way to work with us
+        </Link>
+      </p>
     </main>
   );
 }
 
+type NextStepService = ReturnType<typeof serviceBySlug>;
+
 /**
- * The Clarity Call is free and open to anyone — straight to Calendly, no
- * account needed. The Strategy Consult only appears once she has an
- * account, so we have somewhere to attach that booking and follow up.
- * Creating one sends her to sign in and back to this exact page.
+ * The Strategy Consult only appears once she has an account, so we have
+ * somewhere to attach that booking and follow up. Creating one sends her to
+ * sign in and back to this exact page. Every other recommended service
+ * (including the free Clarity Call) needs no account.
  */
-function NextStepSection() {
+function NextStepSection({
+  primaryService,
+  secondaryService,
+  stageNextStep,
+}: {
+  primaryService: NextStepService;
+  secondaryService: NextStepService;
+  stageNextStep: string;
+}) {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -219,50 +267,65 @@ function NextStepSection() {
     window.location.href = "/login";
   }
 
+  const gate = (service: NextStepService) => service?.slug === "strategy-consult" && !signedIn;
+
   return (
     <section className="mt-12 rounded-2xl bg-secondary p-8">
       <h2 className="text-2xl">Your next step</h2>
-      <p className="mt-3 text-base text-muted-foreground">
-        Bring this score to a free clarity call. Thirty minutes, no pitch deck, and you leave
-        knowing which of these three to do this month and which to have built for you.
-      </p>
-      <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
-        <Link to="/book/$slug" params={{ slug: "clarity-call" }}>
-          Book your free Clarity Call
-        </Link>
-      </Button>
-
-      <div className="mt-8 border-t border-border pt-8">
-        {signedIn ? (
-          <>
-            <h3 className="text-lg">Ready to go deeper?</h3>
-            <p className="mt-2 text-base text-muted-foreground">
-              Two hours on your offer, pricing, pages and follow up, ending with a build plan.
-            </p>
-            <Button asChild size="lg" variant="outline" className="mt-5 h-12 px-7 text-base">
-              <Link to="/book/$slug" params={{ slug: "strategy-consult" }}>
-                Book your 2-Hour Strategy Consult
-              </Link>
-            </Button>
-          </>
-        ) : (
-          <>
-            <h3 className="text-lg">Want the 2-Hour Strategy Consult too?</h3>
-            <p className="mt-2 text-base text-muted-foreground">
-              Create a free account to save this score, and the Strategy Consult unlocks right here.
-            </p>
+      {primaryService ? (
+        <>
+          <p className="mt-3 text-base text-muted-foreground">{stageNextStep}</p>
+          {gate(primaryService) ? (
             <Button
               size="lg"
-              variant="outline"
-              className="mt-5 h-12 px-7 text-base"
+              className="mt-7 h-12 px-7 text-base"
               onClick={createAccount}
               disabled={signedIn === null}
             >
               Create your account
             </Button>
-          </>
-        )}
-      </div>
+          ) : (
+            <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
+              <Link {...bookingHref(primaryService.slug)}>{primaryService.ctaLabel}</Link>
+            </Button>
+          )}
+        </>
+      ) : (
+        <>
+          <p className="mt-3 text-base text-muted-foreground">
+            Bring this score to a free Clarity Call. Thirty minutes, no pitch deck.
+          </p>
+          <Button asChild size="lg" className="mt-7 h-12 px-7 text-base">
+            <Link to="/book/$slug" params={{ slug: "clarity-call" }}>
+              Book your free Clarity Call
+            </Link>
+          </Button>
+        </>
+      )}
+      {secondaryService ? (
+        <p className="mt-4 text-sm text-muted-foreground">
+          {gate(secondaryService) ? (
+            <>
+              Want {secondaryService.name.toLowerCase()} too?{" "}
+              <button
+                type="button"
+                onClick={createAccount}
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Create a free account
+              </button>{" "}
+              to save this score and unlock it.
+            </>
+          ) : (
+            <Link
+              {...bookingHref(secondaryService.slug)}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              Or {secondaryService.name.toLowerCase()}
+            </Link>
+          )}
+        </p>
+      ) : null}
     </section>
   );
 }

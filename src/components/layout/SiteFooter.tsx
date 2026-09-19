@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 
-import { RoseMark } from "@/components/brand/RoseMark";
 import {
   InstagramIcon,
   LinkedinIcon,
@@ -22,7 +21,7 @@ export function SiteFooter() {
       <div className="container-editorial grid gap-10 py-14 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2">
-            <RoseMark className="h-7 w-7 text-primary" />
+            <img src="/brand/logo.png" alt="" className="h-8 w-8" />
             <span className="font-display text-lg font-semibold">Build With Her Media</span>
           </div>
           <p className="mt-4 max-w-xs text-base text-muted-foreground">{SITE.tagline}</p>

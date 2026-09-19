@@ -10,7 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { AREA_ORDER, AREAS, QUESTIONS, type AreaKey, type Question } from "@/lib/score-rubric";
+import {
+  AREA_ORDER,
+  AREAS,
+  QUESTIONS,
+  THORN_QUESTIONS,
+  type AreaKey,
+  type Question,
+} from "@/lib/score-rubric";
 import { submitScore } from "@/lib/score.functions";
 import { getCapturedSource } from "@/lib/source-capture";
 import { rememberScoreToken } from "@/lib/score-memory";
@@ -91,12 +98,17 @@ function QuizPage() {
   const submit = useServerFn(submitScore);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [thornAnswers, setThornAnswers] = useState<Record<string, string>>({});
   const [details, setDetails] = useState<Details>(emptyDetails);
   const [saving, setSaving] = useState(false);
   const questionRefs = useRef<Record<string, HTMLFieldSetElement | null>>({});
+  const thornRefs = useRef<Record<string, HTMLFieldSetElement | null>>({});
 
-  const totalSteps = AREA_ORDER.length + 1;
-  const isDetailsStep = step === AREA_ORDER.length;
+  const totalSteps = AREA_ORDER.length + 2;
+  const isThornStep = step === AREA_ORDER.length;
+  const isDetailsStep = step === AREA_ORDER.length + 1;
+  const answeredThorns = THORN_QUESTIONS.filter((q) => thornAnswers[q.id]).length;
+  const thornComplete = answeredThorns === THORN_QUESTIONS.length;
 
   useEffect(() => {
     try {
@@ -145,6 +157,25 @@ function QuizPage() {
     }
   }
 
+  function chooseThornAnswer(question: Question, value: string) {
+    const wasComplete = thornComplete;
+    const next = { ...thornAnswers, [question.id]: value };
+    setThornAnswers(next);
+
+    const idx = THORN_QUESTIONS.findIndex((q) => q.id === question.id);
+    const upNext = THORN_QUESTIONS.slice(idx + 1).find((q) => !next[q.id]);
+
+    if (upNext) {
+      window.setTimeout(() => {
+        const el = thornRefs.current[upNext.id];
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        el?.focus({ preventScroll: true });
+      }, 150);
+    } else if (!wasComplete) {
+      window.setTimeout(() => setStep((s) => s + 1), 450);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (saving) return;
@@ -152,7 +183,11 @@ function QuizPage() {
     try {
       const captured = getCapturedSource();
       const { token } = await submit({
-        data: { answers, details: { ...details, source: captured?.src ?? "direct" } },
+        data: {
+          answers,
+          thornAnswers,
+          details: { ...details, source: captured?.src ?? "direct" },
+        },
       });
       window.sessionStorage.removeItem(STORAGE_KEY);
       rememberScoreToken(token);
@@ -176,7 +211,9 @@ function QuizPage() {
           <span>
             Step {step + 1} of {totalSteps}
           </span>
-          <span>{isDetailsStep ? "Where to send it" : area.short}</span>
+          <span>
+            {isDetailsStep ? "Where to send it" : isThornStep ? "One more thing" : area.short}
+          </span>
         </div>
         <Progress value={((step + 1) / totalSteps) * 100} className="mt-3 h-2" />
       </div>
@@ -363,6 +400,71 @@ function QuizPage() {
             </Button>
           </div>
         </form>
+      ) : isThornStep ? (
+        <div className="mt-10">
+          <h1 className="text-3xl">One more thing</h1>
+          <p className="mt-3 text-base text-muted-foreground">
+            Five quick ones about how much of this runs without you.
+          </p>
+
+          <div className="mt-8 space-y-8">
+            {THORN_QUESTIONS.map((question) => (
+              <fieldset
+                key={question.id}
+                ref={(el) => {
+                  thornRefs.current[question.id] = el;
+                }}
+                tabIndex={-1}
+                className="scroll-mt-24 outline-none"
+              >
+                <legend className="text-lg font-medium">{question.question}</legend>
+                {question.helper ? (
+                  <p className="mt-1 text-sm text-muted-foreground">{question.helper}</p>
+                ) : null}
+                <div className="mt-4 grid gap-2">
+                  {question.choices.map((choice) => {
+                    const selected = thornAnswers[question.id] === choice.value;
+                    return (
+                      <button
+                        key={choice.value}
+                        type="button"
+                        onClick={() => chooseThornAnswer(question, choice.value)}
+                        aria-pressed={selected}
+                        className={
+                          selected
+                            ? "rounded-xl border-2 border-primary bg-secondary px-4 py-3 text-left text-base"
+                            : "rounded-xl border border-border bg-card px-4 py-3 text-left text-base transition-colors hover:border-primary"
+                        }
+                      >
+                        {choice.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Button
+              size="lg"
+              className="h-12 px-7 text-base"
+              onClick={() => setStep((s) => s + 1)}
+              disabled={!thornComplete}
+            >
+              Last step
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => setStep((s) => s - 1)}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+            {!thornComplete ? (
+              <p className="text-sm text-muted-foreground">
+                {THORN_QUESTIONS.length - answeredThorns} to go
+              </p>
+            ) : null}
+          </div>
+        </div>
       ) : (
         <div className="mt-10">
           <h1 className="text-3xl">{area.title}</h1>
@@ -413,7 +515,7 @@ function QuizPage() {
               onClick={() => setStep((s) => s + 1)}
               disabled={!areaComplete}
             >
-              {step === AREA_ORDER.length - 1 ? "Last step" : "Next area"}
+              {step === AREA_ORDER.length - 1 ? "One more thing" : "Next area"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             {step > 0 ? (

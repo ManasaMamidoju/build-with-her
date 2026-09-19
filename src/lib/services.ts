@@ -16,6 +16,8 @@ export type Service = {
   duration: string;
   summary: string;
   bestFor: string;
+  /** Rose stages this service fits, shown as a "Best for" line on the services page. */
+  stages: string[];
   includes: string[];
   requires: string[];
   faqs: { q: string; a: string }[];
@@ -35,6 +37,7 @@ export const SERVICES: Service[] = [
     summary:
       "We read your Findability Score together, name the one thing costing you the most money, and decide what you fix first.",
     bestFor: "Any woman who has taken the score and wants a plan she can act on this week.",
+    stages: ["Seed", "Sprout", "anyone unsure"],
     includes: [
       "A read of your score, area by area, in plain words",
       "The single fix that pays back fastest for your business",
@@ -66,6 +69,7 @@ export const SERVICES: Service[] = [
       "Two focused hours on your offer, your pricing, your pages and your follow up, ending with a build plan you own whether you hire us or not.",
     bestFor:
       "A woman who already sells something and wants a sharp plan rather than someone to do the work.",
+    stages: ["Bud", "Bloom"],
     includes: [
       "A rewrite of how you describe what you sell",
       "Your pricing and packages reviewed against what buyers already pay you",
@@ -97,6 +101,7 @@ export const SERVICES: Service[] = [
       "We build the machine: the site, the booking, the payment, the replies, the reminders and the follow up, then hand you the keys.",
     bestFor:
       "A woman losing bookings to slow replies, missed messages and work she is doing by hand.",
+    stages: ["Bud", "Bloom", "any stage with thorns"],
     includes: [
       "Your site on your own domain, written for the thing you sell",
       "Booking and card payment that work while you are with a client",
@@ -133,6 +138,7 @@ export const SERVICES: Service[] = [
       "Five to six weeks, live and in a small group, where you build your own machine with us beside you and leave knowing how to run it.",
     bestFor:
       "A woman who would rather learn the system than hand it over, and who can give it a few hours a week.",
+    stages: ["Seed", "Sprout"],
     includes: [
       "Live weekly sessions in a small group, recorded for you",
       "Your own site, booking and follow up built during the weeks",
@@ -163,6 +169,7 @@ export const SERVICES: Service[] = [
     summary:
       "A short, sharp on-the-street conversation about your work, edited into clips built to travel.",
     bestFor: "A woman who wants to be on camera without booking out half a day.",
+    stages: ["Bloom", "Garden"],
     includes: [
       "One short filmed conversation, guided so you never freeze",
       "Edited vertical clips with captions",
@@ -193,6 +200,7 @@ export const SERVICES: Service[] = [
       "A full sit-down episode about your business, cut into a long episode plus a run of clips and one street-style piece.",
     bestFor:
       "A woman with a story, results and a reason for buyers to trust her over everyone else.",
+    stages: ["Bloom", "Garden"],
     includes: [
       "A full filmed episode with proper sound and lighting",
       "Five to six edited clips plus one street-style piece",
@@ -222,6 +230,7 @@ export const SERVICES: Service[] = [
     summary:
       "Extra work for women we already build for: another system, another campaign, another season of content.",
     bestFor: "Existing clients with a job that does not fit the list above.",
+    stages: ["Garden"],
     includes: [
       "A written offer with the scope, the price and the dates",
       "One link to accept and pay",

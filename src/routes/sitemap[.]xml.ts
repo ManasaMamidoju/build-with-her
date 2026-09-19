@@ -14,7 +14,6 @@ const STATIC_PATHS = [
   "/blog",
   "/community",
   "/events",
-  "/interviews",
   "/contact",
   "/terms",
   "/privacy",

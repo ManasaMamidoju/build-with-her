@@ -69,6 +69,17 @@ function Community() {
         </div>
 
         <SkoolCard />
+
+        <div className="rounded-2xl border border-border bg-blush p-6 shadow-card">
+          <h2 className="text-xl text-crimson-dark">Grow a stage together</h2>
+          <p className="mt-2 text-base text-crimson-dark/90">
+            Every member has a stage. Inside the community we track it, celebrate when it moves, and
+            hold each other to the retake every 90 days.
+          </p>
+          <p className="mt-2 text-sm text-crimson-dark/80">
+            Members who reach Bouquet get named on this page, with permission.
+          </p>
+        </div>
       </div>
 
       <p className="mt-10 text-sm text-muted-foreground">
