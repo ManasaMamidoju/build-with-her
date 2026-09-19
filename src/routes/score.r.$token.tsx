@@ -326,6 +326,19 @@ function NextStepSection({
           )}
         </p>
       ) : null}
+      {primaryService?.slug !== "clarity-call" && secondaryService?.slug !== "clarity-call" ? (
+        <p className="mt-4 text-sm text-muted-foreground">
+          Prefer to just talk it through first?{" "}
+          <Link
+            to="/book/$slug"
+            params={{ slug: "clarity-call" }}
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            Book a free Clarity Call
+          </Link>
+          . No account needed.
+        </p>
+      ) : null}
     </section>
   );
 }

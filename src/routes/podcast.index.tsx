@@ -69,16 +69,20 @@ function Podcast() {
   const [platform, setPlatform] = useState<Platform>("all");
   const [sort, setSort] = useState<SortKey>("recent");
 
-  // Only guests actually posted somewhere a client can watch: Instagram, or a
-  // video link (YouTube for long form, or another host for the rest).
+  // Only guests actually posted somewhere a client can watch: the real
+  // Instagram post/reel, or a YouTube link for long form. Internal editing
+  // links (Drive, Photos, Frame.io, Descript) never count as "posted".
   const posted = useMemo(
-    () => allInterviews.filter((i) => Boolean(i.instagram) || Boolean(i.final_video_link)),
+    () =>
+      allInterviews.filter(
+        (i) => Boolean(i.instagram_post_url) || isYoutubeLink(i.final_video_link),
+      ),
     [allInterviews],
   );
 
   const interviews = useMemo(() => {
     let rows = posted;
-    if (platform === "instagram") rows = rows.filter((i) => Boolean(i.instagram));
+    if (platform === "instagram") rows = rows.filter((i) => Boolean(i.instagram_post_url));
     if (platform === "youtube") rows = rows.filter((i) => isYoutubeLink(i.final_video_link));
 
     const term = search.trim().toLowerCase();
@@ -224,12 +228,16 @@ function Podcast() {
                         </p>
                       ) : null}
                       <div className="mt-4 flex flex-wrap gap-3">
-                        {interview.final_video_link ? (
+                        {isYoutubeLink(interview.final_video_link) ? (
                           <Button asChild size="sm">
-                            <a href={interview.final_video_link} target="_blank" rel="noreferrer">
-                              {isYoutubeLink(interview.final_video_link)
-                                ? "Watch on YouTube"
-                                : "Watch her interview"}
+                            <a href={interview.final_video_link!} target="_blank" rel="noreferrer">
+                              Watch on YouTube
+                            </a>
+                          </Button>
+                        ) : interview.instagram_post_url ? (
+                          <Button asChild size="sm">
+                            <a href={interview.instagram_post_url} target="_blank" rel="noreferrer">
+                              Watch her interview
                             </a>
                           </Button>
                         ) : null}
