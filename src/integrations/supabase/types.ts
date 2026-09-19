@@ -63,6 +63,11 @@ export type Database = {
           primary_service_slug: string | null;
           secondary_service_slug: string | null;
           sort_order: number;
+          stage_missing: string | null;
+          stage_name: string | null;
+          stage_next_step: string | null;
+          stage_tagline: string | null;
+          stage_working: string | null;
           updated_at: string;
         };
         Insert: {
@@ -77,6 +82,11 @@ export type Database = {
           primary_service_slug?: string | null;
           secondary_service_slug?: string | null;
           sort_order?: number;
+          stage_missing?: string | null;
+          stage_name?: string | null;
+          stage_next_step?: string | null;
+          stage_tagline?: string | null;
+          stage_working?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -91,6 +101,11 @@ export type Database = {
           primary_service_slug?: string | null;
           secondary_service_slug?: string | null;
           sort_order?: number;
+          stage_missing?: string | null;
+          stage_name?: string | null;
+          stage_next_step?: string | null;
+          stage_tagline?: string | null;
+          stage_working?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -1289,7 +1304,9 @@ export type Database = {
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: string | null;
+          stage: string | null;
           status: string;
+          suggested_featured: boolean;
           updated_at: string;
           website: string | null;
         };
@@ -1310,7 +1327,9 @@ export type Database = {
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           source?: string | null;
+          stage?: string | null;
           status?: string;
+          suggested_featured?: boolean;
           updated_at?: string;
           website?: string | null;
         };
@@ -1331,7 +1350,9 @@ export type Database = {
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           source?: string | null;
+          stage?: string | null;
           status?: string;
+          suggested_featured?: boolean;
           updated_at?: string;
           website?: string | null;
         };
@@ -1600,13 +1621,18 @@ export type Database = {
           handles: Json;
           id: string;
           person_id: string | null;
+          petals: Json;
           phone: string | null;
           primary_source: string | null;
+          stage: string | null;
+          thorn_score: number;
+          thorns: Json;
           token: string;
           top_fixes: Json;
           total_score: number;
           updated_at: string;
           website: string | null;
+          with_thorns: boolean;
         };
         Insert: {
           answers?: Json;
@@ -1624,13 +1650,18 @@ export type Database = {
           handles?: Json;
           id?: string;
           person_id?: string | null;
+          petals?: Json;
           phone?: string | null;
           primary_source?: string | null;
+          stage?: string | null;
+          thorn_score?: number;
+          thorns?: Json;
           token: string;
           top_fixes?: Json;
           total_score: number;
           updated_at?: string;
           website?: string | null;
+          with_thorns?: boolean;
         };
         Update: {
           answers?: Json;
@@ -1648,13 +1679,18 @@ export type Database = {
           handles?: Json;
           id?: string;
           person_id?: string | null;
+          petals?: Json;
           phone?: string | null;
           primary_source?: string | null;
+          stage?: string | null;
+          thorn_score?: number;
+          thorns?: Json;
           token?: string;
           top_fixes?: Json;
           total_score?: number;
           updated_at?: string;
           website?: string | null;
+          with_thorns?: boolean;
         };
         Relationships: [
           {
@@ -1683,6 +1719,7 @@ export type Database = {
           requires: string[];
           slug: string;
           sort_order: number;
+          stages: string[];
           step: string | null;
           summary: string | null;
           updated_at: string;
@@ -1704,6 +1741,7 @@ export type Database = {
           requires?: string[];
           slug: string;
           sort_order?: number;
+          stages?: string[];
           step?: string | null;
           summary?: string | null;
           updated_at?: string;
@@ -1725,6 +1763,7 @@ export type Database = {
           requires?: string[];
           slug?: string;
           sort_order?: number;
+          stages?: string[];
           step?: string | null;
           summary?: string | null;
           updated_at?: string;
