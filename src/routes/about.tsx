@@ -63,7 +63,7 @@ function About() {
         <div className="mt-8 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <img
             src="/brand/manasa-portrait.jpg"
-            alt="Manasa"
+            alt="Manasa Mamidoju, founder of Build With Her Media, photographed in Miami"
             className="aspect-[4/5] w-full max-w-sm rounded-2xl object-cover"
           />
 
