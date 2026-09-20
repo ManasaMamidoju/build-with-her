@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { ImagePlaceholder } from "@/components/site/ImagePlaceholder";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { TOTAL_QUESTION_COUNT } from "@/lib/score-rubric";
 import { canonical, SITE } from "@/lib/site";
+import { STAGES } from "@/lib/stages";
 
 const faqs = [
   {
@@ -135,7 +135,7 @@ function Home() {
           </div>
           <img
             src="/brand/manasa-portrait.jpg"
-            alt="Manasa, holding a rose"
+            alt="Manasa Mamidoju, founder of Build With Her Media in Miami, holding a red rose"
             className="aspect-[4/5] w-full max-w-sm justify-self-center rounded-2xl object-cover lg:justify-self-end"
           />
         </div>
