@@ -1964,6 +1964,7 @@ export type Database = {
           final_video_link: string
           full_name: string
           instagram: string
+          instagram_post_url: string
           interview_date: string
           posted_links: string
           slug: string
