@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
 import { TOTAL_QUESTION_COUNT } from "@/lib/score-rubric";
 import { canonical, SITE } from "@/lib/site";
+import { STAGES } from "@/lib/stages";
 
 const pills = ["Source", "Clarity", "Attract", "Land", "Elevate"];
 
@@ -77,6 +78,34 @@ function ScoreLanding() {
             ))}
           </ul>
         </div>
+
+        <section className="mt-12">
+          <h2 className="text-2xl">What the five stages mean</h2>
+          <p className="mt-2 text-base text-muted-foreground">
+            Your score out of 100 puts you in one of five stages.
+          </p>
+          <div className="mt-6 space-y-4">
+            {STAGES.map((stage) => (
+              <div
+                key={stage.name}
+                className="flex gap-5 rounded-2xl border border-border bg-card p-6 shadow-card"
+              >
+                <img
+                  src={stage.image}
+                  alt={stage.alt}
+                  loading="lazy"
+                  className="h-20 w-20 shrink-0 rounded-xl bg-blush object-contain p-2"
+                />
+                <div>
+                  <h3 className="text-xl">{stage.name}</h3>
+                  <p className="numeric mt-1 text-xs text-muted-foreground">{stage.range}</p>
+                  <p className="mt-2 text-base text-crimson-dark">{stage.tagline}</p>
+                  <p className="mt-2 text-base text-muted-foreground">{stage.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div className="mt-8 rounded-2xl bg-secondary p-6 text-center">
           <p className="text-base text-muted-foreground">
