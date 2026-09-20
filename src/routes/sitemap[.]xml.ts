@@ -7,9 +7,10 @@ import { canonical } from "@/lib/site";
 const STATIC_PATHS = [
   "/",
   "/about",
-  "/mission",
+  "/score",
   "/services",
   "/podcast",
+  "/podcast/book",
   "/learn",
   "/blog",
   "/community",

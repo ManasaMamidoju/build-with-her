@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { RoseMark } from "@/components/brand/RoseMark";
-import { ImagePlaceholder } from "@/components/site/ImagePlaceholder";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { TOTAL_QUESTION_COUNT } from "@/lib/score-rubric";
 import { canonical, SITE } from "@/lib/site";
+import { STAGES } from "@/lib/stages";
 
 const faqs = [
   {
@@ -49,13 +49,6 @@ const faqs = [
   },
 ];
 
-const stages = [
-  { name: "Seed", tagline: "Everything you need is there. Nobody can see it yet." },
-  { name: "Sprout", tagline: "You have broken ground. Now you need a shape." },
-  { name: "Bud", tagline: "Almost open. Most clients leave before it does." },
-  { name: "Bloom", tagline: "You are in full view. Now make it last." },
-  { name: "Garden", tagline: "Your work keeps coming back to you." },
-];
 
 const doors = [
   {
@@ -142,7 +135,7 @@ function Home() {
           </div>
           <img
             src="/brand/manasa-portrait.jpg"
-            alt="Manasa, holding a rose"
+            alt="Manasa Mamidoju, founder of Build With Her Media in Miami, holding a red rose"
             className="aspect-[4/5] w-full max-w-sm justify-self-center rounded-2xl object-cover lg:justify-self-end"
           />
         </div>
@@ -176,17 +169,21 @@ function Home() {
           Every business is somewhere between Seed and Garden.
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          {stages.map((stage) => (
+          {STAGES.map((stage) => (
             <div
               key={stage.name}
               className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card"
             >
-              <ImagePlaceholder
-                label={`${stage.name} illustration`}
-                className="aspect-square w-full"
+              <img
+                src={stage.image}
+                alt={stage.alt}
+                loading="lazy"
+                className="aspect-square w-full rounded-xl bg-blush object-contain p-3"
               />
               <h3 className="mt-4 text-xl">{stage.name}</h3>
-              <p className="mt-2 flex-1 text-sm text-muted-foreground">{stage.tagline}</p>
+              <p className="numeric mt-1 text-xs text-muted-foreground">{stage.range}</p>
+              <p className="mt-2 text-sm text-crimson-dark">{stage.tagline}</p>
+              <p className="mt-2 flex-1 text-sm text-muted-foreground">{stage.description}</p>
               <Link
                 to="/score/quiz"
                 className="mt-4 text-sm font-medium text-primary underline-offset-4 hover:underline"
