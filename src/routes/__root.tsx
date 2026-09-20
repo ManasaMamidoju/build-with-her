@@ -89,6 +89,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Media, systems and AI for women who own businesses. Get your Findability Score in three minutes.",
       },
       { name: "author", content: "Build With Her Media" },
+      {
+        name: "google-site-verification",
+        content: "GF6LsUHHxhCog8pCvLOW-sJVhTLkQywfl4LJr83bSrA",
+      },
       { property: "og:site_name", content: "Build With Her Media" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
