@@ -10,17 +10,114 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# AI crawlers: may read the public site, never the private pages below.
 User-agent: GPTBot
 Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: Applebot
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /login
+Disallow: /score/quiz
+Disallow: /score/r/
+Disallow: /app/
+Disallow: /admin/
+Disallow: /e/
 
 User-agent: *
 Allow: /
