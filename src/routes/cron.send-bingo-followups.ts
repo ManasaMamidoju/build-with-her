@@ -122,7 +122,38 @@ async function sendFollowups(request: Request): Promise<Response> {
     counts.sent += 1;
   }
 
-  return json({ ok: true, ...counts, calendlyConnected: calendlyConfigured() });
+  // Safety net for the live scan: cards whose page was closed before the scan
+  // ran (or whose scan died mid-way) get scanned here, a few per run.
+  const scans = await catchUpScans(supabaseAdmin);
+
+  return json({ ok: true, ...counts, scans, calendlyConnected: calendlyConfigured() });
+}
+
+async function catchUpScans(
+  supabaseAdmin: Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"],
+) {
+  const since = new Date(Date.now() - 2 * 24 * 3600_000).toISOString();
+  const { data, error } = await supabaseAdmin
+    .from("score_submissions")
+    .select("token, answers")
+    .eq("answers->>kind", "bingo")
+    .gte("created_at", since)
+    .order("created_at", { ascending: true });
+  if (error) {
+    console.error("scan catch-up query failed", error.message);
+    return 0;
+  }
+  const staleBefore = Date.now() - 5 * 60_000;
+  const due = (data ?? [])
+    .filter((row) => {
+      const scan = (row.answers as { scan?: { status?: string; startedAt?: string } }).scan;
+      if (!scan) return true;
+      return scan.status === "running" && new Date(scan.startedAt ?? 0).getTime() < staleBefore;
+    })
+    .slice(0, 3);
+  const { runScanForToken } = await import("@/lib/scan/run.server");
+  await Promise.all(due.map((row) => runScanForToken(row.token)));
+  return due.length;
 }
 
 function json(body: unknown, status = 200) {

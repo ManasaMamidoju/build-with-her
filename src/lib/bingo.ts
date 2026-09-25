@@ -300,7 +300,17 @@ const ADVANCED_FIXES: BingoFix[] = [
   },
 ];
 
-export function scoreBingo(checked: Record<string, boolean>): BingoScore {
+export type WeightedFix = BingoFix & { weight: number };
+
+/**
+ * Score the card. `options.extraFixes` are findings from the live scan;
+ * `options.forceFixIds` puts a square's fix on the list even though it is
+ * ticked (e.g. she ticked "shows up on ChatGPT" but the AI check says no).
+ */
+export function scoreBingo(
+  checked: Record<string, boolean>,
+  options: { extraFixes?: WeightedFix[]; forceFixIds?: string[] } = {},
+): BingoScore {
   const earned = Object.fromEntries(AREA_ORDER.map((a) => [a, 0])) as Record<AreaKey, number>;
   for (const s of SCORED_SQUARES) if (checked[s.id]) earned[s.area] += s.points;
 
@@ -317,14 +327,15 @@ export function scoreBingo(checked: Record<string, boolean>): BingoScore {
     ),
   );
 
-  const missing: (BingoFix & { weight: number })[] = [];
+  const forced = new Set(options.forceFixIds ?? []);
+  const missing: WeightedFix[] = [...(options.extraFixes ?? [])];
   for (const s of BINGO_SQUARES) {
-    if (s.kind === "free" || checked[s.id]) continue;
+    if (s.kind === "free" || (checked[s.id] && !forced.has(s.id))) continue;
     missing.push({
       squareId: s.id,
       area: s.area,
       ...s.fix,
-      weight: s.kind === "scored" ? s.points : s.priority,
+      weight: (s.kind === "scored" ? s.points : s.priority) + (forced.has(s.id) ? 3 : 0),
     });
   }
   let fixes: BingoFix[] = missing

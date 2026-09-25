@@ -21,11 +21,18 @@ export function renderBingoResultEmail(input: {
   fixes: BingoFix[];
   resultUrl: string;
   token: string;
+  /** Set once the live scan has checked her card against her real website and profiles. */
+  verified?: { selfTotal: number; checkedCount: number };
   now?: Date;
 }) {
   const first = input.fullName.trim().split(/\s+/)[0] || "there";
   const live = beautyOfferLive(input.now);
-  const subject = `You're a ${input.stage}: your Findability Score is ${input.total}/100`;
+  const subject = input.verified
+    ? `We checked your website and profiles: your verified score is ${input.total}/100`
+    : `You're a ${input.stage}: your Findability Score is ${input.total}/100`;
+  const verifiedLine = input.verified
+    ? `We scanned your website, Google profile, socials and AI answers and checked ${input.verified.checkedCount} of your squares. Your card said ${input.verified.selfTotal}; your verified score is ${input.total}.`
+    : null;
 
   const offerText = live
     ? `2. 1:1 Strategy Call, $50 instead of $200 with code ${BEAUTY_CODE}. Enter the code on your results page before ${BEAUTY_ENDS_LABEL}:\n${input.resultUrl}#book`
@@ -34,6 +41,7 @@ export function renderBingoResultEmail(input: {
   const text = [
     `Hi ${first},`,
     "",
+    ...(verifiedLine ? [verifiedLine, ""] : []),
     `You're a ${input.stage}. ${input.stageTagline}`,
     `Your Findability Score: ${input.total} out of 100.`,
     "",
@@ -66,7 +74,7 @@ export function renderBingoResultEmail(input: {
     : `<p style="margin:8px 0"><a href="${esc(input.resultUrl)}#book" style="color:#a3284a;font-weight:700">1:1 Strategy Call ($200)</a></p>`;
 
   const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#2a1d20;line-height:1.5">
-<p>Hi ${esc(first)},</p>
+<p>Hi ${esc(first)},</p>${verifiedLine ? `<p>${esc(verifiedLine)}</p>` : ""}
 <p style="font-size:22px;margin:16px 0 4px"><strong>You're a ${esc(input.stage)}.</strong></p>
 <p style="margin:0 0 8px;color:#5a4a4e">${esc(input.stageTagline)}</p>
 <p style="font-size:18px;margin:8px 0 20px">Findability Score: <strong>${input.total}</strong> / 100</p>

@@ -76,8 +76,10 @@ const sections = [
     body: (
       <p>
         Only the services that run this business: our hosting and database provider, our email
-        sender, our payment provider, and Google Calendar for scheduling. We do not sell your
-        information.
+        sender, our payment provider, Google Calendar for scheduling, and the services that run our
+        Findability scan (Apify, which reads your public social and Google profiles, and Anthropic,
+        whose AI checks how you show up in AI answers). They only get your business name, city,
+        service and public links, never your email or phone. We do not sell your information.
       </p>
     ),
   },

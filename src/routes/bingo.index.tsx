@@ -54,6 +54,8 @@ type Details = {
   email: string;
   phone: string;
   website: string;
+  city: string;
+  service: string;
   handles: { instagram: string; tiktok: string; facebook: string; other: string };
   consentEmail: boolean;
   consentSms: boolean;
@@ -66,6 +68,8 @@ const emptyDetails: Details = {
   email: "",
   phone: "",
   website: "",
+  city: "",
+  service: "",
   handles: { instagram: "", tiktok: "", facebook: "", other: "" },
   // Marketing consent must be an active choice, so both start unticked.
   consentEmail: false,
@@ -314,6 +318,21 @@ function BingoPage() {
                 onChange={(v) => setDetails({ ...details, website: v })}
               />
             </div>
+            <Field
+              id="city"
+              label="City"
+              placeholder="Miami"
+              value={details.city}
+              autoComplete="address-level2"
+              onChange={(v) => setDetails({ ...details, city: v })}
+            />
+            <Field
+              id="service"
+              label="Your main service"
+              placeholder="Lash extensions"
+              value={details.service}
+              onChange={(v) => setDetails({ ...details, service: v })}
+            />
           </div>
 
           <fieldset className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6">

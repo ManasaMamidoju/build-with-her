@@ -1,7 +1,7 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { ArrowRight, Check, Loader2, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Check, CircleAlert, Info, Loader2, Search, Sparkles, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,13 @@ import { ScoreRing } from "@/components/services/ScoreRing";
 import { cn } from "@/lib/utils";
 import { AREAS } from "@/lib/score-rubric";
 import { BEAUTY_ENDS_LABEL, MYSTERY_SQUARES } from "@/lib/bingo";
-import { getBingoResult, unlockBeautyOffer } from "@/lib/bingo.functions";
+import {
+  getBingoResult,
+  runBingoScan,
+  unlockBeautyOffer,
+  type BingoResult,
+} from "@/lib/bingo.functions";
+import { BINGO_SQUARES } from "@/lib/bingo";
 
 export const Route = createFileRoute("/bingo/r/$token")({
   loader: async ({ params }) => {
@@ -99,6 +105,8 @@ function BingoResultPage() {
           </div>
         </div>
       </section>
+
+      <ScanSection token={token} scan={result.scan} total={result.total} />
 
       {/* Next steps */}
       <section className="mt-12">
@@ -314,6 +322,152 @@ function BookSection({
           )}
         </div>
       </div>
+    </section>
+  );
+}
+
+const SQUARE_LABEL: Record<string, string> = Object.fromEntries(
+  BINGO_SQUARES.map((s) => [
+    s.id,
+    s.kind === "scored" ? s.label : s.kind === "mystery" ? s.reveal : s.label,
+  ]),
+);
+
+/**
+ * Kicks off the live scan the first time the page opens, then refreshes the
+ * page data every few seconds until the scan is done.
+ */
+function ScanSection({
+  token,
+  scan,
+  total,
+}: {
+  token: string;
+  scan: BingoResult["scan"];
+  total: number;
+}) {
+  const router = useRouter();
+  const start = useServerFn(runBingoScan);
+  const started = useRef(false);
+  const [slow, setSlow] = useState(false);
+  const pending = scan.status === "none" || scan.status === "running";
+
+  useEffect(() => {
+    if (!pending) return;
+    if (!started.current) {
+      started.current = true;
+      // The scan call itself can take a minute; when it returns, reload the result.
+      start({ data: { token } })
+        .catch(() => undefined)
+        .finally(() => router.invalidate());
+    }
+    const poll = window.setInterval(() => router.invalidate(), 8000);
+    const slowTimer = window.setTimeout(() => setSlow(true), 90_000);
+    return () => {
+      window.clearInterval(poll);
+      window.clearTimeout(slowTimer);
+    };
+  }, [pending, router, start, token]);
+
+  if (pending) {
+    return (
+      <section className="mt-10 rounded-2xl border border-primary/30 bg-blush/60 p-6">
+        <div className="flex items-start gap-3">
+          <Loader2 className="mt-1 h-5 w-5 shrink-0 animate-spin text-primary" aria-hidden="true" />
+          <div>
+            <h2 className="text-xl">Checking your card against the real internet</h2>
+            <p className="mt-1 text-base text-muted-foreground">
+              We're scanning your website, Google profile, socials and asking an AI assistant who it
+              recommends. This takes about a minute; your score will update right here.
+            </p>
+            {slow ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                Still working. You can close this page: we'll email you the verified score.
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (scan.status === "failed") return null;
+
+  const changed = Object.entries(scan.verified);
+  return (
+    <section className="mt-10">
+      <h2 className="flex items-center gap-2 text-2xl">
+        <Search className="h-5 w-5 text-primary" aria-hidden="true" /> What our scan found
+      </h2>
+      {scan.selfTotal !== null && scan.selfTotal !== total ? (
+        <p className="mt-2 text-base text-muted-foreground">
+          Your card said {scan.selfTotal}. After checking your real profiles, your verified score is{" "}
+          <span className="font-semibold text-foreground">{total}</span>.
+        </p>
+      ) : (
+        <p className="mt-2 text-base text-muted-foreground">
+          We checked your card against your real website and profiles.
+        </p>
+      )}
+
+      <ul className="mt-5 divide-y divide-border rounded-2xl border border-border bg-card shadow-card">
+        {scan.checks.map((check, i) => (
+          <li key={`${check.label}-${i}`} className="flex gap-3 p-4">
+            {check.status === "pass" ? (
+              <Check className="mt-0.5 h-5 w-5 shrink-0 text-success" aria-label="Good" />
+            ) : check.status === "fail" ? (
+              <CircleAlert
+                className="mt-0.5 h-5 w-5 shrink-0 text-primary"
+                aria-label="Needs work"
+              />
+            ) : (
+              <Info
+                className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground"
+                aria-label="Not checked"
+              />
+            )}
+            <div>
+              <p className="font-medium">{check.label}</p>
+              <p className="text-sm text-muted-foreground">{check.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {scan.ai ? (
+        <div className="mt-6 rounded-2xl bg-secondary p-5">
+          <p className="eyebrow text-muted-foreground">We asked an AI assistant</p>
+          <p className="mt-1 text-lg">"{scan.ai.query}"</p>
+          <p className="mt-2 text-base">
+            {scan.ai.mentioned ? "It recommended you." : "You weren't in its answer."}
+            {scan.ai.recommended.length ? (
+              <> It recommended: {scan.ai.recommended.slice(0, 5).join(", ")}.</>
+            ) : null}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{scan.ai.whatAiKnows}</p>
+        </div>
+      ) : null}
+
+      {changed.length ? (
+        <div className="mt-6">
+          <p className="text-sm font-medium">Squares we verified</p>
+          <ul className="mt-2 space-y-1.5 text-sm">
+            {changed.map(([id, v]) => (
+              <li key={id} className="flex gap-2">
+                {v.value ? (
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-label="Yes" />
+                ) : (
+                  <X className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-label="No" />
+                )}
+                <span>
+                  <span className="font-medium">{SQUARE_LABEL[id] ?? id}</span>
+                  <span className="text-muted-foreground"> · {v.evidence}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </section>
   );
 }

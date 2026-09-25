@@ -16,6 +16,12 @@ import { CALENDLY_BEAUTY_STRATEGY_LINK, CALENDLY_LINKS } from "@/lib/calendly";
 import { type AreaKey } from "@/lib/score-rubric";
 import { SITE } from "@/lib/site";
 import { stageForScore } from "@/lib/stages";
+import {
+  deriveFromScan,
+  type ScanCheck,
+  type ScanData,
+  type Verification,
+} from "@/lib/scan/verify";
 
 const handle = z.string().trim().max(160).optional().or(z.literal(""));
 
@@ -27,6 +33,8 @@ const submitSchema = z.object({
     email: z.string().trim().email("That email does not look right").max(255),
     businessName: z.string().trim().min(1, "Tell us your business name").max(160),
     website: z.string().trim().max(255).optional().or(z.literal("")),
+    city: z.string().trim().max(80).optional().or(z.literal("")),
+    service: z.string().trim().max(80).optional().or(z.literal("")),
     phone: z.string().trim().max(40).optional().or(z.literal("")),
     source: z.string().trim().max(80).optional().or(z.literal("")),
     handles: z.object({
@@ -109,6 +117,8 @@ export const submitBingo = createServerFn({ method: "POST" })
         consent_terms_at: now,
         answers: {
           kind: "bingo",
+          city: data.details.city || undefined,
+          service: data.details.service || undefined,
           checked,
           mysteryText,
           bingos: result.bingos,
@@ -213,6 +223,13 @@ export type BingoResult = {
   strategyCallUrl: string;
   beautyLive: boolean;
   beautyEndsAt: string;
+  scan: {
+    status: "none" | "running" | "done" | "failed";
+    checks: ScanCheck[];
+    verified: Record<string, Verification>;
+    selfTotal: number | null;
+    ai: { query: string; mentioned: boolean; recommended: string[]; whatAiKnows: string } | null;
+  };
 };
 
 export const getBingoResult = createServerFn({ method: "GET" })
@@ -234,6 +251,9 @@ export const getBingoResult = createServerFn({ method: "GET" })
       checked?: Record<string, boolean>;
       mysteryText?: Record<string, string>;
       bingos?: number;
+      scan?: ScanData;
+      verified?: Record<string, Verification>;
+      selfTotal?: number;
     };
     if (!row || answers.kind !== "bingo") return null;
 
@@ -256,6 +276,20 @@ export const getBingoResult = createServerFn({ method: "GET" })
       strategyCallUrl: CALENDLY_LINKS["strategy-consult"],
       beautyLive: beautyOfferLive(),
       beautyEndsAt: BEAUTY_ENDS_AT.toISOString(),
+      scan: {
+        status: answers.scan?.status ?? "none",
+        checks: answers.scan?.status === "done" ? deriveFromScan(answers.scan).checks : [],
+        verified: answers.verified ?? {},
+        selfTotal: answers.selfTotal ?? null,
+        ai: answers.scan?.ai
+          ? {
+              query: answers.scan.ai.query,
+              mentioned: answers.scan.ai.mentioned,
+              recommended: answers.scan.ai.recommended,
+              whatAiKnows: answers.scan.ai.what_ai_knows,
+            }
+          : null,
+      },
     };
   });
 
@@ -323,4 +357,12 @@ export const unsubscribeByToken = createServerFn({ method: "POST" })
       detail: { channel: "email", token: data.token },
     });
     return { ok: true as const };
+  });
+
+/** Starts (or reports on) the live website/social/AI scan for this card. Called by the results page. */
+export const runBingoScan = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({ token: z.string().min(20).max(80) }).parse(data))
+  .handler(async ({ data }) => {
+    const { runScanForToken } = await import("@/lib/scan/run.server");
+    return runScanForToken(data.token);
   });
