@@ -69,6 +69,11 @@ export type Database = {
           primary_service_slug: string | null
           secondary_service_slug: string | null
           sort_order: number
+          stage_missing: string | null
+          stage_name: string | null
+          stage_next_step: string | null
+          stage_tagline: string | null
+          stage_working: string | null
           updated_at: string
         }
         Insert: {
@@ -83,6 +88,11 @@ export type Database = {
           primary_service_slug?: string | null
           secondary_service_slug?: string | null
           sort_order?: number
+          stage_missing?: string | null
+          stage_name?: string | null
+          stage_next_step?: string | null
+          stage_tagline?: string | null
+          stage_working?: string | null
           updated_at?: string
         }
         Update: {
@@ -97,6 +107,11 @@ export type Database = {
           primary_service_slug?: string | null
           secondary_service_slug?: string | null
           sort_order?: number
+          stage_missing?: string | null
+          stage_name?: string | null
+          stage_next_step?: string | null
+          stage_tagline?: string | null
+          stage_working?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -134,8 +149,84 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          cta_label: string
+          cta_to: string
+          description: string
+          id: string
+          interview_backlink_label: string | null
+          interview_business_name: string | null
+          interview_business_website: string | null
+          interview_guest_name: string | null
+          interview_instagram_url: string | null
+          intro: string
+          published_at: string
+          read_minutes: number
+          sections: Json
+          slug: string
+          status: string
+          tags: string[]
+          takeaways: string[]
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string
+          cta_to?: string
+          description: string
+          id?: string
+          interview_backlink_label?: string | null
+          interview_business_name?: string | null
+          interview_business_website?: string | null
+          interview_guest_name?: string | null
+          interview_instagram_url?: string | null
+          intro: string
+          published_at?: string
+          read_minutes?: number
+          sections?: Json
+          slug: string
+          status?: string
+          tags?: string[]
+          takeaways?: string[]
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string
+          cta_to?: string
+          description?: string
+          id?: string
+          interview_backlink_label?: string | null
+          interview_business_name?: string | null
+          interview_business_website?: string | null
+          interview_guest_name?: string | null
+          interview_instagram_url?: string | null
+          intro?: string
+          published_at?: string
+          read_minutes?: number
+          sections?: Json
+          slug?: string
+          status?: string
+          tags?: string[]
+          takeaways?: string[]
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
+          amount_cents: number | null
           cancelled_at: string | null
           created_at: string
           ends_at: string
@@ -144,14 +235,18 @@ export type Database = {
           intake: Json
           meet_link: string | null
           person_id: string | null
+          reminder_sent_at: string | null
           reschedule_count: number
           service_slug: string
           starts_at: string
           status: string
+          stripe_payment_status: string
+          stripe_session_id: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          amount_cents?: number | null
           cancelled_at?: string | null
           created_at?: string
           ends_at: string
@@ -160,14 +255,18 @@ export type Database = {
           intake?: Json
           meet_link?: string | null
           person_id?: string | null
+          reminder_sent_at?: string | null
           reschedule_count?: number
           service_slug: string
           starts_at: string
           status?: string
+          stripe_payment_status?: string
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          amount_cents?: number | null
           cancelled_at?: string | null
           created_at?: string
           ends_at?: string
@@ -176,10 +275,13 @@ export type Database = {
           intake?: Json
           meet_link?: string | null
           person_id?: string | null
+          reminder_sent_at?: string | null
           reschedule_count?: number
           service_slug?: string
           starts_at?: string
           status?: string
+          stripe_payment_status?: string
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -189,6 +291,105 @@ export type Database = {
             columns: ["person_id"]
             isOneToOne: false
             referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_pieces: {
+        Row: {
+          caption: string | null
+          created_at: string
+          event_id: string | null
+          hook: string | null
+          id: string
+          interview_id: string | null
+          kind: string
+          notes: string | null
+          person_id: string | null
+          platform: string | null
+          project_id: string | null
+          published_at: string | null
+          published_url: string | null
+          script: string | null
+          service_id: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string | null
+          hook?: string | null
+          id?: string
+          interview_id?: string | null
+          kind?: string
+          notes?: string | null
+          person_id?: string | null
+          platform?: string | null
+          project_id?: string | null
+          published_at?: string | null
+          published_url?: string | null
+          script?: string | null
+          service_id?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string | null
+          hook?: string | null
+          id?: string
+          interview_id?: string | null
+          kind?: string
+          notes?: string | null
+          person_id?: string | null
+          platform?: string | null
+          project_id?: string | null
+          published_at?: string | null
+          published_url?: string | null
+          script?: string | null
+          service_id?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_pieces_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_pieces_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
             referencedColumns: ["id"]
           },
         ]
@@ -728,6 +929,7 @@ export type Database = {
           full_name: string
           id: string
           instagram: string | null
+          instagram_post_url: string | null
           interview_date: string | null
           notes: string | null
           other_links: string | null
@@ -757,6 +959,7 @@ export type Database = {
           full_name: string
           id?: string
           instagram?: string | null
+          instagram_post_url?: string | null
           interview_date?: string | null
           notes?: string | null
           other_links?: string | null
@@ -786,6 +989,7 @@ export type Database = {
           full_name?: string
           id?: string
           instagram?: string | null
+          instagram_post_url?: string | null
           interview_date?: string | null
           notes?: string | null
           other_links?: string | null
@@ -1093,67 +1297,115 @@ export type Database = {
       }
       podcast_applications: {
         Row: {
+          agreed_to_terms: boolean
           answers: Json
           business_name: string | null
           city: string | null
           created_at: string
+          decision_maker: boolean
           email: string
           format: string
           full_name: string
+          has_high_ticket_offer: boolean
+          has_offer: string | null
           id: string
           instagram: string | null
+          monthly_revenue: string | null
           notes: string | null
+          open_to_vip_investment: string | null
           person_id: string | null
           phone: string | null
+          professional_tone_ok: boolean
           profile_id: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          social_media_optimized: string | null
+          social_tags: string | null
           source: string | null
+          stage: string | null
           status: string
+          suggested_featured: boolean
+          tour_focus: string | null
           updated_at: string
+          wants_community: boolean
+          wants_podcast_tour: string | null
           website: string | null
+          will_promote: boolean
+          youtube_channel: string | null
         }
         Insert: {
+          agreed_to_terms?: boolean
           answers?: Json
           business_name?: string | null
           city?: string | null
           created_at?: string
+          decision_maker?: boolean
           email: string
           format?: string
           full_name: string
+          has_high_ticket_offer?: boolean
+          has_offer?: string | null
           id?: string
           instagram?: string | null
+          monthly_revenue?: string | null
           notes?: string | null
+          open_to_vip_investment?: string | null
           person_id?: string | null
           phone?: string | null
+          professional_tone_ok?: boolean
           profile_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          social_media_optimized?: string | null
+          social_tags?: string | null
           source?: string | null
+          stage?: string | null
           status?: string
+          suggested_featured?: boolean
+          tour_focus?: string | null
           updated_at?: string
+          wants_community?: boolean
+          wants_podcast_tour?: string | null
           website?: string | null
+          will_promote?: boolean
+          youtube_channel?: string | null
         }
         Update: {
+          agreed_to_terms?: boolean
           answers?: Json
           business_name?: string | null
           city?: string | null
           created_at?: string
+          decision_maker?: boolean
           email?: string
           format?: string
           full_name?: string
+          has_high_ticket_offer?: boolean
+          has_offer?: string | null
           id?: string
           instagram?: string | null
+          monthly_revenue?: string | null
           notes?: string | null
+          open_to_vip_investment?: string | null
           person_id?: string | null
           phone?: string | null
+          professional_tone_ok?: boolean
           profile_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          social_media_optimized?: string | null
+          social_tags?: string | null
           source?: string | null
+          stage?: string | null
           status?: string
+          suggested_featured?: boolean
+          tour_focus?: string | null
           updated_at?: string
+          wants_community?: boolean
+          wants_podcast_tour?: string | null
           website?: string | null
+          will_promote?: boolean
+          youtube_channel?: string | null
         }
         Relationships: [
           {
@@ -1420,13 +1672,18 @@ export type Database = {
           handles: Json
           id: string
           person_id: string | null
+          petals: Json
           phone: string | null
           primary_source: string | null
+          stage: string | null
+          thorn_score: number
+          thorns: Json
           token: string
           top_fixes: Json
           total_score: number
           updated_at: string
           website: string | null
+          with_thorns: boolean
         }
         Insert: {
           answers?: Json
@@ -1444,13 +1701,18 @@ export type Database = {
           handles?: Json
           id?: string
           person_id?: string | null
+          petals?: Json
           phone?: string | null
           primary_source?: string | null
+          stage?: string | null
+          thorn_score?: number
+          thorns?: Json
           token: string
           top_fixes?: Json
           total_score: number
           updated_at?: string
           website?: string | null
+          with_thorns?: boolean
         }
         Update: {
           answers?: Json
@@ -1468,13 +1730,18 @@ export type Database = {
           handles?: Json
           id?: string
           person_id?: string | null
+          petals?: Json
           phone?: string | null
           primary_source?: string | null
+          stage?: string | null
+          thorn_score?: number
+          thorns?: Json
           token?: string
           top_fixes?: Json
           total_score?: number
           updated_at?: string
           website?: string | null
+          with_thorns?: boolean
         }
         Relationships: [
           {
@@ -1503,6 +1770,7 @@ export type Database = {
           requires: string[]
           slug: string
           sort_order: number
+          stages: string[]
           step: string | null
           summary: string | null
           updated_at: string
@@ -1524,6 +1792,7 @@ export type Database = {
           requires?: string[]
           slug: string
           sort_order?: number
+          stages?: string[]
           step?: string | null
           summary?: string | null
           updated_at?: string
@@ -1545,6 +1814,7 @@ export type Database = {
           requires?: string[]
           slug?: string
           sort_order?: number
+          stages?: string[]
           step?: string | null
           summary?: string | null
           updated_at?: string
@@ -1706,6 +1976,7 @@ export type Database = {
           final_video_link: string
           full_name: string
           instagram: string
+          instagram_post_url: string
           interview_date: string
           posted_links: string
           slug: string

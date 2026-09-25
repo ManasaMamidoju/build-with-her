@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 import { ScoreRing } from "@/components/services/ScoreRing";
 import { cn } from "@/lib/utils";
 import { AREAS } from "@/lib/score-rubric";
-import { BEAUTY_ENDS_LABEL, MYSTERY_SQUARES } from "@/lib/bingo";
+import { MYSTERY_SQUARES } from "@/lib/bingo";
 import {
   getBingoResult,
   runBingoScan,
-  unlockBeautyOffer,
+
   type BingoResult,
 } from "@/lib/bingo.functions";
 import { BINGO_SQUARES } from "@/lib/bingo";
@@ -149,12 +149,7 @@ function BingoResultPage() {
         </ol>
       </section>
 
-      <BookSection
-        token={token}
-        clarityCallUrl={result.clarityCallUrl}
-        strategyCallUrl={result.strategyCallUrl}
-        beautyLive={result.beautyLive}
-      />
+      <BookSection token={token} clarityCallUrl={result.clarityCallUrl} />
 
       {/* The three mystery squares, revealed */}
       <section className="mt-12 rounded-2xl border border-dashed border-primary/50 p-6">
@@ -182,145 +177,25 @@ function BingoResultPage() {
   );
 }
 
-function BookSection({
-  token,
-  clarityCallUrl,
-  strategyCallUrl,
-  beautyLive,
-}: {
-  token: string;
-  clarityCallUrl: string;
-  strategyCallUrl: string;
-  beautyLive: boolean;
-}) {
-  const unlock = useServerFn(unlockBeautyOffer);
-  const [code, setCode] = useState("");
-  const [status, setStatus] = useState<"idle" | "checking" | "invalid" | "expired">("idle");
-  const [beautyUrl, setBeautyUrl] = useState<string | null>(null);
-
-  async function applyCode(event: React.FormEvent) {
-    event.preventDefault();
-    if (!code.trim()) return;
-    setStatus("checking");
-    try {
-      const res = await unlock({ data: { code, token } });
-      if (res.ok) {
-        setBeautyUrl(res.url);
-        setStatus("idle");
-      } else {
-        setStatus(res.reason);
-      }
-    } catch {
-      setStatus("invalid");
-    }
-  }
-
+function BookSection({ clarityCallUrl }: { token: string; clarityCallUrl: string }) {
   return (
     <section id="book" className="mt-12 scroll-mt-6">
       <h2 className="text-3xl">Want help doing this?</h2>
       <p className="mt-2 text-base text-muted-foreground">
-        Bring this score to a call and leave knowing exactly what to fix first.
+        Bring this score to a free call and leave knowing exactly what to fix first.
       </p>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
-          <p className="eyebrow text-muted-foreground">30 minutes · Free</p>
-          <h3 className="mt-2 text-2xl">Clarity Call</h3>
-          <p className="mt-2 flex-1 text-base text-muted-foreground">
-            We go through your score together and pick the one fix that pays back fastest.
-          </p>
-          <Button asChild variant="outline" size="lg" className="mt-5 h-12 text-base">
-            <a href={clarityCallUrl} target="_blank" rel="noopener noreferrer">
-              Book a free Clarity Call
-            </a>
-          </Button>
-        </div>
-
-        <div
-          className={cn(
-            "flex flex-col rounded-2xl border bg-card p-6 shadow-card",
-            beautyUrl ? "border-primary ring-2 ring-primary" : "border-border",
-          )}
-        >
-          <p className="eyebrow text-muted-foreground">2 hours · 1:1</p>
-          <h3 className="mt-2 text-2xl">Strategy Call</h3>
-          <p className="mt-2 text-base text-muted-foreground">
-            Your offer, pages, Google and AI findability, and follow up, ending with a build plan.
-          </p>
-          <p className="numeric mt-4 text-3xl">
-            {beautyUrl ? (
-              <>
-                <span className="mr-2 text-xl text-muted-foreground line-through">$200</span>$50
-              </>
-            ) : (
-              "$200"
-            )}
-          </p>
-
-          {beautyUrl ? (
-            <>
-              <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-primary">
-                <Sparkles className="h-4 w-4" /> Code BEAUTY applied. Book before{" "}
-                {BEAUTY_ENDS_LABEL}.
-              </p>
-              <Button asChild size="lg" className="mt-5 h-12 text-base">
-                <a href={beautyUrl} target="_blank" rel="noopener noreferrer">
-                  Book my $50 Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            </>
-          ) : (
-            <>
-              {beautyLive ? (
-                <form onSubmit={applyCode} className="mt-4">
-                  <Label htmlFor="promo" className="text-sm">
-                    Have a code?
-                  </Label>
-                  <div className="mt-1.5 flex gap-2">
-                    <Input
-                      id="promo"
-                      value={code}
-                      onChange={(e) => {
-                        setCode(e.target.value);
-                        if (status !== "checking") setStatus("idle");
-                      }}
-                      placeholder="Enter code"
-                      autoCapitalize="characters"
-                      className="h-11 uppercase"
-                      maxLength={40}
-                    />
-                    <Button
-                      type="submit"
-                      variant="secondary"
-                      className="h-11"
-                      disabled={status === "checking"}
-                    >
-                      {status === "checking" ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Apply"
-                      )}
-                    </Button>
-                  </div>
-                  {status === "invalid" ? (
-                    <p className="mt-1.5 text-sm text-destructive">That code does not work.</p>
-                  ) : null}
-                  {status === "expired" ? (
-                    <p className="mt-1.5 text-sm text-destructive">
-                      That code ended with Beauty Weekend.
-                    </p>
-                  ) : null}
-                </form>
-              ) : null}
-              <div className="flex-1" />
-              <Button asChild size="lg" className="mt-5 h-12 text-base">
-                <a href={strategyCallUrl} target="_blank" rel="noopener noreferrer">
-                  Book a Strategy Call
-                </a>
-              </Button>
-            </>
-          )}
-        </div>
+      <div className="mt-6 flex flex-col rounded-2xl border border-primary bg-card p-6 shadow-card ring-2 ring-primary">
+        <p className="eyebrow text-muted-foreground">30 minutes · Free</p>
+        <h3 className="mt-2 text-2xl">Clarity Call</h3>
+        <p className="mt-2 text-base text-muted-foreground">
+          We go through your score together and pick the one fix that pays back fastest.
+        </p>
+        <Button asChild size="lg" className="mt-5 h-12 text-base">
+          <a href={clarityCallUrl} target="_blank" rel="noopener noreferrer">
+            Book my free Clarity Call <ArrowRight className="ml-2 h-4 w-4" />
+          </a>
+        </Button>
       </div>
     </section>
   );

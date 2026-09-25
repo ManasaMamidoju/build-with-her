@@ -1,4 +1,4 @@
-import { BEAUTY_CODE, BEAUTY_ENDS_AT, type BingoFix } from "@/lib/bingo";
+import { BEAUTY_ENDS_AT, type BingoFix } from "@/lib/bingo";
 import { CALENDLY_LINKS } from "@/lib/calendly";
 import { SITE } from "@/lib/site";
 
@@ -85,45 +85,44 @@ export function renderFollowupEmail(input: FollowupInput) {
   const footer = emailFooter(input.token);
   const topFix = input.fixes[0];
 
+  const clarityUrl = CALENDLY_LINKS["clarity-call"];
+
   if (input.kind === "beauty_saturday") {
-    const subject = `${firstText}, your $50 strategy call code ends Sunday`;
+    const subject = `${firstText}, want help with your ${input.total}/100 score?`;
     const text = `Hi ${firstText},
 
 You scored ${input.total}/100 at Findability Bingo (you're a ${input.stage}).
 
-${topFix ? `Your #1 fix: ${topFix.title}.\n\n` : ""}If you want me to map out exactly how to get found on Google and in AI answers, the 2-hour 1:1 Strategy Call is $50 instead of $200 with code ${BEAUTY_CODE}, only until Sunday at 11:59pm ET.
+${topFix ? `Your #1 fix: ${topFix.title}.\n\n` : ""}If you want a hand with it, book a free 30-minute Clarity Call. We go through your score together and pick the one fix that pays back fastest, so you show up on Google and in AI answers.
 
-Enter the code on your results page: ${bookUrl}
-
-Or start with a free 30-minute Clarity Call: ${CALENDLY_LINKS["clarity-call"]}
+Book your free Clarity Call: ${clarityUrl}
 
 Manasa
 ${SITE.name}${footer.text}`;
     const html = wrap(`<p>Hi ${first},</p>
 <p>You scored <strong>${input.total}/100</strong> at Findability Bingo (you're a <strong>${esc(input.stage)}</strong>).</p>
 ${topFix ? `<p>Your #1 fix: <strong>${esc(topFix.title)}</strong>.</p>` : ""}
-<p>If you want me to map out exactly how to get found on Google and in AI answers, the 2-hour 1:1 Strategy Call is <strong>$50 instead of $200</strong> with code <strong>${BEAUTY_CODE}</strong>, only until Sunday at 11:59pm ET.</p>
-${button(bookUrl, `Use code ${BEAUTY_CODE}`)}
-<p>Or start with a <a href="${CALENDLY_LINKS["clarity-call"]}" style="color:#a3284a">free 30-minute Clarity Call</a>.</p>
+<p>If you want a hand with it, book a <strong>free 30-minute Clarity Call</strong>. We go through your score together and pick the one fix that pays back fastest, so you show up on Google and in AI answers.</p>
+${button(clarityUrl, "Book my free Clarity Call")}
 <p>Manasa<br>${esc(SITE.name)}</p>${footer.html}`);
     return { subject, text, html };
   }
 
   if (input.kind === "beauty_last_chance") {
-    const subject = `Tonight at midnight: $50 strategy call goes back to $200`;
+    const subject = `${firstText}, grab a free Clarity Call before the week fills up`;
     const text = `Hi ${firstText},
 
-Quick one: code ${BEAUTY_CODE} stops working tonight at 11:59pm ET.
+Quick one: Clarity Call spots for Beauty Weekend players are filling up.
 
-After that the 2-hour 1:1 Strategy Call goes back to $200. On the call we go through your ${input.total}/100 score and build your plan to show up on Google, ChatGPT and Gemini.
+In 30 free minutes we go through your ${input.total}/100 score and pick the first fix to help you show up on Google, ChatGPT and Gemini.
 
-Book it for $50 here: ${bookUrl}
+Book yours here: ${clarityUrl}
 
 Manasa${footer.text}`;
     const html = wrap(`<p>Hi ${first},</p>
-<p>Quick one: code <strong>${BEAUTY_CODE}</strong> stops working <strong>tonight at 11:59pm ET</strong>.</p>
-<p>After that the 2-hour 1:1 Strategy Call goes back to $200. On the call we go through your ${input.total}/100 score and build your plan to show up on Google, ChatGPT and Gemini.</p>
-${button(bookUrl, "Book it for $50")}
+<p>Quick one: Clarity Call spots for Beauty Weekend players are filling up.</p>
+<p>In 30 free minutes we go through your ${input.total}/100 score and pick the first fix to help you show up on Google, ChatGPT and Gemini.</p>
+${button(clarityUrl, "Book my free Clarity Call")}
 <p>Manasa</p>${footer.html}`);
     return { subject, text, html };
   }

@@ -1,5 +1,5 @@
 import { AREAS } from "@/lib/score-rubric";
-import { BEAUTY_CODE, BEAUTY_ENDS_LABEL, beautyOfferLive, type BingoFix } from "@/lib/bingo";
+import type { BingoFix } from "@/lib/bingo";
 import { CALENDLY_LINKS } from "@/lib/calendly";
 import { SITE } from "@/lib/site";
 import { unsubscribeUrl } from "@/lib/bingo-followups";
@@ -26,7 +26,6 @@ export function renderBingoResultEmail(input: {
   now?: Date;
 }) {
   const first = input.fullName.trim().split(/\s+/)[0] || "there";
-  const live = beautyOfferLive(input.now);
   const subject = input.verified
     ? `We checked your website and profiles: your verified score is ${input.total}/100`
     : `You're a ${input.stage}: your Findability Score is ${input.total}/100`;
@@ -34,9 +33,6 @@ export function renderBingoResultEmail(input: {
     ? `We scanned your website, Google profile, socials and AI answers and checked ${input.verified.checkedCount} of your squares. Your card said ${input.verified.selfTotal}; your verified score is ${input.total}.`
     : null;
 
-  const offerText = live
-    ? `2. 1:1 Strategy Call, $50 instead of $200 with code ${BEAUTY_CODE}. Enter the code on your results page before ${BEAUTY_ENDS_LABEL}:\n${input.resultUrl}#book`
-    : `2. 1:1 Strategy Call ($200): ${input.resultUrl}#book`;
 
   const text = [
     `Hi ${first},`,
@@ -52,9 +48,8 @@ export function renderBingoResultEmail(input: {
     "",
     `See your full result any time: ${input.resultUrl}`,
     "",
-    "Want help doing this?",
-    `1. Free Clarity Call (30 min): ${CALENDLY_LINKS["clarity-call"]}`,
-    offerText,
+    "Want help doing this? Book a free 30-minute Clarity Call and we'll pick the one fix that pays back fastest:",
+    CALENDLY_LINKS["clarity-call"],
     "",
     "Manasa",
     SITE.name,
@@ -69,9 +64,6 @@ export function renderBingoResultEmail(input: {
     )
     .join("");
 
-  const offerHtml = live
-    ? `<p style="margin:8px 0"><a href="${esc(input.resultUrl)}#book" style="color:#a3284a;font-weight:700">1:1 Strategy Call: $50 instead of $200 with code ${BEAUTY_CODE}</a><br><span style="font-size:13px;color:#5a4a4e">Enter the code on your results page before ${BEAUTY_ENDS_LABEL}. The price goes back to $200 after Beauty Weekend.</span></p>`
-    : `<p style="margin:8px 0"><a href="${esc(input.resultUrl)}#book" style="color:#a3284a;font-weight:700">1:1 Strategy Call ($200)</a></p>`;
 
   const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#2a1d20;line-height:1.5">
 <p>Hi ${esc(first)},</p>${verifiedLine ? `<p>${esc(verifiedLine)}</p>` : ""}
@@ -83,8 +75,8 @@ export function renderBingoResultEmail(input: {
 <p style="margin:20px 0"><a href="${esc(input.resultUrl)}" style="background:#a3284a;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">See your full result</a></p>
 <div style="background:#f6e3e6;border-radius:16px;padding:16px 20px;margin:24px 0">
 <p style="margin:0 0 8px"><strong>Want help doing this?</strong></p>
-<p style="margin:8px 0"><a href="${CALENDLY_LINKS["clarity-call"]}" style="color:#a3284a;font-weight:700">Book a free Clarity Call (30 min)</a></p>
-${offerHtml}
+<p style="margin:8px 0">Book a free 30-minute Clarity Call. We go through your score together and pick the one fix that pays back fastest.</p>
+<p style="margin:14px 0 4px"><a href="${CALENDLY_LINKS["clarity-call"]}" style="background:#a3284a;color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:700">Book my free Clarity Call</a></p>
 </div>
 <p>Manasa<br>${esc(SITE.name)}</p>
 <p style="font-size:12px;color:#8a7a7e">${esc(SITE.legalName)}, ${esc(SITE.city)}, FL<br>You're getting this because you asked for your Findability Score at ${esc(SITE.url)}/bingo. <a href="${esc(unsubscribeUrl(input.token))}" style="color:#8a7a7e">Unsubscribe from marketing emails</a></p>
