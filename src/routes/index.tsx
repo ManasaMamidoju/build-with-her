@@ -49,7 +49,6 @@ const faqs = [
   },
 ];
 
-
 const doors = [
   {
     icon: Compass,
