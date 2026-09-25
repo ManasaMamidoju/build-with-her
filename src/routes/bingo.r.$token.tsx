@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 import { ScoreRing } from "@/components/services/ScoreRing";
 import { cn } from "@/lib/utils";
 import { AREAS } from "@/lib/score-rubric";
-import { BEAUTY_ENDS_LABEL, MYSTERY_SQUARES } from "@/lib/bingo";
+import { MYSTERY_SQUARES } from "@/lib/bingo";
 import {
   getBingoResult,
   runBingoScan,
-  unlockBeautyOffer,
+
   type BingoResult,
 } from "@/lib/bingo.functions";
 import { BINGO_SQUARES } from "@/lib/bingo";

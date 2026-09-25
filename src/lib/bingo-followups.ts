@@ -1,4 +1,4 @@
-import { BEAUTY_CODE, BEAUTY_ENDS_AT, type BingoFix } from "@/lib/bingo";
+import { BEAUTY_ENDS_AT, type BingoFix } from "@/lib/bingo";
 import { CALENDLY_LINKS } from "@/lib/calendly";
 import { SITE } from "@/lib/site";
 
