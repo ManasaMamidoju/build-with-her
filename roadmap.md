@@ -10,4 +10,10 @@
 ## Open
 - Google Calendar connection (booking events + Meet links; currently skipped gracefully)
 - Stripe payments (strategy consult invoices for now)
-- Publish latest fixes so the booking pages work on buildwithhermedia.com
+
+## Done (continued)
+- Calendly connector linked; booking lookups go through it (personal token still works as fallback)
+- Apify and Anthropic keys saved
+- Scheduled job every 30 minutes calling /cron/send-bingo-followups (first Beauty Weekend email due Sat 10am ET)
+- Published bingo pages and cron endpoint to buildwithhermedia.com
+
