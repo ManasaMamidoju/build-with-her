@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -132,6 +133,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  // Findability Bingo is opened from a conference QR code: show only the card, no site nav.
+  const bare = useRouterState({
+    select: (s) => s.location.pathname === "/bingo" || s.location.pathname.startsWith("/bingo/"),
+  });
 
   useEffect(() => {
     captureSourceFromLocation();
@@ -150,11 +155,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <div className="flex min-h-screen flex-col">
-        <SiteHeader />
+        {bare ? null : <SiteHeader />}
         <div className="flex-1">
           <Outlet />
         </div>
-        <SiteFooter />
+        {bare ? null : <SiteFooter />}
       </div>
       <Toaster />
     </QueryClientProvider>

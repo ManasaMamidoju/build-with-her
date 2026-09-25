@@ -22,13 +22,16 @@ import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin.route'
+import { Route as BingoIndexRouteImport } from './routes/bingo.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as BookClarityRouteImport } from './routes/book.clarity'
 import { Route as BookPodcastRouteImport } from './routes/book.podcast'
 import { Route as BookStrategyRouteImport } from './routes/book.strategy'
+import { Route as CronSendBingoFollowupsRouteImport } from './routes/cron.send-bingo-followups'
 import { Route as CronSendBookingRemindersRouteImport } from './routes/cron.send-booking-reminders'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
@@ -55,6 +58,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppScoreRouteImport } from './routes/_authenticated/app.score'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as BingoRTokenRouteImport } from './routes/bingo.r.$token'
 import { Route as ScoreRTokenRouteImport } from './routes/score.r.$token'
 import { Route as AuthenticatedAdminPeopleIndexRouteImport } from './routes/_authenticated/admin.people.index'
 import { Route as AuthenticatedAdminPeopleIdRouteImport } from './routes/_authenticated/admin.people.$id'
@@ -129,10 +133,20 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BingoIndexRoute = BingoIndexRouteImport.update({
+  id: '/bingo/',
+  path: '/bingo/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
@@ -162,6 +176,11 @@ const BookPodcastRoute = BookPodcastRouteImport.update({
 const BookStrategyRoute = BookStrategyRouteImport.update({
   id: '/book/strategy',
   path: '/book/strategy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CronSendBingoFollowupsRoute = CronSendBingoFollowupsRouteImport.update({
+  id: '/cron/send-bingo-followups',
+  path: '/cron/send-bingo-followups',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CronSendBookingRemindersRoute =
@@ -304,6 +323,11 @@ const AuthenticatedAppSettingsRoute =
     path: '/app/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const BingoRTokenRoute = BingoRTokenRouteImport.update({
+  id: '/bingo/r/$token',
+  path: '/bingo/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScoreRTokenRoute = ScoreRTokenRouteImport.update({
   id: '/score/r/$token',
   path: '/score/r/$token',
@@ -371,12 +395,14 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/book/clarity': typeof BookClarityRoute
   '/book/podcast': typeof BookPodcastRoute
   '/book/strategy': typeof BookStrategyRoute
+  '/cron/send-bingo-followups': typeof CronSendBingoFollowupsRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -384,6 +410,7 @@ export interface FileRoutesByFullPath {
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/bingo/': typeof BingoIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/podcast/': typeof PodcastIndexRoute
@@ -402,6 +429,7 @@ export interface FileRoutesByFullPath {
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/bingo/r/$token': typeof BingoRTokenRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
@@ -426,11 +454,13 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/book/clarity': typeof BookClarityRoute
   '/book/podcast': typeof BookPodcastRoute
   '/book/strategy': typeof BookStrategyRoute
+  '/cron/send-bingo-followups': typeof CronSendBingoFollowupsRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -438,6 +468,7 @@ export interface FileRoutesByTo {
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/bingo': typeof BingoIndexRoute
   '/blog': typeof BlogIndexRoute
   '/learn': typeof LearnIndexRoute
   '/podcast': typeof PodcastIndexRoute
@@ -456,6 +487,7 @@ export interface FileRoutesByTo {
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/bingo/r/$token': typeof BingoRTokenRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
@@ -483,12 +515,14 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/book/clarity': typeof BookClarityRoute
   '/book/podcast': typeof BookPodcastRoute
   '/book/strategy': typeof BookStrategyRoute
+  '/cron/send-bingo-followups': typeof CronSendBingoFollowupsRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -496,6 +530,7 @@ export interface FileRoutesById {
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/bingo/': typeof BingoIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/podcast/': typeof PodcastIndexRoute
@@ -514,6 +549,7 @@ export interface FileRoutesById {
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/bingo/r/$token': typeof BingoRTokenRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
@@ -541,12 +577,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/admin'
     | '/blog/$slug'
     | '/book/$slug'
     | '/book/clarity'
     | '/book/podcast'
     | '/book/strategy'
+    | '/cron/send-bingo-followups'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -554,6 +592,7 @@ export interface FileRouteTypes {
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/bingo/'
     | '/blog/'
     | '/learn/'
     | '/podcast/'
@@ -572,6 +611,7 @@ export interface FileRouteTypes {
     | '/app/billing'
     | '/app/score'
     | '/app/settings'
+    | '/bingo/r/$token'
     | '/score/r/$token'
     | '/admin/'
     | '/app/'
@@ -596,11 +636,13 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/blog/$slug'
     | '/book/$slug'
     | '/book/clarity'
     | '/book/podcast'
     | '/book/strategy'
+    | '/cron/send-bingo-followups'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -608,6 +650,7 @@ export interface FileRouteTypes {
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/bingo'
     | '/blog'
     | '/learn'
     | '/podcast'
@@ -626,6 +669,7 @@ export interface FileRouteTypes {
     | '/app/billing'
     | '/app/score'
     | '/app/settings'
+    | '/bingo/r/$token'
     | '/score/r/$token'
     | '/admin'
     | '/app'
@@ -652,12 +696,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/_authenticated/admin'
     | '/blog/$slug'
     | '/book/$slug'
     | '/book/clarity'
     | '/book/podcast'
     | '/book/strategy'
+    | '/cron/send-bingo-followups'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -665,6 +711,7 @@ export interface FileRouteTypes {
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/bingo/'
     | '/blog/'
     | '/learn/'
     | '/podcast/'
@@ -683,6 +730,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
     | '/_authenticated/app/settings'
+    | '/bingo/r/$token'
     | '/score/r/$token'
     | '/_authenticated/admin/'
     | '/_authenticated/app/'
@@ -710,20 +758,24 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BookSlugRoute: typeof BookSlugRoute
   BookClarityRoute: typeof BookClarityRoute
   BookPodcastRoute: typeof BookPodcastRoute
   BookStrategyRoute: typeof BookStrategyRoute
+  CronSendBingoFollowupsRoute: typeof CronSendBingoFollowupsRoute
   CronSendBookingRemindersRoute: typeof CronSendBookingRemindersRoute
   ESlugRoute: typeof ESlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
   ScoreQuizRoute: typeof ScoreQuizRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  BingoIndexRoute: typeof BingoIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
   ScoreIndexRoute: typeof ScoreIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
+  BingoRTokenRoute: typeof BingoRTokenRoute
   ScoreRTokenRoute: typeof ScoreRTokenRoute
 }
 
@@ -820,12 +872,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/bingo/': {
+      id: '/bingo/'
+      path: '/bingo'
+      fullPath: '/bingo/'
+      preLoaderRoute: typeof BingoIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/blog/': {
       id: '/blog/'
@@ -867,6 +933,13 @@ declare module '@tanstack/react-router' {
       path: '/book/strategy'
       fullPath: '/book/strategy'
       preLoaderRoute: typeof BookStrategyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cron/send-bingo-followups': {
+      id: '/cron/send-bingo-followups'
+      path: '/cron/send-bingo-followups'
+      fullPath: '/cron/send-bingo-followups'
+      preLoaderRoute: typeof CronSendBingoFollowupsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cron/send-booking-reminders': {
@@ -1051,6 +1124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/bingo/r/$token': {
+      id: '/bingo/r/$token'
+      path: '/bingo/r/$token'
+      fullPath: '/bingo/r/$token'
+      preLoaderRoute: typeof BingoRTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/score/r/$token': {
       id: '/score/r/$token'
       path: '/score/r/$token'
@@ -1215,20 +1295,24 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   BlogSlugRoute: BlogSlugRoute,
   BookSlugRoute: BookSlugRoute,
   BookClarityRoute: BookClarityRoute,
   BookPodcastRoute: BookPodcastRoute,
   BookStrategyRoute: BookStrategyRoute,
+  CronSendBingoFollowupsRoute: CronSendBingoFollowupsRoute,
   CronSendBookingRemindersRoute: CronSendBookingRemindersRoute,
   ESlugRoute: ESlugRoute,
   LearnSlugRoute: LearnSlugRoute,
   ScoreQuizRoute: ScoreQuizRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  BingoIndexRoute: BingoIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
   ScoreIndexRoute: ScoreIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
+  BingoRTokenRoute: BingoRTokenRoute,
   ScoreRTokenRoute: ScoreRTokenRoute,
 }
 export const routeTree = rootRouteImport
