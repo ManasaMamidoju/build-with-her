@@ -3,6 +3,7 @@ import sproutAsset from "@/assets/stages/stage-sprout.png.asset.json";
 import budAsset from "@/assets/stages/stage-bud.png.asset.json";
 import bloomAsset from "@/assets/stages/stage-bloom.png.asset.json";
 import gardenAsset from "@/assets/stages/stage-garden.png.asset.json";
+import { BANDS } from "@/lib/score-rubric";
 
 export type Stage = {
   name: string;
@@ -61,3 +62,9 @@ export const STAGES: Stage[] = [
     alt: "Three red roses and buds growing together on one vine, the Garden stage",
   },
 ];
+
+/** The stage for a 0-100 score, using the same bands as the rubric. */
+export function stageForScore(total: number): Stage {
+  const index = BANDS.findIndex((band) => total >= band.min && total <= band.max);
+  return STAGES[Math.max(0, index)]!;
+}

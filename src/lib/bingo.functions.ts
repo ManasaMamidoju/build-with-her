@@ -13,9 +13,9 @@ import {
   type BingoFix,
 } from "@/lib/bingo";
 import { CALENDLY_BEAUTY_STRATEGY_LINK, CALENDLY_LINKS } from "@/lib/calendly";
-import { BANDS, type AreaKey } from "@/lib/score-rubric";
+import { type AreaKey } from "@/lib/score-rubric";
 import { SITE } from "@/lib/site";
-import { STAGES } from "@/lib/stages";
+import { stageForScore } from "@/lib/stages";
 
 const handle = z.string().trim().max(160).optional().or(z.literal(""));
 
@@ -47,11 +47,6 @@ function makeToken() {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function stageFor(total: number) {
-  const index = BANDS.findIndex((band) => total >= band.min && total <= band.max);
-  return STAGES[Math.max(0, index)]!;
-}
-
 export const submitBingo = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => submitSchema.parse(data))
   .handler(async ({ data }) => {
@@ -73,7 +68,7 @@ export const submitBingo = createServerFn({ method: "POST" })
       MYSTERY_SQUARES.map((s) => [s.id, data.mysteryText[s.id] ?? ""]).filter(([, v]) => v),
     );
     const result = scoreBingo(checked);
-    const stage = stageFor(result.total);
+    const stage = stageForScore(result.total);
     const token = makeToken();
     const now = new Date().toISOString();
     const phone = data.details.phone || null;
@@ -167,6 +162,7 @@ export const submitBingo = createServerFn({ method: "POST" })
       stageTagline: stage.tagline,
       fixes: result.fixes,
       resultUrl,
+      token,
     });
     try {
       const sent = await triggerN8nEmail({
@@ -241,7 +237,7 @@ export const getBingoResult = createServerFn({ method: "GET" })
     };
     if (!row || answers.kind !== "bingo") return null;
 
-    const stage = stageFor(row.total_score);
+    const stage = stageForScore(row.total_score);
     return {
       firstName: row.full_name.trim().split(/\s+/)[0] ?? row.full_name,
       businessName: row.business_name,
@@ -297,4 +293,34 @@ export const unlockBeautyOffer = createServerFn({ method: "POST" })
       console.error("offer unlock log failed", logError);
     }
     return { ok: true as const, url: CALENDLY_BEAUTY_STRATEGY_LINK };
+  });
+
+/** Turns off marketing email for everything tied to this email. The score link keeps working. */
+export const unsubscribeByToken = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({ token: z.string().min(20).max(80) }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("score_submissions")
+      .select("email, person_id")
+      .eq("token", data.token)
+      .maybeSingle();
+    if (!row) return { ok: false as const };
+
+    const { error } = await supabaseAdmin
+      .from("score_submissions")
+      .update({ consent_email: false })
+      .eq("email", row.email.toLowerCase());
+    if (error) {
+      console.error("unsubscribe failed", error.message);
+      throw new Error("We could not unsubscribe you. Please email us and we will do it by hand.");
+    }
+    await supabaseAdmin.from("touchpoints").insert({
+      email: row.email,
+      person_id: row.person_id,
+      kind: "unsubscribe",
+      source: "email",
+      detail: { channel: "email", token: data.token },
+    });
+    return { ok: true as const };
   });

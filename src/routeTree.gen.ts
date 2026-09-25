@@ -22,6 +22,7 @@ import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin.route'
 import { Route as BingoIndexRouteImport } from './routes/bingo.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -30,6 +31,7 @@ import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as BookClarityRouteImport } from './routes/book.clarity'
 import { Route as BookPodcastRouteImport } from './routes/book.podcast'
 import { Route as BookStrategyRouteImport } from './routes/book.strategy'
+import { Route as CronSendBingoFollowupsRouteImport } from './routes/cron.send-bingo-followups'
 import { Route as CronSendBookingRemindersRouteImport } from './routes/cron.send-booking-reminders'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
@@ -131,6 +133,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -169,6 +176,11 @@ const BookPodcastRoute = BookPodcastRouteImport.update({
 const BookStrategyRoute = BookStrategyRouteImport.update({
   id: '/book/strategy',
   path: '/book/strategy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CronSendBingoFollowupsRoute = CronSendBingoFollowupsRouteImport.update({
+  id: '/cron/send-bingo-followups',
+  path: '/cron/send-bingo-followups',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CronSendBookingRemindersRoute =
@@ -383,12 +395,14 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/book/clarity': typeof BookClarityRoute
   '/book/podcast': typeof BookPodcastRoute
   '/book/strategy': typeof BookStrategyRoute
+  '/cron/send-bingo-followups': typeof CronSendBingoFollowupsRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -440,11 +454,13 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/book/clarity': typeof BookClarityRoute
   '/book/podcast': typeof BookPodcastRoute
   '/book/strategy': typeof BookStrategyRoute
+  '/cron/send-bingo-followups': typeof CronSendBingoFollowupsRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -499,12 +515,14 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/book/clarity': typeof BookClarityRoute
   '/book/podcast': typeof BookPodcastRoute
   '/book/strategy': typeof BookStrategyRoute
+  '/cron/send-bingo-followups': typeof CronSendBingoFollowupsRoute
   '/cron/send-booking-reminders': typeof CronSendBookingRemindersRoute
   '/e/$slug': typeof ESlugRoute
   '/learn/$slug': typeof LearnSlugRoute
@@ -559,12 +577,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/admin'
     | '/blog/$slug'
     | '/book/$slug'
     | '/book/clarity'
     | '/book/podcast'
     | '/book/strategy'
+    | '/cron/send-bingo-followups'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -616,11 +636,13 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/blog/$slug'
     | '/book/$slug'
     | '/book/clarity'
     | '/book/podcast'
     | '/book/strategy'
+    | '/cron/send-bingo-followups'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -674,12 +696,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/_authenticated/admin'
     | '/blog/$slug'
     | '/book/$slug'
     | '/book/clarity'
     | '/book/podcast'
     | '/book/strategy'
+    | '/cron/send-bingo-followups'
     | '/cron/send-booking-reminders'
     | '/e/$slug'
     | '/learn/$slug'
@@ -734,11 +758,13 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BookSlugRoute: typeof BookSlugRoute
   BookClarityRoute: typeof BookClarityRoute
   BookPodcastRoute: typeof BookPodcastRoute
   BookStrategyRoute: typeof BookStrategyRoute
+  CronSendBingoFollowupsRoute: typeof CronSendBingoFollowupsRoute
   CronSendBookingRemindersRoute: typeof CronSendBookingRemindersRoute
   ESlugRoute: typeof ESlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
@@ -846,6 +872,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -900,6 +933,13 @@ declare module '@tanstack/react-router' {
       path: '/book/strategy'
       fullPath: '/book/strategy'
       preLoaderRoute: typeof BookStrategyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cron/send-bingo-followups': {
+      id: '/cron/send-bingo-followups'
+      path: '/cron/send-bingo-followups'
+      fullPath: '/cron/send-bingo-followups'
+      preLoaderRoute: typeof CronSendBingoFollowupsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cron/send-booking-reminders': {
@@ -1255,11 +1295,13 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   BlogSlugRoute: BlogSlugRoute,
   BookSlugRoute: BookSlugRoute,
   BookClarityRoute: BookClarityRoute,
   BookPodcastRoute: BookPodcastRoute,
   BookStrategyRoute: BookStrategyRoute,
+  CronSendBingoFollowupsRoute: CronSendBingoFollowupsRoute,
   CronSendBookingRemindersRoute: CronSendBookingRemindersRoute,
   ESlugRoute: ESlugRoute,
   LearnSlugRoute: LearnSlugRoute,

@@ -2,6 +2,7 @@ import { AREAS } from "@/lib/score-rubric";
 import { BEAUTY_CODE, BEAUTY_ENDS_LABEL, beautyOfferLive, type BingoFix } from "@/lib/bingo";
 import { CALENDLY_LINKS } from "@/lib/calendly";
 import { SITE } from "@/lib/site";
+import { unsubscribeUrl } from "@/lib/bingo-followups";
 
 function esc(value: string) {
   return value
@@ -19,6 +20,7 @@ export function renderBingoResultEmail(input: {
   stageTagline: string;
   fixes: BingoFix[];
   resultUrl: string;
+  token: string;
   now?: Date;
 }) {
   const first = input.fullName.trim().split(/\s+/)[0] || "there";
@@ -49,7 +51,7 @@ export function renderBingoResultEmail(input: {
     "Manasa",
     SITE.name,
     "",
-    `You're getting this because you asked for your score at ${SITE.url}/bingo.`,
+    `${SITE.legalName}, ${SITE.city}, FL. You're getting this because you asked for your score at ${SITE.url}/bingo. Unsubscribe from marketing emails: ${unsubscribeUrl(input.token)}`,
   ].join("\n");
 
   const fixesHtml = input.fixes
@@ -77,7 +79,7 @@ export function renderBingoResultEmail(input: {
 ${offerHtml}
 </div>
 <p>Manasa<br>${esc(SITE.name)}</p>
-<p style="font-size:12px;color:#8a7a7e">You're getting this because you asked for your Findability Score at ${esc(SITE.url)}/bingo.</p>
+<p style="font-size:12px;color:#8a7a7e">${esc(SITE.legalName)}, ${esc(SITE.city)}, FL<br>You're getting this because you asked for your Findability Score at ${esc(SITE.url)}/bingo. <a href="${esc(unsubscribeUrl(input.token))}" style="color:#8a7a7e">Unsubscribe from marketing emails</a></p>
 </div>`;
 
   return { subject, text, html };
