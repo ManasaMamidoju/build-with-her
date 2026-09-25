@@ -30,7 +30,8 @@ const sections = [
     body: (
       <p>
         Your name and email, your business name and website, your social handles, the answers you
-        give in the Findability Score, the pages you visit, and where you came from, such as a
+        give in the Findability Score and Findability Bingo, what our scan finds on your public
+        website and social profiles, the pages you visit, and where you came from, such as a
         podcast, a social post, an event QR code or a partner link.
       </p>
     ),
@@ -51,8 +52,21 @@ const sections = [
     heading: "Phone numbers and texts",
     body: (
       <p>
-        If you give us a phone number we store it with your permission. We are not sending texts
-        yet. If that changes you will be asked again before anything is sent.
+        If you give us a phone number and tick the text message box, we may send you marketing and
+        reminder texts, including automated ones. We record when you agreed and the exact wording
+        you agreed to. Reply STOP to any text to opt out, or HELP for help. Message and data rates
+        may apply. We never share your number or your text consent with anyone else for their own
+        marketing.
+      </p>
+    ),
+  },
+  {
+    id: "emails",
+    heading: "Emails",
+    body: (
+      <p>
+        We always email you the score you asked for. We only send marketing emails if you ticked the
+        email box, and every one has a way to unsubscribe.
       </p>
     ),
   },
@@ -93,7 +107,7 @@ function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy Notice"
-      lastUpdated="September 5, 2026"
+      lastUpdated="September 25, 2026"
       intro="This notice explains what we collect when you use this site and how to have it removed."
       sections={sections}
     />

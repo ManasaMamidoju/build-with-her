@@ -51,6 +51,36 @@ const sections = [
     ),
   },
   {
+    id: "messages",
+    heading: "Emails and text messages",
+    body: (
+      <>
+        <p>
+          If you tick the email box, we send you your score plus marketing emails about events,
+          offers and tips. Every marketing email has a way to unsubscribe.
+        </p>
+        <p className="mt-3">
+          If you tick the text box, you agree that Build With Her Media may send marketing and
+          reminder text messages, including automated texts, to the number you gave us. Consent is
+          not a condition of purchase. Message frequency varies. Message and data rates may apply.
+          Reply STOP to opt out at any time, or HELP for help. Carriers are not liable for delayed
+          or undelivered messages.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "event-offers",
+    heading: "Event offers and codes",
+    body: (
+      <p>
+        Event codes, such as BEAUTY for Beauty Weekend, are valid only for the dates shown with the
+        offer, one use per person, and cannot be exchanged for cash. Once the event ends the regular
+        price applies.
+      </p>
+    ),
+  },
+  {
     id: "calls",
     heading: "Calls, consults and recordings",
     body: (
@@ -110,7 +140,7 @@ function TermsPage() {
   return (
     <LegalLayout
       title="Terms of Service"
-      lastUpdated="September 5, 2026"
+      lastUpdated="September 25, 2026"
       intro="These terms cover your Findability Score, your bookings, and any work we build for you."
       sections={sections}
     />

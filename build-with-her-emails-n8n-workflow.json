@@ -84,12 +84,16 @@
             {
               "value": "booking_cancelled",
               "output": 6
+            },
+            {
+              "value": "rendered_email",
+              "output": 7
             }
           ]
         },
         "dataType": "string",
         "value1": "={{ $json.event }}",
-        "fallbackOutput": 7
+        "fallbackOutput": 8
       },
       "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
       "name": "Route by Event",
@@ -262,7 +266,7 @@
             },
             {
               "name": "subject",
-              "value": "New booking: {{ $json.data.personName }} — {{ $json.data.serviceName }}"
+              "value": "New booking: {{ $json.data.personName }} \u2014 {{ $json.data.serviceName }}"
             },
             {
               "name": "text",
@@ -547,6 +551,25 @@
         1450,
         1050
       ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@digimaids.com",
+        "toEmail": "={{ $json.recipient.email }}",
+        "subject": "={{ $json.data.subject }}",
+        "text": "={{ $json.data.text }}",
+        "html": "={{ $json.data.html }}",
+        "options": {}
+      },
+      "id": "e1b2c3d4-0b1a-4c2d-9e8f-bingo0000001",
+      "name": "Send Rendered Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        1500
+      ],
+      "onError": "continueErrorOutput"
     }
   ],
   "connections": {
@@ -637,6 +660,13 @@
         [
           {
             "node": "Prepare Booking Cancelled Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Rendered Email",
             "type": "main",
             "index": 0
           }
@@ -836,6 +866,24 @@
       ]
     },
     "Send Booking Cancelled Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Email Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Rendered Email": {
       "main": [
         [
           {

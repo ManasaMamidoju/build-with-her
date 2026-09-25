@@ -23,6 +23,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin.route'
+import { Route as BingoIndexRouteImport } from './routes/bingo.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
@@ -55,6 +56,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppScoreRouteImport } from './routes/_authenticated/app.score'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as BingoRTokenRouteImport } from './routes/bingo.r.$token'
 import { Route as ScoreRTokenRouteImport } from './routes/score.r.$token'
 import { Route as AuthenticatedAdminPeopleIndexRouteImport } from './routes/_authenticated/admin.people.index'
 import { Route as AuthenticatedAdminPeopleIdRouteImport } from './routes/_authenticated/admin.people.$id'
@@ -133,6 +135,11 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BingoIndexRoute = BingoIndexRouteImport.update({
+  id: '/bingo/',
+  path: '/bingo/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
@@ -304,6 +311,11 @@ const AuthenticatedAppSettingsRoute =
     path: '/app/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const BingoRTokenRoute = BingoRTokenRouteImport.update({
+  id: '/bingo/r/$token',
+  path: '/bingo/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScoreRTokenRoute = ScoreRTokenRouteImport.update({
   id: '/score/r/$token',
   path: '/score/r/$token',
@@ -384,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/bingo/': typeof BingoIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/podcast/': typeof PodcastIndexRoute
@@ -402,6 +415,7 @@ export interface FileRoutesByFullPath {
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/bingo/r/$token': typeof BingoRTokenRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
@@ -438,6 +452,7 @@ export interface FileRoutesByTo {
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/bingo': typeof BingoIndexRoute
   '/blog': typeof BlogIndexRoute
   '/learn': typeof LearnIndexRoute
   '/podcast': typeof PodcastIndexRoute
@@ -456,6 +471,7 @@ export interface FileRoutesByTo {
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/score': typeof AuthenticatedAppScoreRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/bingo/r/$token': typeof BingoRTokenRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
@@ -496,6 +512,7 @@ export interface FileRoutesById {
   '/podcast/book': typeof PodcastBookRoute
   '/score/quiz': typeof ScoreQuizRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/bingo/': typeof BingoIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/podcast/': typeof PodcastIndexRoute
@@ -514,6 +531,7 @@ export interface FileRoutesById {
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/score': typeof AuthenticatedAppScoreRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/bingo/r/$token': typeof BingoRTokenRoute
   '/score/r/$token': typeof ScoreRTokenRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
@@ -554,6 +572,7 @@ export interface FileRouteTypes {
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/bingo/'
     | '/blog/'
     | '/learn/'
     | '/podcast/'
@@ -572,6 +591,7 @@ export interface FileRouteTypes {
     | '/app/billing'
     | '/app/score'
     | '/app/settings'
+    | '/bingo/r/$token'
     | '/score/r/$token'
     | '/admin/'
     | '/app/'
@@ -608,6 +628,7 @@ export interface FileRouteTypes {
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/bingo'
     | '/blog'
     | '/learn'
     | '/podcast'
@@ -626,6 +647,7 @@ export interface FileRouteTypes {
     | '/app/billing'
     | '/app/score'
     | '/app/settings'
+    | '/bingo/r/$token'
     | '/score/r/$token'
     | '/admin'
     | '/app'
@@ -665,6 +687,7 @@ export interface FileRouteTypes {
     | '/podcast/book'
     | '/score/quiz'
     | '/services/$slug'
+    | '/bingo/'
     | '/blog/'
     | '/learn/'
     | '/podcast/'
@@ -683,6 +706,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/billing'
     | '/_authenticated/app/score'
     | '/_authenticated/app/settings'
+    | '/bingo/r/$token'
     | '/score/r/$token'
     | '/_authenticated/admin/'
     | '/_authenticated/app/'
@@ -720,10 +744,12 @@ export interface RootRouteChildren {
   LearnSlugRoute: typeof LearnSlugRoute
   ScoreQuizRoute: typeof ScoreQuizRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  BingoIndexRoute: typeof BingoIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
   ScoreIndexRoute: typeof ScoreIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
+  BingoRTokenRoute: typeof BingoRTokenRoute
   ScoreRTokenRoute: typeof ScoreRTokenRoute
 }
 
@@ -826,6 +852,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/bingo/': {
+      id: '/bingo/'
+      path: '/bingo'
+      fullPath: '/bingo/'
+      preLoaderRoute: typeof BingoIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/blog/': {
       id: '/blog/'
@@ -1051,6 +1084,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/bingo/r/$token': {
+      id: '/bingo/r/$token'
+      path: '/bingo/r/$token'
+      fullPath: '/bingo/r/$token'
+      preLoaderRoute: typeof BingoRTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/score/r/$token': {
       id: '/score/r/$token'
       path: '/score/r/$token'
@@ -1225,10 +1265,12 @@ const rootRouteChildren: RootRouteChildren = {
   LearnSlugRoute: LearnSlugRoute,
   ScoreQuizRoute: ScoreQuizRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  BingoIndexRoute: BingoIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
   ScoreIndexRoute: ScoreIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
+  BingoRTokenRoute: BingoRTokenRoute,
   ScoreRTokenRoute: ScoreRTokenRoute,
 }
 export const routeTree = rootRouteImport

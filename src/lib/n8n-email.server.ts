@@ -2,6 +2,16 @@ import { createHmac } from "crypto";
 
 type EmailAutomation =
   | {
+      /**
+       * Pre-rendered email: the site writes the subject and body, n8n only
+       * sends it. Used by Findability Bingo (score, deadline nudges, follow up).
+       */
+      event: "rendered_email";
+      idempotencyKey: string;
+      recipient: { email: string; fullName: string };
+      data: { kind: string; subject: string; text: string; html: string };
+    }
+  | {
       event: "score_result";
       idempotencyKey: string;
       recipient: { email: string; fullName: string };
